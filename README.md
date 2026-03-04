@@ -1,6 +1,6 @@
 # SPACE SHOOTER GAME
 
-**Giảng viên:** Thầy Vũ Tuấn Hải 
+**Giảng viên:** Thầy Vũ Tuấn Hải  
 **Đơn vị:** Khoa Công nghệ Phần mềm (Faculty of Software Engineering) — Trường Đại học Công nghệ Thông tin, ĐHQG-HCM (UIT)  
 **Môn học:** **SE102.Q23 — Nhập môn phát triển game** 
 
@@ -10,7 +10,7 @@
 **Sinh viên 2:** Nguyễn Công Tài  
 **MSSV 2:** 21522565
 
-**Sinh viên 3:** Nguyễn Hoàng Quân 
+**Sinh viên 3:** Nguyễn Hoàng Quân  
 **MSSV 3:** 21522494
 
 ## NỘI DUNG SƠ LƯỢC
