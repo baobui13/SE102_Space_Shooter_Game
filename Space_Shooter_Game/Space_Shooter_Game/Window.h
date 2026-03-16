@@ -2,6 +2,7 @@
 #pragma once
 #include <Windows.h>
 #include <string>
+#include "InputManager.h"
 
 class Window {
 public:
@@ -15,13 +16,22 @@ public:
     // Lấy handle của cửa sổ để sau này truyền cho DirectX
     HWND GetHWND() const { return m_hwnd; }
 
+    // Hàm để truyền InputManager cho SceneManager
+    InputManager& GetInput() { return m_inputManager; }
+
 private:
-    // Hàm callback xử lý thông điệp của Windows
-    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     HWND m_hwnd;
     HINSTANCE m_hInstance;
     std::wstring m_title;
     int m_width;
     int m_height;
+
+    InputManager m_inputManager; // Window sẽ chứa InputManager
+
+    // Hàm xử lý tín hiệu tĩnh bắt buộc của Win32 API
+    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+    // Hàm xử lý tín hiệu thực sự của object
+    LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 };

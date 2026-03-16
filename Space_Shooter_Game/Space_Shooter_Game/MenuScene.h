@@ -9,7 +9,7 @@ public:
     MenuScene(Graphics& gfx);
     ~MenuScene() = default;
 
-    void Update(float dt) override;
+	void Update(float dt, InputManager& input) override;
     void Render(Graphics& gfx) override;
 
 private:

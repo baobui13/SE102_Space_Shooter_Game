@@ -1,5 +1,6 @@
 #include "MenuScene.h"
 #include "Graphics.h"
+#include "InputManager.h"
 
 MenuScene::MenuScene(Graphics& gfx) {
     m_playButton = std::make_unique<Button>(200.0f, 400.0f, 400.0f, 100.0f);
@@ -18,11 +19,11 @@ MenuScene::MenuScene(Graphics& gfx) {
     );
 }
 
-void MenuScene::Update(float dt) {
-    // Tương lai: Lấy tọa độ chuột và trạng thái click từ InputManager
-    float mouseX = 0; // Tạm thời để 0
-    float mouseY = 0;
-    bool isClicked = false;
+void MenuScene::Update(float dt, InputManager& input) {
+    // Lấy dữ liệu chuột thật từ InputManager
+    float mouseX = (float)input.GetMouseX();
+    float mouseY = (float)input.GetMouseY();
+    bool isClicked = input.IsLeftMouseClicked();
 
     // Cập nhật trạng thái của các nút
     m_playButton->Update(mouseX, mouseY, isClicked);

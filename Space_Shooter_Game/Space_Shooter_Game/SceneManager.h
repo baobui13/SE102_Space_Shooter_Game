@@ -11,7 +11,7 @@ public:
     void ChangeScene(std::unique_ptr<Scene> newScene);
 
     // Gọi Update và Render của màn hình hiện tại
-    void Update(float dt);
+    void Update(float dt, InputManager& input);
     void Render(Graphics& gfx);
 
 private:

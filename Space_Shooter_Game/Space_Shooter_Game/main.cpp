@@ -49,14 +49,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         float dt = elapsedTime.count();
 
         // --- UPDATE (Cập nhật logic) ---
-        sceneManager.Update(dt);
+
+        // Truyền InputManager vào hàm Update của SceneManager
+        sceneManager.Update(dt, gameWindow.GetInput());
 
         // --- RENDER (Vẽ đồ họa) ---
         // SceneManager sẽ tự động gọi lệnh ClearBuffer của Scene hiện tại
         sceneManager.Render(gfx);
 
         gfx.EndFrame();
+
+        gameWindow.GetInput().Update();
     }
 
+    CoUninitialize();
     return 0;
 }

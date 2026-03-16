@@ -1,14 +1,71 @@
+#pragma once
 #include "Window.h"
+#include <windowsx.h>
 
 // Xử lý các thông điệp từ hệ điều hành Windows
 LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch (uMsg) {
-    case WM_DESTROY:
-        PostQuitMessage(0); // Gửi tín hiệu thoát game
-        return 0;
+    
+    Window* pThis = nullptr;
+
+    // Khi cửa sổ vừa được tạo, Windows gửi thông điệp WM_NCCREATE đầu tiên
+    if (uMsg == WM_NCCREATE) {
+        // Trích xuất con trỏ 'this' truyền vào CreateWindowEx
+        CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+        pThis = reinterpret_cast<Window*>(pCreate->lpCreateParams);
+
+        // Lưu con trỏ pThis vào bộ nhớ dữ liệu người dùng của cửa sổ này
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
     }
+    else {
+		// Với các thông điệp khác (như phím, chuột), dùng con trỏ pThis đã lưu để gọi hàm xử lý của object Window
+        pThis = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    }
+
+    // Nếu đã lấy được con trỏ của Object Window, gọi hàm xử lý KHÔNG TĨNH
+    if (pThis) {
+        return pThis->HandleMessage(hwnd, uMsg, wParam, lParam);
+    }
+
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
+
+
+
+// Đây là hàm KHÔNG TĨNH, có thể truy cập m_inputManager bình thường
+LRESULT Window::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+
+        // --- XỬ LÝ BÀN PHÍM ---
+    case WM_KEYDOWN:
+        m_inputManager.OnKeyDown(static_cast<unsigned int>(wParam));
+        break;
+
+    case WM_KEYUP:
+        m_inputManager.OnKeyUp(static_cast<unsigned int>(wParam));
+        break;
+
+        // --- XỬ LÝ CHUỘT ---
+    case WM_MOUSEMOVE:
+        m_inputManager.OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        break;
+
+    case WM_LBUTTONDOWN:
+        m_inputManager.OnLeftMouseDown();
+        break;
+
+    case WM_LBUTTONUP:
+        m_inputManager.OnLeftMouseUp();
+        break;
+
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+
 
 Window::Window(const std::wstring& title, int width, int height)
     : m_title(title), m_width(width), m_height(height), m_hInstance(GetModuleHandle(nullptr)), m_hwnd(nullptr) {
@@ -41,7 +98,7 @@ Window::Window(const std::wstring& title, int width, int height)
         nullptr,
         nullptr,
         m_hInstance,
-        nullptr
+        this
     );
 
     // Hiển thị cửa sổ lên màn hình
