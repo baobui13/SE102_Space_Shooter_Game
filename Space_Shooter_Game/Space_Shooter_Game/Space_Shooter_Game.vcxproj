@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
@@ -144,7 +145,10 @@
     <ResourceCompile Include="Space_Shooter_Game.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObject.h" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />

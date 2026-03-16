@@ -4,18 +4,17 @@
 
 MenuScene::MenuScene(Graphics& gfx) {
     m_playButton = std::make_unique<Button>(200.0f, 400.0f, 400.0f, 100.0f);
-    // Nạp 3 trạng thái ảnh cho nút PLAY (nếu bạn chỉ có 1 ảnh, hãy chép tên nó cho cả 3 tham số)
     m_playButton->SetTextures(
-        gfx.LoadTexture(L"Assets/Start_BTN.png"),
-        gfx.LoadTexture(L"Assets/Start_BTN.png"),
-        gfx.LoadTexture(L"Assets/Start_BTN.png")
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Start_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Start_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Start_BTN.png")
     );
 
     m_exitButton = std::make_unique<Button>(200.0f, 600.0f, 400.0f, 100.0f);
     m_exitButton->SetTextures(
-        gfx.LoadTexture(L"Assets/Exit_BTN.png"),
-        gfx.LoadTexture(L"Assets/Exit_BTN.png"),
-        gfx.LoadTexture(L"Assets/Exit_BTN.png")
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_BTN.png")
     );
 }
 

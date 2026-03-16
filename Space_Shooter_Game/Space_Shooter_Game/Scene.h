@@ -1,4 +1,5 @@
 #pragma once
+#include "AssetManager.h"
 
 // Forward declaration: Báo cho C++ biết có tồn tại class Graphics để dùng làm tham số
 class Graphics;
