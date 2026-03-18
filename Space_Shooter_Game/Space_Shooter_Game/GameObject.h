@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include <wrl/client.h>
 #include <d3d11.h>
+#include "SpriteAnimation.h"
 
 class GameObject {
 protected:
@@ -18,7 +19,7 @@ protected:
     bool m_isActive;
 
     // Hình ảnh hiển thị (Texture)
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
+    SpriteAnimation m_anim;
 
 public:
     GameObject(float x, float y, float width, float height);
@@ -44,5 +45,6 @@ public:
     float GetWidth() const { return m_width; }
     float GetHeight() const { return m_height; }
 
-    void SetTexture(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture) { m_texture = texture; }
+    void SetVelocity(float vx, float vy) { m_vx = vx; m_vy = vy; }
+    SpriteAnimation& GetAnim() { return m_anim; }
 };

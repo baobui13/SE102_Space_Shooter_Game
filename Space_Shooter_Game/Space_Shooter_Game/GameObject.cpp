@@ -5,21 +5,24 @@ GameObject::GameObject(float x, float y, float width, float height)
     m_vx(0.0f), m_vy(0.0f), m_isActive(true) {
 }
 
+void GameObject::Update(float dt) {
+    // 1. Logic mặc định: Tự động di chuyển dựa theo vận tốc
+    // Nhờ có 2 dòng này, class Đạn (Bullet) gần như không cần viết lại hàm Update!
+    m_x += m_vx * dt;
+    m_y += m_vy * dt;
+
+    // 2. Tự động cập nhật khung hình của hoạt ảnh
+    m_anim.Update(dt);
+}
+
 void GameObject::Render(Graphics& gfx) {
     // Nếu object đã chết hoặc không có ảnh thì không cần vẽ
-    if (!m_isActive || !m_texture) return;
+    if (!m_isActive) return;
 
     auto spriteBatch = gfx.GetSpriteBatch();
 
-    // Tạo khung chữ nhật để vẽ dựa trên tọa độ và kích thước thực thể
-    RECT destRect = {
-        (LONG)m_x,
-        (LONG)m_y,
-        (LONG)(m_x + m_width),
-        (LONG)(m_y + m_height)
-    };
-
-    spriteBatch->Draw(m_texture.Get(), destRect);
+    // Gọi SpriteAnimation tự vẽ chính nó lên tọa độ của Object này
+    m_anim.Render(gfx, m_x, m_y, m_width, m_height);
 }
 
 // Xử lý va chạm chuẩn cho game 2D (Axis-Aligned Bounding Box - AABB)
