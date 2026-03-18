@@ -36,7 +36,7 @@ Graphics::Graphics(HWND hwnd) {
         &m_pContext
     );
 
-    // FIX: check lỗi
+    // check lỗi
     if (FAILED(hr)) {
         throw std::runtime_error("Failed to create D3D device and swap chain");
     }
@@ -76,6 +76,8 @@ void Graphics::ClearBuffer(float red, float green, float blue) {
     const float color[] = { red, green, blue, 1.0f };
     // Tô màu toàn bộ bộ đệm ẩn
     m_pContext->ClearRenderTargetView(m_pTargetView.Get(), color);
+
+    m_pContext->OMSetRenderTargets(1, m_pTargetView.GetAddressOf(), nullptr);
 }
 
 void Graphics::EndFrame() {
