@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Exit_BTN.png" />
+    <Image Include="Assets\Spaceship.png" />
     <Image Include="Assets\Start_BTN.png" />
   </ItemGroup>
   <ItemGroup>

@@ -24,7 +24,7 @@ void GameplayScene::Render(Graphics& gfx) {
     auto spriteBatch = gfx.GetSpriteBatch();
 
     // 2. Bắt đầu vẽ
-    spriteBatch->Begin();
+    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied());
 
     // 3. Gọi Player tự vẽ nó (Sẽ tự động gọi GameObject::Render)
     m_player->Render(gfx);

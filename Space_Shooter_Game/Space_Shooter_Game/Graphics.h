@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <wrl.h> // Thư viện chứa ComPtr giúp tự động dọn dẹp bộ nhớ DirectX
-
+#include <CommonStates.h>
 #include <SpriteBatch.h>
 #include <WICTextureLoader.h>
 #include <memory>
@@ -28,6 +28,8 @@ public:
     // Lấy cọ vẽ SpriteBatch ra vẽ
     DirectX::SpriteBatch* GetSpriteBatch() { return m_spriteBatch.get(); }
 
+    DirectX::CommonStates* GetStates() { return m_states.get(); }
+
 private:
     // Các thành phần cốt lõi của DirectX 11
     Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;                 // Quản lý bộ nhớ GPU, tạo tài nguyên (texture, buffer...)
@@ -36,4 +38,5 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pTargetView;   // Nơi mà GPU sẽ vẽ lên (màn hình)
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;            // SpriteBatch giúp vẽ hình 2D dễ dàng hơn
+    std::unique_ptr<DirectX::CommonStates> m_states;
 };

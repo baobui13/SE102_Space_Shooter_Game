@@ -7,8 +7,8 @@ Player::Player(Graphics& gfx, float startX, float startY)
     : GameObject(startX, startY, 64.0f, 64.0f), m_speed(300.0f)
 {
     // Cài đặt Animation cho Player
-    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Player.png"));
-    m_anim.AddClip("Idle", 0, 0, 64, 64, 1, 1, 1.0f, true);
+    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Spaceship.png"));
+    m_anim.AddClip("Idle", 0, 0, 500, 500, 1, 1, 1.0f, true);
     m_anim.Play("Idle");
 }
 
