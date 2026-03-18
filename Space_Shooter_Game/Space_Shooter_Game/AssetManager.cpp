@@ -1,25 +1,29 @@
 #include "AssetManager.h"
 #include "Graphics.h"
+#include <filesystem>
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> AssetManager::GetTexture(Graphics& gfx, const std::wstring& filePath) {
 
-    // 1. Tìm xem đường dẫn file này đã tồn tại trong kho chưa
-    auto it = m_textures.find(filePath);
+    // Chuẩn hóa đường dẫn (Normalize)
+    std::wstring normalizedPath = std::filesystem::weakly_canonical(filePath).wstring();
 
-    // 2. Nếu ĐÃ CÓ trong kho -> Trả về ảnh đó
+    // 1. DÙNG NORMALIZED PATH ĐỂ TÌM KIẾM
+    auto it = m_textures.find(normalizedPath);
+
     if (it != m_textures.end()) {
         return it->second;
     }
 
-    // 3. Nếu CHƯA CÓ -> Nhờ Graphics nạp từ ổ cứng
-    auto newTexture = gfx.LoadTexture(filePath.c_str());
+    // 3. DÙNG NORMALIZED PATH ĐỂ NẠP TỪ Ổ CỨNG
+    auto newTexture = gfx.LoadTexture(normalizedPath.c_str());
 
-    // 4. Nếu nạp thành công, cất vào kho để các Object sau dùng lại
-    if (newTexture) {
-        m_textures[filePath] = newTexture;
+    // 4. DÙNG NORMALIZED PATH LÀM CHÌA KHÓA LƯU TRỮ VÀO KHO
+    if (!newTexture) {
+        OutputDebugString(L"[AssetManager] Failed to load texture!\n");
+        return nullptr;
     }
+    m_textures[normalizedPath] = newTexture;
 
-    // 5. Trả ảnh về cho người gọi
     return newTexture;
 }
 

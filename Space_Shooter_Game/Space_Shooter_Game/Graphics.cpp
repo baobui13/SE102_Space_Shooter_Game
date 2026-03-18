@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include <WICTextureLoader.h>
+#include <stdexcept>
 
 Graphics::Graphics(HWND hwnd) {
     DXGI_SWAP_CHAIN_DESC sd = {};
@@ -13,14 +14,14 @@ Graphics::Graphics(HWND hwnd) {
     sd.SampleDesc.Count = 1; // Khử răng cưa (Antialiasing)
     sd.SampleDesc.Quality = 0;
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    sd.BufferCount = 1; // Double buffering (1 buffer ẩn, 1 buffer hiện)
+    sd.BufferCount = 2; // Double buffering (1 buffer ẩn, 1 buffer hiện)
     sd.OutputWindow = hwnd;
     sd.Windowed = TRUE;
-    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+    sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     sd.Flags = 0;
 
     // Tạo Device, SwapChain và DeviceContext cùng lúc
-    D3D11CreateDeviceAndSwapChain(
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
@@ -35,10 +36,22 @@ Graphics::Graphics(HWND hwnd) {
         &m_pContext
     );
 
+    // FIX: check lỗi
+    if (FAILED(hr)) {
+        throw std::runtime_error("Failed to create D3D device and swap chain");
+    }
+
     // Lấy back buffer (bộ đệm ẩn) từ SwapChain để tạo Render Target View
     Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer;
-    m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer);
-    m_pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &m_pTargetView);
+    hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer);
+    if (FAILED(hr)) {
+        throw std::runtime_error("Failed to get back buffer");
+    }
+
+    hr = m_pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &m_pTargetView);
+    if (FAILED(hr)) {
+        throw std::runtime_error("Failed to create render target view");
+    }
 
     m_pContext->OMSetRenderTargets(1, m_pTargetView.GetAddressOf(), nullptr);
 
@@ -67,7 +80,10 @@ void Graphics::ClearBuffer(float red, float green, float blue) {
 
 void Graphics::EndFrame() {
     // Đổi bộ đệm ẩn lên màn hình chính (V-Sync bật: 1)
-    m_pSwapChain->Present(1, 0);
+    HRESULT hr = m_pSwapChain->Present(1, 0);
+    if (FAILED(hr)) {
+        OutputDebugString(L"[Graphics] Present failed\n");
+    }
 }
 
 // Hàm đọc file ảnh (.png, .jpg) từ ổ cứng và biến nó thành Texture của DirectX
@@ -79,7 +95,8 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Graphics::LoadTexture(const wch
 
     // Báo lỗi nếu gõ sai tên file hoặc sai đường dẫn
     if (FAILED(hr)) {
-        MessageBox(nullptr, L"Khong tim thay file anh!", filePath, MB_OK | MB_ICONERROR);
+        OutputDebugString(L"[Graphics] Failed to load texture\n");
+        return nullptr;
     }
 
     return pTexture;
