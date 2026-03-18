@@ -1,8 +1,10 @@
 #include "MenuScene.h"
+#include "GameplayScene.h"
+#include "SceneManager.h"
 #include "Graphics.h"
 #include "InputManager.h"
 
-MenuScene::MenuScene(Graphics& gfx) {
+MenuScene::MenuScene(Graphics& gfx) : m_gfx(gfx) {
     m_playButton = std::make_unique<Button>(200.0f, 400.0f, 400.0f, 100.0f);
     m_playButton->SetTextures(
         AssetManager::GetInstance().GetTexture(gfx, L"Assets/Start_BTN.png"),
@@ -18,7 +20,7 @@ MenuScene::MenuScene(Graphics& gfx) {
     );
 }
 
-void MenuScene::Update(float dt, InputManager& input) {
+void MenuScene::Update(float dt, InputManager& input, SceneManager& manager) {
     // Lấy dữ liệu chuột thật từ InputManager
     float mouseX = (float)input.GetMouseX();
     float mouseY = (float)input.GetMouseY();
@@ -29,7 +31,7 @@ void MenuScene::Update(float dt, InputManager& input) {
     m_exitButton->Update(mouseX, mouseY, isClicked);
 
     if (m_playButton->IsClicked()) {
-        // Tương lai: Gọi SceneManager chuyển sang GameplayScene
+        manager.ChangeScene(std::make_unique<GameplayScene>(m_gfx));
     }
 
 	if (m_exitButton->IsClicked()) {
