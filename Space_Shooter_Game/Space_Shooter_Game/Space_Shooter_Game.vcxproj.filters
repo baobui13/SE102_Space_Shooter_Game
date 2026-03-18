@@ -50,6 +50,9 @@
     <ClInclude Include="AssetManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteAnimation.h">
+      <Filter>Foundation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -84,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="AssetManager.cpp">
       <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteAnimation.cpp">
+      <Filter>Foundation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
