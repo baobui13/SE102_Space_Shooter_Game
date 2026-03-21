@@ -1,6 +1,9 @@
 #pragma once
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Bullet.h"
+#include <vector>
+#include <memory>
 
 class Player : public GameObject {
 private:
@@ -26,11 +29,13 @@ public:
     void Update(float dt) override;
 
     // Ta viết một hàm Update riêng nhận thêm InputManager để bắt phím
-    void Update(float dt, InputManager& input);
+    void Update(float dt, InputManager& input, std::vector<std::unique_ptr<Bullet>>& bullets, Graphics& gfx);
 
     // --- CÁC HÀM XỬ LÝ LOGIC CHỈ SỐ ---
     void TakeDamage(int damage);
     void GainExp(int amount);
+
+
 
     // Player sẽ tự động dùng hàm Render() được kế thừa từ GameObject.
 

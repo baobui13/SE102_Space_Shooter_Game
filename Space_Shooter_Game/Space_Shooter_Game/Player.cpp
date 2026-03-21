@@ -22,7 +22,7 @@ void Player::Update(float dt) {
 
 }
 
-void Player::Update(float dt, InputManager& input) {
+void Player::Update(float dt, InputManager& input, std::vector<std::unique_ptr<Bullet>>& bullets, Graphics& gfx) {
     // -----------------------------------------
     // 1. LOGIC TẤN CÔNG (ATTACK SPEED & TIMER)
     // -----------------------------------------
@@ -35,8 +35,20 @@ void Player::Update(float dt, InputManager& input) {
     // Nếu NHẤN GIỮ chuột trái và ĐÃ HẾT thời gian chờ
     if (input.IsLeftMouseDown() && m_attackTimer <= 0.0f) {
 
-        // (Tạm thời in ra màn hình, lát nữa ta sẽ gọi code sinh Đạn ở đây)
-        OutputDebugStringA("[Player] PEW PEW! Ban dan!\n");
+        // Lấy tọa độ chuột từ InputManager
+        float mouseX = (float)input.GetMouseX();
+        float mouseY = (float)input.GetMouseY();
+
+        // Tính toán vị trí nòng súng (Cho đạn bay ra từ chính giữa Player)
+        // Kích thước Player là 64x64, kích thước Đạn là 16x16
+        float spawnX = m_x + (m_width / 2.0f) - 8.0f;
+        float spawnY = m_y + (m_height / 2.0f) - 8.0f;
+
+        // Tốc độ đạn bay: 500 px/giây
+        float bulletSpeed = 500.0f;
+
+        // Sinh viên đạn mới và đẩy vào danh sách của GameplayScene
+        bullets.push_back(std::make_unique<Bullet>(gfx, spawnX, spawnY, mouseX, mouseY, bulletSpeed, m_attackDamage));
 
         // Đặt lại thời gian chờ dựa trên Attack Speed (Công thức: 1.0 / Số đòn mỗi giây)
         m_attackTimer = 1.0f / m_attackSpeed;
