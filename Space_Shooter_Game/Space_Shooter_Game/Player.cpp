@@ -9,6 +9,7 @@ Player::Player(Graphics& gfx, float startX, float startY)
     m_maxHp(100), m_hp(100),                // Khởi đầu với 100/100 HP
     m_attackDamage(10),                     // Sát thương khởi điểm
     m_attackSpeed(3.0f),                    // Tốc độ đánh: 3 viên / 1 giây
+	m_attackRange(250.0f),                  // Tầm tấn công
     m_attackTimer(0.0f),                    // Không cần chờ ở phát bắn đầu tiên
     m_level(1), m_exp(0), m_expToNextLevel(100) // Khởi đầu lv 1, cần 100 exp để lên lv 2
 {
@@ -47,8 +48,14 @@ void Player::Update(float dt, InputManager& input, std::vector<std::unique_ptr<B
         // Tốc độ đạn bay: 500 px/giây
         float bulletSpeed = 500.0f;
 
-        // Sinh viên đạn mới và đẩy vào danh sách của GameplayScene
-        bullets.push_back(std::make_unique<Bullet>(gfx, spawnX, spawnY, mouseX, mouseY, bulletSpeed, m_attackDamage));
+        // -------------------------------------------------------------
+        // TÍNH TOÁN TẦM BAY THỰC TẾ = TẦM BẮN PLAYER * TỶ SỐ ĐỘ XA ĐẠN
+        // -------------------------------------------------------------
+        float bulletDistanceRatio = 1.0f;
+        float finalMaxDistance = m_attackRange * bulletDistanceRatio;
+
+        // Truyền finalMaxDistance vào viên đạn
+        bullets.push_back(std::make_unique<Bullet>(gfx, spawnX, spawnY, mouseX, mouseY, bulletSpeed, m_attackDamage, finalMaxDistance));
 
         // Đặt lại thời gian chờ dựa trên Attack Speed (Công thức: 1.0 / Số đòn mỗi giây)
         m_attackTimer = 1.0f / m_attackSpeed;

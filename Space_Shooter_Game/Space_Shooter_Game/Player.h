@@ -16,6 +16,7 @@ private:
     int m_attackDamage;    // Sát thương mỗi đòn đánh
     float m_attackSpeed;   // Số đòn đánh tung ra trong 1 giây (Attacks per second)
     float m_attackTimer;   // Bộ đếm ngược thời gian chờ đến đòn đánh tiếp theo
+    float m_attackRange;
 
     // --- CHỈ SỐ CẤP ĐỘ ---
     int m_level;           // Cấp độ hiện tại
