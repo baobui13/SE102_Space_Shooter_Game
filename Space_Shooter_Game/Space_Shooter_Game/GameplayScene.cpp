@@ -1,34 +1,65 @@
 #include "GameplayScene.h"
 #include "MenuScene.h"
 #include "SceneManager.h"
+#include <string>
+#include <DirectXColors.h>
 
-GameplayScene::GameplayScene(Graphics& gfx) : m_gfx(gfx) {
-    // Đặt phi thuyền ở giữa màn hình (400, 300)
-    m_player = std::make_unique<Player>(gfx, 400.0f - 32.0f, 300.0f - 32.0f);
+GameplayScene::GameplayScene(Graphics& gfx) 
+    : m_gfx(gfx), m_bulletPool(gfx) {
+    // Đặt phi thuyền ở gần cạnh dưới màn hình (400, 800)
+    m_player = std::make_unique<Player>(gfx, 400.0f - 32.0f, 800.0f - 32.0f);
+
+    // KHỞI TẠO FONT CHỮ
+    m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
+
+    // Sinh ngọc ở các vị trí cố định thông qua EntityManager
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 100.0f, 100.0f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 700.0f, 100.0f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 100.0f, 500.0f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 700.0f, 500.0f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 400.0f, 100.0f, 50));
 }
 
 void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager) {
-    // Cập nhật logic di chuyển của Player
-    m_player->Update(dt, input);
+    GameContext ctx(m_gfx, input, AssetManager::GetInstance(), m_bulletPool, *m_player);
 
-    // KHI BẤM NÚT ESCAPE -> QUAY LẠI MENU
+    // 1. Cập nhật Player
+    m_player->Update(dt, ctx);
+
+    // 2. Cập nhật các Entity (Ngọc, Quái...)
+    m_entityManager.UpdateAll(dt, ctx);
+
+    // 3. Cập nhật Đạn từ Pool
+    m_bulletPool.Update(dt, ctx);
+
+    // 4. Quay lại Menu
     if (input.IsKeyDown(VK_ESCAPE)) {
         manager.ChangeScene(std::make_unique<MenuScene>(m_gfx));
+    }
+
+    if (input.IsKeyPressed('E')) {
+        m_player->GainExp(50);
     }
 }
 
 void GameplayScene::Render(Graphics& gfx) {
-    // 1. Xóa màn hình với màu không gian sâu (xanh lam đậm)
     gfx.ClearBuffer(0.02f, 0.02f, 0.1f);
-
     auto spriteBatch = gfx.GetSpriteBatch();
 
-    // 2. Bắt đầu vẽ
-    spriteBatch->Begin();
+    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied());
 
-    // 3. Gọi Player tự vẽ nó (Sẽ tự động gọi GameObject::Render)
+    // Vẽ tất cả bằng EntityManager và BulletPool
+    m_entityManager.RenderAll(gfx);
+    m_bulletPool.Render(gfx);
     m_player->Render(gfx);
 
-    // 4. Kết thúc vẽ
+    std::wstring uiText =
+        L"LEVEL: " + std::to_wstring(m_player->GetLevel()) + L"\n" +
+        L"EXP: " + std::to_wstring(m_player->GetCurrentExp()) + L" / " + std::to_wstring(m_player->GetExpToNextLevel()) + L"\n" +
+        L"DAMAGE: " + std::to_wstring(m_player->GetAttackDamage()) + L"\n" +
+        L"FPS: " + std::to_wstring((int)(1.0f / 0.016f)); // Giả định 60fps để test
+
+    m_font->DrawString(spriteBatch, uiText.c_str(), DirectX::XMFLOAT2(10.0f, 10.0f), DirectX::Colors::Yellow);
+
     spriteBatch->End();
 }

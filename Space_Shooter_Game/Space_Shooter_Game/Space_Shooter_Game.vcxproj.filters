@@ -50,8 +50,29 @@
     <ClInclude Include="AssetManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
     <ClInclude Include="SpriteAnimation.h">
       <Filter>Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpOrb.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletPool.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameContext.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -88,8 +109,20 @@
     <ClCompile Include="AssetManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
     <ClCompile Include="SpriteAnimation.cpp">
       <Filter>Foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="ExpOrb.cpp">
+      <Filter>Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -99,8 +132,17 @@
     <Image Include="Assets\Start_BTN.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Bullets1.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Spaceship.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Assets\Arial.spritefont">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
 </Project>

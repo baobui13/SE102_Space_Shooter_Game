@@ -4,6 +4,8 @@
 #include <d3d11.h>
 #include "SpriteAnimation.h"
 
+struct GameContext; // Forward declaration toàn cục
+
 class GameObject {
 protected:
     // Dùng protected thay vì private để các class con (Player, Enemy) có thể trực tiếp sửa đổi
@@ -27,10 +29,9 @@ public:
     // Virtual destructor rất quan trọng trong đa hình để tránh rò rỉ bộ nhớ
     virtual ~GameObject() = default;
 
-    // Hàm thuần ảo (Pure virtual): Bắt buộc mọi class con BẮT BUỘC phải tự viết logic Update riêng
-    virtual void Update(float dt) = 0;
 
-    // Hàm ảo (Virtual): Cung cấp sẵn logic vẽ mặc định, class con CÓ THỂ dùng hoặc ghi đè lại
+    // --- CÁC HÀM ẢO ---
+    virtual void Update(float dt, ::GameContext& ctx);
     virtual void Render(Graphics& gfx);
 
     // Thuật toán kiểm tra va chạm (AABB)

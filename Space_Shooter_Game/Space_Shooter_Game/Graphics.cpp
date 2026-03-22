@@ -70,6 +70,7 @@ Graphics::Graphics(HWND hwnd) {
     m_pContext->RSSetViewports(1, &vp);
 
     m_spriteBatch = std::make_unique<DirectX::SpriteBatch>(m_pContext.Get());
+    m_states = std::make_unique<DirectX::CommonStates>(m_pDevice.Get());
 }
 
 void Graphics::ClearBuffer(float red, float green, float blue) {
