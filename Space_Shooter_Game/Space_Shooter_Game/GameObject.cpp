@@ -1,11 +1,12 @@
 #include "GameObject.h"
+#include "GameContext.h"
 
 GameObject::GameObject(float x, float y, float width, float height)
     : m_x(x), m_y(y), m_width(width), m_height(height),
     m_vx(0.0f), m_vy(0.0f), m_isActive(true) {
 }
 
-void GameObject::Update(float dt) {
+void GameObject::Update(float dt, ::GameContext& ctx) {
     // 1. Logic mặc định: Tự động di chuyển dựa theo vận tốc
     // Nhờ có 2 dòng này, class Đạn (Bullet) gần như không cần viết lại hàm Update!
     m_x += m_vx * dt;

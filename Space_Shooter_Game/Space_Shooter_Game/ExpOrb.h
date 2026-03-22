@@ -10,9 +10,7 @@ public:
     ExpOrb(Graphics& gfx, float x, float y, int expValue);
 
     // Bắt buộc phải ghi đè hàm Update của GameObject
-    void Update(float dt) override;
-
-    void Update(float dt, float playerX, float playerY, float playerMagnetRange);
+    void Update(float dt, ::GameContext& ctx) override;
 
     // Lấy lượng kinh nghiệm khi Player nhặt được
     int GetExpAmount() const { return m_expAmount; }

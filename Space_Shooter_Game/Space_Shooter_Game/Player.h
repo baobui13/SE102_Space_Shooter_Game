@@ -28,11 +28,8 @@ private:
 public:
     Player(Graphics& gfx, float startX, float startY);
 
-    // Override hàm thuần ảo của GameObject
-    void Update(float dt) override;
-
-    // Ta viết một hàm Update riêng nhận thêm InputManager để bắt phím
-    void Update(float dt, InputManager& input, std::vector<std::unique_ptr<Bullet>>& bullets, Graphics& gfx);
+    // Override hàm ảo của GameObject
+    void Update(float dt, ::GameContext& ctx) override;
 
 	// Hàm xử lý khi bị trúng đạn
     void TakeDamage(int damage);

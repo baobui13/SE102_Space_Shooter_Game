@@ -1,4 +1,6 @@
 #include "Player.h"
+#include "GameContext.h"
+#include "BulletPool.h"
 #include "AssetManager.h"
 #include <cmath> // Dùng cho hàm sqrt (tính căn bậc 2)
 
@@ -23,47 +25,31 @@ Player::Player(Graphics& gfx, float startX, float startY)
     m_anim.Play("Idle");
 }
 
-void Player::Update(float dt) {
-
-}
-
-void Player::Update(float dt, InputManager& input, std::vector<std::unique_ptr<Bullet>>& bullets, Graphics& gfx) {
+void Player::Update(float dt, ::GameContext& ctx) {
     if (!m_isActive) return;
 
     // -----------------------------------------
     // 1. LOGIC TẤN CÔNG (ATTACK SPEED & TIMER)
     // -----------------------------------------
 
-    // Đếm lùi thời gian chờ đạn
     if (m_attackTimer > 0.0f) {
         m_attackTimer -= dt;
     }
 
-    // Nếu NHẤN GIỮ chuột trái và ĐÃ HẾT thời gian chờ
-    if (input.IsLeftMouseDown() && m_attackTimer <= 0.0f) {
+    if (ctx.input.IsLeftMouseDown() && m_attackTimer <= 0.0f) {
+        float mouseX = (float)ctx.input.GetMouseX();
+        float mouseY = (float)ctx.input.GetMouseY();
 
-        // Lấy tọa độ chuột từ InputManager
-        float mouseX = (float)input.GetMouseX();
-        float mouseY = (float)input.GetMouseY();
-
-        // Tính toán vị trí nòng súng (Cho đạn bay ra từ chính giữa Player)
-        // Kích thước Player là 64x64, kích thước Đạn là 16x16
         float spawnX = m_x + (m_width / 2.0f) - 8.0f;
         float spawnY = m_y + (m_height / 2.0f) - 8.0f;
 
-        // Tốc độ đạn bay: 500 px/giây
         float bulletSpeed = 500.0f;
-
-        // -------------------------------------------------------------
-        // TÍNH TOÁN TẦM BAY THỰC TẾ = TẦM BẮN PLAYER * TỶ SỐ ĐỘ XA ĐẠN
-        // -------------------------------------------------------------
         float bulletDistanceRatio = 1.0f;
         float finalMaxDistance = m_attackRange * bulletDistanceRatio;
 
-        // Truyền finalMaxDistance vào viên đạn
-        bullets.push_back(std::make_unique<Bullet>(gfx, spawnX, spawnY, mouseX, mouseY, bulletSpeed, m_attackDamage, finalMaxDistance));
+        // Lấy đạn từ Pool thay vì tạo mới
+        ctx.bulletPool.GetBullet(spawnX, spawnY, mouseX, mouseY, bulletSpeed, m_attackDamage, finalMaxDistance);
 
-        // Đặt lại thời gian chờ dựa trên Attack Speed (Công thức: 1.0 / Số đòn mỗi giây)
         m_attackTimer = 1.0f / m_attackSpeed;
     }
 
@@ -71,37 +57,32 @@ void Player::Update(float dt, InputManager& input, std::vector<std::unique_ptr<B
     // 2. LOGIC DI CHUYỂN
     // -----------------------------------------
 
-    // 1. Khởi tạo vector hướng di chuyển
     float dirX = 0.0f;
     float dirY = 0.0f;
 
-    if (input.IsKeyDown('W') || input.IsKeyDown(VK_UP)) dirY -= 1.0f;
-    if (input.IsKeyDown('S') || input.IsKeyDown(VK_DOWN)) dirY += 1.0f;
-    if (input.IsKeyDown('A') || input.IsKeyDown(VK_LEFT)) dirX -= 1.0f;
-    if (input.IsKeyDown('D') || input.IsKeyDown(VK_RIGHT)) dirX += 1.0f;
+    if (ctx.input.IsKeyDown('W') || ctx.input.IsKeyDown(VK_UP)) dirY -= 1.0f;
+    if (ctx.input.IsKeyDown('S') || ctx.input.IsKeyDown(VK_DOWN)) dirY += 1.0f;
+    if (ctx.input.IsKeyDown('A') || ctx.input.IsKeyDown(VK_LEFT)) dirX -= 1.0f;
+    if (ctx.input.IsKeyDown('D') || ctx.input.IsKeyDown(VK_RIGHT)) dirX += 1.0f;
 
-    // 2. Chuẩn hóa vector hướng (Ngăn chặn việc bay chéo nhanh hơn bay thẳng)
     if (dirX != 0.0f || dirY != 0.0f) {
         float length = std::sqrt(dirX * dirX + dirY * dirY);
         dirX /= length;
         dirY /= length;
 
-        // Cập nhật tọa độ
         m_x += dirX * m_speed * dt;
         m_y += dirY * m_speed * dt;
     }
 
     // -----------------------------------------
-    // 3. CẬP NHẬT HOẠT ẢNH & KIỂM TRA MÀN HÌNH
+    // 3. GIỚI HẠN MÀN HÌNH & CẬP NHẬT ANIM
     // -----------------------------------------
 
-    // 3. Giới hạn không cho bay ra khỏi màn hình (cửa sổ 800x1000)
     if (m_x < 0) m_x = 0;
     if (m_y < 0) m_y = 0;
     if (m_x > 800.0f - m_width) m_x = 800.0f - m_width;
     if (m_y > 1000.0f - m_height) m_y = 1000.0f - m_height;
 
-    // 4. Cập nhật hoạt ảnh
     m_anim.Update(dt);
 }
 

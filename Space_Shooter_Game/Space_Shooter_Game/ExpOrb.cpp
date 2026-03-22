@@ -1,4 +1,6 @@
 #include "ExpOrb.h"
+#include "GameContext.h"
+#include "Player.h"
 #include "AssetManager.h"
 #include <cmath>
 
@@ -14,32 +16,36 @@ ExpOrb::ExpOrb(Graphics& gfx, float x, float y, int expValue)
     m_anim.Play("Idle");
 }
 
-void ExpOrb::Update(float dt) {}
-
-// CẬP NHẬT: Sử dụng playerMagnetRange
-void ExpOrb::Update(float dt, float playerX, float playerY, float playerMagnetRange) {
+void ExpOrb::Update(float dt, ::GameContext& ctx) {
+    // 1. Tính toán tọa độ và khoảng cách
+    float playerCenterX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
+    float playerCenterY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
     float orbCenterX = m_x + m_width / 2.0f;
     float orbCenterY = m_y + m_height / 2.0f;
 
-    float dx = playerX - orbCenterX;
-    float dy = playerY - orbCenterY;
+    float dx = playerCenterX - orbCenterX;
+    float dy = playerCenterY - orbCenterY;
     float distance = std::sqrt(dx * dx + dy * dy);
 
-    // THAY THẾ m_magnetRange bằng playerMagnetRange
-    if (distance < playerMagnetRange && distance > 0.0f) {
-        dx /= distance;
-        dy /= distance;
-        m_vx = dx * m_magnetSpeed;
-        m_vy = dy * m_magnetSpeed;
+    // 2. Cập nhật vận tốc m_vx, m_vy (Nam châm)
+    if (distance < ctx.player.GetMagnetRange() && distance > 0.0f) {
+        m_vx = (dx / distance) * m_magnetSpeed;
+        m_vy = (dy / distance) * m_magnetSpeed;
     }
     else {
         m_vx = 0.0f;
         m_vy = 50.0f;
     }
 
-    GameObject::Update(dt);
+    // 3. DI CHUYỂN (Gọi hàm cha sau khi đã có vận tốc mới)
+    GameObject::Update(dt, ctx);
 
-    if (m_y > 1000.0f) {
+    // 4. Va chạm (Ăn ngọc) và Dọn rác
+    if (distance < 30.0f) {
+        ctx.player.GainExp(m_expAmount);
+        Destroy();
+    }
+    else if (m_y > 1100.0f) {
         Destroy();
     }
 }

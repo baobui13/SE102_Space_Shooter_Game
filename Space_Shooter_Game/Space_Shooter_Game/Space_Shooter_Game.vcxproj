@@ -133,8 +133,11 @@
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="ExpOrb.h" />
+    <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />

@@ -65,6 +65,15 @@
     <ClInclude Include="ExpOrb.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="BulletPool.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameContext.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -123,10 +132,10 @@
     <Image Include="Assets\Start_BTN.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\Spaceship.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Assets\Bullets1.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Spaceship.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
