@@ -137,6 +137,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="ExpOrb.h" />
+    <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="Graphics.h" />

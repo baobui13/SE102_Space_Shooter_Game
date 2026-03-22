@@ -45,7 +45,7 @@ void LevelUpScene::Update(float dt, InputManager& input, SceneManager& manager) 
 
 void LevelUpScene::Render(Graphics& gfx) {
     auto spriteBatch = gfx.GetSpriteBatch();
-    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied());
+    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied(), nullptr, nullptr, nullptr, nullptr, gfx.GetScaleMatrix());
 
     // Vẽ tiêu đề
     std::wstring title = L"--- CHON NANG CAP --- (Con " + std::to_wstring(m_player.GetUpgradePoints()) + L" luot)";

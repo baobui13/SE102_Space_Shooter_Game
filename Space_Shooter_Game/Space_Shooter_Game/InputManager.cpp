@@ -43,8 +43,8 @@ void InputManager::OnKeyUp(unsigned int keycode) {
 }
 
 void InputManager::OnMouseMove(int x, int y) {
-    m_mouseX = x;
-    m_mouseY = y;
+    m_mouseX = (int)(x / m_scaleX);
+    m_mouseY = (int)(y / m_scaleY);
 }
 
 void InputManager::OnLeftMouseDown() { m_isLeftMouseDown = true; }

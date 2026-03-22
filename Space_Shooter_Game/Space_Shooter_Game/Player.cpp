@@ -80,8 +80,8 @@ void Player::Update(float dt, ::GameContext& ctx) {
 
     if (m_x < 0) m_x = 0;
     if (m_y < 0) m_y = 0;
-    if (m_x > 800.0f - m_width) m_x = 800.0f - m_width;
-    if (m_y > 1000.0f - m_height) m_y = 1000.0f - m_height;
+    if (m_x > ctx.screenWidth - m_width) m_x = ctx.screenWidth - m_width;
+    if (m_y > ctx.screenHeight - m_height) m_y = ctx.screenHeight - m_height;
 
     m_anim.Update(dt);
 }

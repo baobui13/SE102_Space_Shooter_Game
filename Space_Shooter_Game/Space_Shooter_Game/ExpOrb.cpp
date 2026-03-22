@@ -45,7 +45,7 @@ void ExpOrb::Update(float dt, ::GameContext& ctx) {
         ctx.player.GainExp(m_expAmount);
         Destroy();
     }
-    else if (m_y > 1100.0f) {
+    else if (m_y > ctx.screenHeight + 100.0f) {
         Destroy();
     }
 }

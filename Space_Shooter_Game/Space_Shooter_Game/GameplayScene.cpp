@@ -1,28 +1,29 @@
 #include "GameplayScene.h"
 #include "MenuScene.h"
 #include "SceneManager.h"
+#include "GameConfig.h"
 #include <string>
 #include <DirectXColors.h>
 #include "LevelUpScene.h"
 
 GameplayScene::GameplayScene(Graphics& gfx) 
     : m_gfx(gfx), m_bulletPool(gfx) {
-    // Đặt phi thuyền ở gần cạnh dưới màn hình (400, 800)
-    m_player = std::make_unique<Player>(gfx, 400.0f - 32.0f, 800.0f - 32.0f);
+    // Đặt phi thuyền ở giữa cạnh dưới màn hình
+    m_player = std::make_unique<Player>(gfx, VIRTUAL_WIDTH / 2.0f - 32.0f, VIRTUAL_HEIGHT - 200.0f);
 
     // KHỞI TẠO FONT CHỮ
     m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
 
     // Sinh ngọc ở các vị trí cố định thông qua EntityManager
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 100.0f, 100.0f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 700.0f, 100.0f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 100.0f, 500.0f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 700.0f, 500.0f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, 400.0f, 100.0f, 50));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.125f, VIRTUAL_HEIGHT * 0.1f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.875f, VIRTUAL_HEIGHT * 0.1f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.125f, VIRTUAL_HEIGHT * 0.5f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.875f, VIRTUAL_HEIGHT * 0.5f, 10));
+    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.5f, VIRTUAL_HEIGHT * 0.1f, 50));
 }
 
 void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager) {
-    GameContext ctx(m_gfx, input, AssetManager::GetInstance(), m_bulletPool, *m_player);
+    GameContext ctx(m_gfx, input, AssetManager::GetInstance(), m_bulletPool, *m_player, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
     // 1. Cập nhật Player
     m_player->Update(dt, ctx);
@@ -52,7 +53,7 @@ void GameplayScene::Render(Graphics& gfx) {
     gfx.ClearBuffer(0.02f, 0.02f, 0.1f);
     auto spriteBatch = gfx.GetSpriteBatch();
 
-    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied());
+    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied(), nullptr, nullptr, nullptr, nullptr, gfx.GetScaleMatrix());
 
     // Vẽ tất cả bằng EntityManager và BulletPool
     m_entityManager.RenderAll(gfx);
