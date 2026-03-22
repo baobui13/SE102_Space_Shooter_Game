@@ -62,6 +62,9 @@
     <ClInclude Include="GameplayScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="ExpOrb.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -109,6 +112,9 @@
     <ClCompile Include="GameplayScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="ExpOrb.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Exit_BTN.png">
@@ -126,5 +132,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Assets\Arial.spritefont">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
 </Project>

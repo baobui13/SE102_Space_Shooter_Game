@@ -16,11 +16,15 @@ public:
     Graphics(HWND hwnd);
     ~Graphics() = default;
 
+
+
     // Xóa màn hình cũ và tô màu nền mới (R, G, B)
     void ClearBuffer(float red, float green, float blue);
 
     // Đẩy hình ảnh đã vẽ lên màn hình
     void EndFrame();
+
+    Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() { return m_pDevice; }
 
     // Đọc file ảnh từ ổ cứng
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadTexture(const wchar_t* filePath);

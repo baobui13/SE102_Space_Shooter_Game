@@ -56,8 +56,8 @@ void Bullet::Update(float dt) {
     }
 
     // LOGIC DỌN RÁC: Xóa viên đạn nếu nó bay khỏi màn hình
-    // (Giả sử màn hình 800x600, ta mở rộng biên ra một chút (-50 và +50) để đạn khuất hẳn mới xóa)
-    if (m_x < -50.0f || m_x > 850.0f || m_y < -50.0f || m_y > 650.0f) {
+    // (Giả sử màn hình 800x1000, ta mở rộng biên ra một chút (-50 và +50) để đạn khuất hẳn mới xóa)
+    if (m_x < -50.0f || m_x > 850.0f || m_y < -50.0f || m_y > 1050.0f) {
         Destroy(); // Gọi hàm Destroy từ GameObject (Đánh dấu m_isActive = false)
     }
 }

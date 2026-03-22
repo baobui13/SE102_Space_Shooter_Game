@@ -20,8 +20,10 @@ private:
 
     // --- CHỈ SỐ CẤP ĐỘ ---
     int m_level;           // Cấp độ hiện tại
-    int m_exp;             // Kinh nghiệm hiện tại
+    int m_currentExp;      // Kinh nghiệm hiện tại
     int m_expToNextLevel;  // Kinh nghiệm cần để lên cấp tiếp theo
+
+    float m_magnetRange;
 
 public:
     Player(Graphics& gfx, float startX, float startY);
@@ -32,15 +34,23 @@ public:
     // Ta viết một hàm Update riêng nhận thêm InputManager để bắt phím
     void Update(float dt, InputManager& input, std::vector<std::unique_ptr<Bullet>>& bullets, Graphics& gfx);
 
-    // --- CÁC HÀM XỬ LÝ LOGIC CHỈ SỐ ---
+	// Hàm xử lý khi bị trúng đạn
     void TakeDamage(int damage);
+
+    // Các hàm xử lý kinh nghiệm
     void GainExp(int amount);
+    void LevelUp();
 
+    // Getter nếu sau này cần vẽ lên UI
+    int GetLevel() const { return m_level; }
+    int GetCurrentExp() const { return m_currentExp; }
+    int GetExpToNextLevel() const { return m_expToNextLevel; }
 
+    int GetAttackDamage() const { return m_attackDamage; }
+    float GetAttackSpeed() const { return m_attackSpeed; }
+    float GetAttackRange() const { return m_attackRange; }
+
+    float GetMagnetRange() const { return m_magnetRange; }
 
     // Player sẽ tự động dùng hàm Render() được kế thừa từ GameObject.
-
-private:
-    // Hàm nội bộ, chỉ gọi tự động khi exp >= expToNextLevel
-    void LevelUp();
 };

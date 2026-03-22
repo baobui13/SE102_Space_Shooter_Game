@@ -6,12 +6,16 @@ Player::Player(Graphics& gfx, float startX, float startY)
 // Gọi Constructor của class cha (GameObject) để thiết lập tọa độ và kích thước (64x64)
     : GameObject(startX, startY, 64.0f, 64.0f),
     m_speed(300.0f),
-    m_maxHp(100), m_hp(100),                // Khởi đầu với 100/100 HP
+    m_maxHp(100), 
+    m_hp(100),                // Khởi đầu với 100/100 HP
     m_attackDamage(10),                     // Sát thương khởi điểm
     m_attackSpeed(3.0f),                    // Tốc độ đánh: 3 viên / 1 giây
 	m_attackRange(250.0f),                  // Tầm tấn công
     m_attackTimer(0.0f),                    // Không cần chờ ở phát bắn đầu tiên
-    m_level(1), m_exp(0), m_expToNextLevel(100) // Khởi đầu lv 1, cần 100 exp để lên lv 2
+    m_level(1), 
+    m_currentExp(0),
+    m_expToNextLevel(100),                  // Khởi đầu lv 1, cần 100 exp để lên lv 2
+    m_magnetRange(100.0f)
 {
     // Cài đặt Animation cho Player
     m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Spaceship.png"));
@@ -24,6 +28,8 @@ void Player::Update(float dt) {
 }
 
 void Player::Update(float dt, InputManager& input, std::vector<std::unique_ptr<Bullet>>& bullets, Graphics& gfx) {
+    if (!m_isActive) return;
+
     // -----------------------------------------
     // 1. LOGIC TẤN CÔNG (ATTACK SPEED & TIMER)
     // -----------------------------------------
@@ -113,20 +119,20 @@ void Player::TakeDamage(int damage) {
 }
 
 void Player::GainExp(int amount) {
-    m_exp += amount;
+    m_currentExp += amount;
 
     std::string msg = "[Player] Nhan duoc " + std::to_string(amount) + " EXP!\n";
     OutputDebugStringA(msg.c_str());
 
     // Dùng vòng lặp while để xử lý trường hợp nhận quá nhiều exp thăng nhiều cấp 1 lúc
-    while (m_exp >= m_expToNextLevel) {
+    while (m_currentExp >= m_expToNextLevel) {
         LevelUp();
     }
 }
 
 void Player::LevelUp() {
     m_level++;
-    m_exp -= m_expToNextLevel; // Khấu trừ exp đã dùng để lên cấp
+    m_currentExp -= m_expToNextLevel; // Khấu trừ exp đã dùng để lên cấp
     m_expToNextLevel = (int)(m_expToNextLevel * 1.5f); // Cấp sau cần nhiều exp hơn cấp trước 50%
 
     // Tăng chỉ số
