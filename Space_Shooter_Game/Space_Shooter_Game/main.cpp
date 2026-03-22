@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "SceneManager.h"
 #include "MenuScene.h"
+#include "GameConfig.h"
 #include <chrono>
 #include <objbase.h>
 
@@ -10,11 +11,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);    // Khởi tạo COM (Component Object Model) để sử dụng DirectXTK
 
-	// Khởi tạo cửa sổ game với kích thước 800 x 1000 và tiêu đề "Space Roguelike Game"
-    Window gameWindow(L"Space Roguelike Game", 800, 1000);
+	// Khởi tạo cửa sổ game với kích thước chuẩn từ GameConfig
+    Window gameWindow(L"Space Roguelike Game", (int)VIRTUAL_WIDTH, (int)VIRTUAL_HEIGHT);
 
     // Khởi tạo DirectX gắn vào handle (HWND) của cửa sổ vừa tạo
     Graphics gfx(gameWindow.GetHWND());
+
+    // Truyền tỉ lệ scale thực tế vào InputManager để tính tọa độ chuột chính xác
+    gameWindow.GetInput().SetScale(gfx.GetScaleX(), gfx.GetScaleY());
 
     // Khởi tạo SceneManager
     SceneManager sceneManager;

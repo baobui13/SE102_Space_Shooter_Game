@@ -1,4 +1,5 @@
 #include "Graphics.h"
+#include "GameConfig.h"
 #include <WICTextureLoader.h>
 #include <stdexcept>
 
@@ -68,6 +69,11 @@ Graphics::Graphics(HWND hwnd) {
 
     // Đưa Viewport vào Pipeline của DirectX
     m_pContext->RSSetViewports(1, &vp);
+
+    // --- TÍNH TOÁN SCALE MATRIX ---
+    m_scaleX = (float)vp.Width / VIRTUAL_WIDTH;
+    m_scaleY = (float)vp.Height / VIRTUAL_HEIGHT;
+    m_scaleMatrix = DirectX::XMMatrixScaling(m_scaleX, m_scaleY, 1.0f);
 
     m_spriteBatch = std::make_unique<DirectX::SpriteBatch>(m_pContext.Get());
     m_states = std::make_unique<DirectX::CommonStates>(m_pDevice.Get());

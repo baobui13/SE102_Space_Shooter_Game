@@ -12,8 +12,13 @@ private:
     bool m_isLeftMouseDown = false;
     bool m_prevLeftMouseDown = false; // Lưu trạng thái chuột ở frame trước
 
+    float m_scaleX = 1.0f; // Scale từ tọa độ thực sang tọa độ ảo
+    float m_scaleY = 1.0f;
+
 public:
     InputManager() = default;
+
+    void SetScale(float sx, float sy) { m_scaleX = sx; m_scaleY = sy; }
 
     // --- CÁC HÀM CHO SCENE SỬ DỤNG LẤY THÔNG TIN ---
     // Kiểm tra xem phím có đang ĐƯỢC GIỮ không

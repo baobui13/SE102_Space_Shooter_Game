@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <string>
 #include "InputManager.h"
+#include "GameConfig.h"
 
 class Window {
 public:

@@ -6,6 +6,7 @@
 #include <SpriteBatch.h>
 #include <WICTextureLoader.h>
 #include <memory>
+#include <DirectXMath.h>
 
 // Tự động link thư viện d3d11
 #pragma comment(lib, "d3d11.lib")
@@ -34,6 +35,11 @@ public:
 
     DirectX::CommonStates* GetStates() { return m_states.get(); }
 
+    // --- HÀM HỖ TRỢ SCALE MÀN HÌNH ---
+    float GetScaleX() const { return m_scaleX; }
+    float GetScaleY() const { return m_scaleY; }
+    DirectX::XMMATRIX GetScaleMatrix() const { return m_scaleMatrix; }
+
 private:
     // Các thành phần cốt lõi của DirectX 11
     Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;                 // Quản lý bộ nhớ GPU, tạo tài nguyên (texture, buffer...)
@@ -43,4 +49,9 @@ private:
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;            // SpriteBatch giúp vẽ hình 2D dễ dàng hơn
     std::unique_ptr<DirectX::CommonStates> m_states;
+
+    // Các biến phục vụ scaling
+    float m_scaleX = 1.0f;
+    float m_scaleY = 1.0f;
+    DirectX::XMMATRIX m_scaleMatrix = DirectX::XMMatrixIdentity();
 };

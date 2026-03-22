@@ -68,7 +68,27 @@ LRESULT Window::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 
 Window::Window(const std::wstring& title, int width, int height)
-    : m_title(title), m_width(width), m_height(height), m_hInstance(GetModuleHandle(nullptr)), m_hwnd(nullptr) {
+    : m_title(title), m_hInstance(GetModuleHandle(nullptr)), m_hwnd(nullptr) {
+
+    // --- TỰ ĐỘNG SCALE CỬA SỔ THEO MÀN HÌNH MÁY ---
+    int screenW = GetSystemMetrics(SM_CXSCREEN);
+    int screenH = GetSystemMetrics(SM_CYSCREEN);
+
+    m_width = width;
+    m_height = height;
+
+    // Nếu cửa sổ lớn hơn 90% màn hình, scale nó xuống
+    float maxW = screenW * 0.9f;
+    float maxH = screenH * 0.9f;
+
+    if (m_width > maxW || m_height > maxH) {
+        float ratioW = maxW / m_width;
+        float ratioH = maxH / m_height;
+        float scale = (ratioW < ratioH) ? ratioW : ratioH;
+
+        m_width = (int)(m_width * scale);
+        m_height = (int)(m_height * scale);
+    }
 
     const wchar_t* CLASS_NAME = L"SpaceRoguelikeWindowClass";
 

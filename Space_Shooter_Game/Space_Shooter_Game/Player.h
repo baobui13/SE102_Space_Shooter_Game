@@ -25,6 +25,8 @@ private:
 
     float m_magnetRange;
 
+    int m_upgradePoints = 0;
+
 public:
     Player(Graphics& gfx, float startX, float startY);
 
@@ -48,6 +50,14 @@ public:
     float GetAttackRange() const { return m_attackRange; }
 
     float GetMagnetRange() const { return m_magnetRange; }
+
+    int GetUpgradePoints() const { return m_upgradePoints; }
+    void UseUpgradePoint() { if (m_upgradePoints > 0) m_upgradePoints--; }
+
+    // Thêm các hàm Setter để thẻ Upgrade thay đổi chỉ số
+    void SetAttackDamage(int dmg) { m_attackDamage = dmg; }
+    void SetMagnetRange(float range) { m_magnetRange = range; }
+    void SetAttackSpeed(float speed) { m_attackSpeed = speed; }
 
     // Player sẽ tự động dùng hàm Render() được kế thừa từ GameObject.
 };

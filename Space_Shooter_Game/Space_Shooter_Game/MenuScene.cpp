@@ -47,7 +47,7 @@ void MenuScene::Render(Graphics& gfx) {
     auto spriteBatch = gfx.GetSpriteBatch();
 
     // Bắt đầu vẽ 2D
-    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied());
+    spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied(), nullptr, nullptr, nullptr, nullptr, gfx.GetScaleMatrix());
 
     // Vẽ nút PLAY
     if (auto tex = m_playButton->GetCurrentTexture()) {

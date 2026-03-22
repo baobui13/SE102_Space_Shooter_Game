@@ -137,16 +137,20 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="ExpOrb.h" />
+    <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LevelUpScene.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SpriteAnimation.h" />
+    <ClInclude Include="Upgrade.h" />
+    <ClInclude Include="UpgradeManager.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -162,11 +166,13 @@
     <ClCompile Include="GameplayScene.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="LevelUpScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
+    <ClCompile Include="UpgradeManager.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
