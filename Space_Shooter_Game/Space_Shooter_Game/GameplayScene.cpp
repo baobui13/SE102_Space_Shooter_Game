@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include <string>
 #include <DirectXColors.h>
+#include "LevelUpScene.h"
 
 GameplayScene::GameplayScene(Graphics& gfx) 
     : m_gfx(gfx), m_bulletPool(gfx) {
@@ -40,6 +41,11 @@ void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager)
     if (input.IsKeyPressed('E')) {
         m_player->GainExp(50);
     }
+
+    // Mở hòm nâng cấp nếu có lượt và bấm phím U
+    if (m_player->GetUpgradePoints() > 0 && input.IsKeyPressed('U')) {
+        manager.PushScene(std::make_unique<LevelUpScene>(m_gfx, *m_player));
+    }
 }
 
 void GameplayScene::Render(Graphics& gfx) {
@@ -60,6 +66,12 @@ void GameplayScene::Render(Graphics& gfx) {
         L"FPS: " + std::to_wstring((int)(1.0f / 0.016f)); // Giả định 60fps để test
 
     m_font->DrawString(spriteBatch, uiText.c_str(), DirectX::XMFLOAT2(10.0f, 10.0f), DirectX::Colors::Yellow);
+
+    // Cảnh báo có lượt nâng cấp
+    if (m_player->GetUpgradePoints() > 0) {
+        std::wstring notify = L"Ban co " + std::to_wstring(m_player->GetUpgradePoints()) + L" luot nang cap! Bam 'U' de dung.";
+        m_font->DrawString(spriteBatch, notify.c_str(), DirectX::XMFLOAT2(10.0f, 200.0f), DirectX::Colors::Cyan);
+    }
 
     spriteBatch->End();
 }

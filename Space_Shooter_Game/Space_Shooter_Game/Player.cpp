@@ -113,17 +113,8 @@ void Player::GainExp(int amount) {
 
 void Player::LevelUp() {
     m_level++;
-    m_currentExp -= m_expToNextLevel; // Khấu trừ exp đã dùng để lên cấp
-    m_expToNextLevel = (int)(m_expToNextLevel * 1.5f); // Cấp sau cần nhiều exp hơn cấp trước 50%
+    m_expToNextLevel = (int)(m_expToNextLevel * 1.3f);
 
-    // Tăng chỉ số
-    m_maxHp += 20;
-    m_hp = m_maxHp; // Hồi đầy máu
-    m_attackDamage += 5;
-
-    // Ví dụ tăng tốc độ đánh thêm 0.2 viên/giây mỗi khi lên cấp
-    m_attackSpeed += 0.2f;
-
-    std::string msg = "[Player] LEN CAP " + std::to_string(m_level) + "!!!\n";
-    OutputDebugStringA(msg.c_str());
+    // Tích lũy 1 lượt nâng cấp
+    m_upgradePoints++;
 }
