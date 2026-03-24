@@ -10,13 +10,26 @@ UpgradeManager::UpgradeManager() {
 void UpgradeManager::Initialize() {
     m_allUpgrades.clear();
 
-    // Thêm các thẻ nâng cấp vào đây (Nhớ viết tiếng Việt KHÔNG DẤU nhé)
-    m_allUpgrades.push_back({ "Sung Nhieu Nong", "Tang 5 sat thuong", [](Player& p) { p.SetAttackDamage(p.GetAttackDamage() + 5); } });
-    m_allUpgrades.push_back({ "Nam cham sieu cap", "Hut xa hon", [](Player& p) { p.SetMagnetRange(p.GetMagnetRange() + 50.0f); } });
-    m_allUpgrades.push_back({ "Dong co Turbo", "Ban nhanh hon", [](Player& p) { p.SetAttackSpeed(p.GetAttackSpeed() + 1.0f); } });
-    m_allUpgrades.push_back({ "Ao Giap Thep", "Hoi phuc 50 Mau", [](Player& p) { p.TakeDamage(-50); /* Trừ damage = Hồi máu */ } });
+    // { "Loại", "Tên", "Mô tả", "TÊN ICON (iconTag)", Hàm Effect }
+    m_allUpgrades.push_back({
+        "ATTACK", "Sung Nhieu Nong", "Tang 5 sat thuong", "sword",
+        [](Player& p) { p.SetAttackDamage(p.GetAttackDamage() + 5); }
+        });
 
-    // Bạn có thể thoải mái thêm 100 thẻ nữa ở đây!
+    m_allUpgrades.push_back({
+        "UTILITY", "Nam cham sieu cap", "Hut xa hon", "shield",
+        [](Player& p) { p.SetMagnetRange(p.GetMagnetRange() + 50.0f); }
+        });
+
+    m_allUpgrades.push_back({
+        "SPEED", "Dong co Turbo", "Ban nhanh hon", "boot",
+        [](Player& p) { p.SetAttackSpeed(p.GetAttackSpeed() + 1.0f); }
+        });
+
+    m_allUpgrades.push_back({
+        "DEFENSE", "Ao Giap Thep", "Hoi phuc 50 Mau", "heart",
+        [](Player& p) { p.TakeDamage(-50); /* Trừ damage = Hồi máu */ }
+        });
 }
 
 std::vector<UpgradeOption> UpgradeManager::GetRandomUpgrades(int count) {
