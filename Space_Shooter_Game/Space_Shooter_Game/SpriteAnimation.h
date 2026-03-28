@@ -24,6 +24,21 @@ public:
     void Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH);
     bool IsFinished() const;
 
+    // Lấy Texture đang sử dụng
+    ID3D11ShaderResourceView* GetCurrentTexture() const {
+        return m_texture.Get();
+    }
+
+    // Lấy thông tin một Clip theo tên
+    const AnimClip* GetClip(const std::string& name) const {
+        auto it = m_clips.find(name);
+        if (it != m_clips.end()) return &it->second;
+        return nullptr;
+    }
+
+    // Lấy Rect của Frame hiện tại (dùng nếu bạn muốn chính xác khung hình đang chạy)
+    RECT GetCurrentFrameRect() const;
+
 private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Bullet.h"
+#include "SkillManager.h"
 #include <vector>
 #include <memory>
 
@@ -27,14 +28,22 @@ private:
 
     int m_upgradePoints = 0;
 
+    SkillManager m_skillManager;
+
 public:
     Player(Graphics& gfx, float startX, float startY);
 
     // Override hàm ảo của GameObject
     void Update(float dt, ::GameContext& ctx) override;
 
+    void Render(Graphics& gfx) override;
+
 	// Hàm xử lý khi bị trúng đạn
     void TakeDamage(int damage);
+
+    void AddSkill(std::unique_ptr<Skill> skill) {
+        m_skillManager.AddSkill(std::move(skill));
+    }
 
     // Các hàm xử lý kinh nghiệm
     void GainExp(int amount);

@@ -74,3 +74,18 @@ void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float draw
 bool SpriteAnimation::IsFinished() const {
     return m_isFinished;
 }
+
+RECT SpriteAnimation::GetCurrentFrameRect() const {
+    if (!m_currentClip) return { 0, 0, 0, 0 };
+
+    int col = m_localFrameIndex % m_currentClip->columns;
+    int row = m_localFrameIndex / m_currentClip->columns;
+
+    RECT rect;
+    rect.left = m_currentClip->startX + (col * m_currentClip->frameWidth);
+    rect.top = m_currentClip->startY + (row * m_currentClip->frameHeight);
+    rect.right = rect.left + m_currentClip->frameWidth;
+    rect.bottom = rect.top + m_currentClip->frameHeight;
+
+    return rect;
+}

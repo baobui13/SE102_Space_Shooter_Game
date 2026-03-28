@@ -6,7 +6,7 @@
 
 ExpOrb::ExpOrb(Graphics& gfx, float x, float y, int expValue)
     : GameObject(x, y, 16.0f, 16.0f), m_expAmount(expValue),
-    m_magnetSpeed(450.0f) // Xóa dòng m_magnetRange ở đây
+    m_magnetSpeed(450.0f)
 {
     m_vx = 0.0f;
     m_vy = 50.0f;

@@ -7,6 +7,7 @@
 Player::Player(Graphics& gfx, float startX, float startY)
 // Gọi Constructor của class cha (GameObject) để thiết lập tọa độ và kích thước (64x64)
     : GameObject(startX, startY, 64.0f, 64.0f),
+    m_skillManager(),
     m_speed(300.0f),
     m_maxHp(100), 
     m_hp(100),                // Khởi đầu với 100/100 HP
@@ -84,6 +85,13 @@ void Player::Update(float dt, ::GameContext& ctx) {
     if (m_y > ctx.screenHeight - m_height) m_y = ctx.screenHeight - m_height;
 
     m_anim.Update(dt);
+
+    m_skillManager.Update(dt, ctx);
+}
+
+void Player::Render(Graphics& gfx) {
+    // Vẽ bản thân Player trước (bằng hàm Render của GameObject)
+    GameObject::Render(gfx);
 }
 
 // -----------------------------------------
