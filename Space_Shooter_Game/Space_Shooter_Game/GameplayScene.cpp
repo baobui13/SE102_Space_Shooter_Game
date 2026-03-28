@@ -23,7 +23,7 @@ GameplayScene::GameplayScene(Graphics& gfx)
 }
 
 void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager) {
-    GameContext ctx(m_gfx, input, AssetManager::GetInstance(), m_bulletPool, *m_player, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+    GameContext ctx(m_gfx, input, AssetManager::GetInstance(), m_bulletPool, m_entityManager, *m_player, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
     // 1. Cập nhật Player
     m_player->Update(dt, ctx);
