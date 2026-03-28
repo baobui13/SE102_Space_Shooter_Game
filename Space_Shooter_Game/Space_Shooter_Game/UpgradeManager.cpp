@@ -11,24 +11,56 @@ void UpgradeManager::Initialize() {
     m_allUpgrades.clear();
 
     // { "Loại", "Tên", "Mô tả", "TÊN ICON (iconTag)", Hàm Effect }
+    
+    // TẤN CÔNG
     m_allUpgrades.push_back({
-        "ATTACK", "Sung Nhieu Nong", "Tang 5 sat thuong", "sword",
-        [](Player& p) { p.SetAttackDamage(p.GetAttackDamage() + 5); }
+        "ATTACK", "Tang sat thuong", "Tang 10 sat thuong dan", "sword",
+        [](Player& p) { p.SetAttackDamage(p.GetAttackDamage() + 10); }
         });
 
     m_allUpgrades.push_back({
-        "UTILITY", "Nam cham sieu cap", "Hut xa hon", "shield",
-        [](Player& p) { p.SetMagnetRange(p.GetMagnetRange() + 50.0f); }
-        });
-
-    m_allUpgrades.push_back({
-        "SPEED", "Dong co Turbo", "Ban nhanh hon", "boot",
+        "SPEED", "Tang toc do ban", "Tang 1 vien/s", "sword",
         [](Player& p) { p.SetAttackSpeed(p.GetAttackSpeed() + 1.0f); }
         });
 
     m_allUpgrades.push_back({
-        "DEFENSE", "Ao Giap Thep", "Hoi phuc 50 Mau", "heart",
-        [](Player& p) { p.TakeDamage(-50); /* Trừ damage = Hồi máu */ }
+        "ATTACK", "Tang tam ban dan", "Tang tam ban", "sword",
+        [](Player& p) { p.SetAttackRange(p.GetAttackRange() + 50.0f); }
+        });
+
+    m_allUpgrades.push_back({
+        "ATTACK", "Giam hoi chieu", "Hoi chieu nhanh hon 10%", "sword",
+        [](Player& p) { p.SetCooldownMultiplier(p.GetCooldownMultiplier() * 0.9f); }
+        });
+
+    m_allUpgrades.push_back({
+        "ATTACK", "Tang kich thuoc", "Ky nang to hon 20%", "sword",
+        [](Player& p) { p.SetSkillSizeMultiplier(p.GetSkillSizeMultiplier() + 0.2f); }
+        });
+
+    // PHÒNG THỦ & SINH TỒN
+    m_allUpgrades.push_back({
+        "DEFENSE", "Hoi mau", "Hoi 50 Mau", "heart",
+        [](Player& p) { p.Heal(50); }
+        });
+
+    m_allUpgrades.push_back({
+        "DEFENSE", "Tang mau toi da", "Tang 50 mau goc", "heart",
+        [](Player& p) { 
+            p.SetMaxHp(p.GetMaxHp() + 50); 
+            p.Heal(50); 
+        }
+        });
+
+    m_allUpgrades.push_back({
+        "SPEED", "Toc do di chuyen", "Tau luot nhanh hon", "boot",
+        [](Player& p) { p.SetSpeed(p.GetSpeed() + 50.0f); }
+        });
+
+    // TIỆN ÍCH
+    m_allUpgrades.push_back({
+        "UTILITY", "Tang tam hut EXP", "Hut nam cham xa hon", "shield",
+        [](Player& p) { p.SetMagnetRange(p.GetMagnetRange() + 50.0f); }
         });
 }
 

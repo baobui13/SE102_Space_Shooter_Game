@@ -58,6 +58,8 @@ public:
     int GetCurrentExp() const { return m_currentExp; }
     int GetExpToNextLevel() const { return m_expToNextLevel; }
 
+    int GetHp() const { return m_hp; }
+
     int GetAttackDamage() const { return m_attackDamage; }
     float GetAttackSpeed() const { return m_attackSpeed; }
     float GetAttackRange() const { return m_attackRange; }
@@ -70,12 +72,24 @@ public:
     float GetCooldownMultiplier() const { return m_cooldownMultiplier; }
     float GetSkillSizeMultiplier() const { return m_skillSizeMultiplier; }
 
+    void Heal(int amount) {
+        m_hp += amount;
+        if (m_hp > m_maxHp) m_hp = m_maxHp;
+    }
+
     // Thêm các hàm Setter để thẻ Upgrade thay đổi chỉ số
     void SetAttackDamage(int dmg) { m_attackDamage = dmg; }
     void SetMagnetRange(float range) { m_magnetRange = range; }
     void SetAttackSpeed(float speed) { m_attackSpeed = speed; }
     void SetCooldownMultiplier(float val) { m_cooldownMultiplier = val; }
     void SetSkillSizeMultiplier(float val) { m_skillSizeMultiplier = val; }
+    void SetMaxHp(int maxHp) { m_maxHp = maxHp; }
+    void SetSpeed(float speed) { m_speed = speed; }
+    void SetAttackRange(float range) { m_attackRange = range; }
+    
+    // Getters
+    int GetMaxHp() const { return m_maxHp; }
+    float GetSpeed() const { return m_speed; }
 
     // Player sẽ tự động dùng hàm Render() được kế thừa từ GameObject.
 };
