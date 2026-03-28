@@ -11,10 +11,10 @@ void SkillManager::AddSkill(std::unique_ptr<Skill> skill) {
 
 void SkillManager::Update(float dt, GameContext& ctx) {
     for (auto& skill : m_skills) {
-        skill->Update(dt);
-        if (skill->GetType() == SkillType::ACTIVE && skill->IsReady()) {
+        skill->Update(dt, ctx);
+        if (skill->GetType() == SkillType::ACTIVE && skill->IsReady() && skill->CanActivate(ctx)) {
             skill->Activate(ctx);
-            skill->ResetCooldown();
+            skill->ResetCooldown(ctx.player.GetCooldownMultiplier());
         }
     }
 }

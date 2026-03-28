@@ -26,6 +26,10 @@ private:
 
     float m_magnetRange;
 
+    // --- CHỈ SỐ KỸ NĂNG ---
+    float m_cooldownMultiplier; // Hồi chiêu kỹ năng (vd: 0.8 = giảm 20%)
+    float m_skillSizeMultiplier;// Kích thước kỹ năng (vd: 1.5 = to hơn 50%)
+
     int m_upgradePoints = 0;
 
     SkillManager m_skillManager;
@@ -63,10 +67,15 @@ public:
     int GetUpgradePoints() const { return m_upgradePoints; }
     void UseUpgradePoint() { if (m_upgradePoints > 0) m_upgradePoints--; }
 
+    float GetCooldownMultiplier() const { return m_cooldownMultiplier; }
+    float GetSkillSizeMultiplier() const { return m_skillSizeMultiplier; }
+
     // Thêm các hàm Setter để thẻ Upgrade thay đổi chỉ số
     void SetAttackDamage(int dmg) { m_attackDamage = dmg; }
     void SetMagnetRange(float range) { m_magnetRange = range; }
     void SetAttackSpeed(float speed) { m_attackSpeed = speed; }
+    void SetCooldownMultiplier(float val) { m_cooldownMultiplier = val; }
+    void SetSkillSizeMultiplier(float val) { m_skillSizeMultiplier = val; }
 
     // Player sẽ tự động dùng hàm Render() được kế thừa từ GameObject.
 };

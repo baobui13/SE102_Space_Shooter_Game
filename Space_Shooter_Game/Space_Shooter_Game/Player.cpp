@@ -18,7 +18,9 @@ Player::Player(Graphics& gfx, float startX, float startY)
     m_level(1), 
     m_currentExp(0),
     m_expToNextLevel(100),                  // Khởi đầu lv 1, cần 100 exp để lên lv 2
-    m_magnetRange(100.0f)
+    m_magnetRange(100.0f),
+    m_cooldownMultiplier(1.0f),
+    m_skillSizeMultiplier(1.0f)
 {
     // Cài đặt Animation cho Player
     m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Spaceship.png"));

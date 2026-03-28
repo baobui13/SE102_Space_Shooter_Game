@@ -24,14 +24,18 @@ public:
 
     virtual ~Skill() = default;
 
-    virtual void Update(float dt) {
+    virtual void Update(float dt, GameContext& ctx) {
         if (m_currentTimer > 0.0f) {
             m_currentTimer -= dt;
         }
     }
 
     bool IsReady() const { return m_currentTimer <= 0.0f; }
-    void ResetCooldown() { m_currentTimer = m_cooldown; }
+    virtual void ResetCooldown(float multiplier = 1.0f) { m_currentTimer = m_cooldown * multiplier; }
+
+    virtual bool CanActivate(GameContext& ctx) {
+        return true;
+    }
 
     virtual void Activate(GameContext& ctx) = 0;
 

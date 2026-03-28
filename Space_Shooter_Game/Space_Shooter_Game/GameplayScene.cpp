@@ -5,11 +5,12 @@
 #include <string>
 #include <DirectXColors.h>
 #include "LevelUpScene.h"
-
+#include "LaserSkill.h"
 GameplayScene::GameplayScene(Graphics& gfx) 
     : m_gfx(gfx), m_bulletPool(gfx) {
     // Đặt phi thuyền ở giữa cạnh dưới màn hình
     m_player = std::make_unique<Player>(gfx, VIRTUAL_WIDTH / 2.0f - 32.0f, VIRTUAL_HEIGHT - 200.0f);
+    m_player->AddSkill(std::make_unique<LaserSkill>());
 
     // KHỞI TẠO FONT CHỮ
     m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
