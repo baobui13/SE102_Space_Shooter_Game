@@ -9,6 +9,8 @@ struct AnimClip {
     int frameWidth, frameHeight;
     int frameCount;
     int columns;
+    int spacingX;
+    int spacingY;
     float frameDuration;
     bool isLooping;
 };
@@ -18,7 +20,7 @@ class Graphics;
 class SpriteAnimation {
 public:
     void Initialize(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tex);
-    void AddClip(const std::string& name, int x, int y, int w, int h, int count, int cols, float duration, bool loop);
+    void AddClip(const std::string& name, int x, int y, int w, int h, int count, int cols, float duration, bool loop, int spacingX = 0, int spacingY = 0);
     void Play(const std::string& name);
     void Update(float dt);
     void Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH);

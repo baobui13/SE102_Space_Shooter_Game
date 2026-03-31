@@ -136,6 +136,8 @@
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="ExplodingBullet.h" />
+    <ClInclude Include="ExplodingBulletSkill.h" />
     <ClInclude Include="ExpOrb.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameContext.h" />
@@ -164,6 +166,8 @@
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="ExplodingBullet.cpp" />
+    <ClCompile Include="ExplodingBulletSkill.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -185,6 +189,7 @@
   <ItemGroup>
     <Image Include="Assets\Bullets1.png" />
     <Image Include="Assets\Exit_BTN.png" />
+    <Image Include="Assets\ExplodingBullet_1.png" />
     <Image Include="Assets\lazer_1.png" />
     <Image Include="Assets\Spaceship.png" />
     <Image Include="Assets\Start_BTN.png" />

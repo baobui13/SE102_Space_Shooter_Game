@@ -56,6 +56,12 @@
     <ClInclude Include="Bullet.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="ExplodingBullet.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="ExplodingBulletSkill.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
     <ClInclude Include="SpriteAnimation.h">
       <Filter>Foundation</Filter>
     </ClInclude>
@@ -79,6 +85,27 @@
     </ClInclude>
     <ClInclude Include="LaserSkill.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="UpgradeManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Skill.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Upgrade.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="GameConfig.h">
+      <Filter>Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelUpScene.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -106,9 +133,6 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.h">
-      <Filter>Entities</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
@@ -119,6 +143,12 @@
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="ExplodingBullet.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="ExplodingBulletSkill.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="SpriteAnimation.cpp">
@@ -136,6 +166,15 @@
     <ClCompile Include="LaserSkill.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="UpgradeManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SkillManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelUpScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Exit_BTN.png">
@@ -148,6 +187,12 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Spaceship.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\lazer_1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\ExplodingBullet_1.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
