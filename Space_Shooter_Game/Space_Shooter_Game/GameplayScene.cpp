@@ -5,11 +5,14 @@
 #include <string>
 #include <DirectXColors.h>
 #include "LevelUpScene.h"
-
+#include "LaserSkill.h"
+#include "ExplodingBulletSkill.h"
 GameplayScene::GameplayScene(Graphics& gfx) 
     : m_gfx(gfx), m_bulletPool(gfx) {
     // Đặt phi thuyền ở giữa cạnh dưới màn hình
     m_player = std::make_unique<Player>(gfx, VIRTUAL_WIDTH / 2.0f - 32.0f, VIRTUAL_HEIGHT - 200.0f);
+    m_player->AddSkill(std::make_unique<LaserSkill>());
+    m_player->AddSkill(std::make_unique<ExplodingBulletSkill>()); // Phím '2'
 
     // KHỞI TẠO FONT CHỮ
     m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
@@ -23,7 +26,7 @@ GameplayScene::GameplayScene(Graphics& gfx)
 }
 
 void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager) {
-    GameContext ctx(m_gfx, input, AssetManager::GetInstance(), m_bulletPool, *m_player, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+    GameContext ctx(m_gfx, input, AssetManager::GetInstance(), m_bulletPool, m_entityManager, *m_player, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
     // 1. Cập nhật Player
     m_player->Update(dt, ctx);
@@ -60,13 +63,27 @@ void GameplayScene::Render(Graphics& gfx) {
     m_bulletPool.Render(gfx);
     m_player->Render(gfx);
 
-    std::wstring uiText =
+    // Cot trai: Chi so chung
+    std::wstring uiLeft =
+        L"--- PLAYER STATS ---\n"
+        L"HP: " + std::to_wstring(m_player->GetHp()) + L" / " + std::to_wstring(m_player->GetMaxHp()) + L"\n" +
         L"LEVEL: " + std::to_wstring(m_player->GetLevel()) + L"\n" +
         L"EXP: " + std::to_wstring(m_player->GetCurrentExp()) + L" / " + std::to_wstring(m_player->GetExpToNextLevel()) + L"\n" +
-        L"DAMAGE: " + std::to_wstring(m_player->GetAttackDamage()) + L"\n" +
-        L"FPS: " + std::to_wstring((int)(1.0f / 0.016f)); // Giả định 60fps để test
+        L"SPEED: " + std::to_wstring((int)m_player->GetSpeed()) + L"\n" +
+        L"MAGNET: " + std::to_wstring((int)m_player->GetMagnetRange());
 
-    m_font->DrawString(spriteBatch, uiText.c_str(), DirectX::XMFLOAT2(10.0f, 10.0f), DirectX::Colors::Yellow);
+    // Cot phai: Chi so tan cong & ky nang
+    std::wstring uiRight =
+        L"--- COMBAT STATS ---\n"
+        L"DAMAGE: " + std::to_wstring(m_player->GetAttackDamage()) + L"\n" +
+        L"ATK SPD: " + std::to_wstring((int)(m_player->GetAttackSpeed() * 10.0f) / 10) + L" /s\n" +
+        L"RANGE: " + std::to_wstring((int)m_player->GetAttackRange()) + L"\n" +
+        L"CD MULT: " + std::to_wstring((int)(m_player->GetCooldownMultiplier() * 100)) + L"%\n" +
+        L"SKILL SIZE: " + std::to_wstring((int)(m_player->GetSkillSizeMultiplier() * 100)) + L"%";
+
+    m_font->DrawString(spriteBatch, uiLeft.c_str(),  DirectX::XMFLOAT2(10.0f,  10.0f), DirectX::Colors::Yellow);
+    m_font->DrawString(spriteBatch, uiRight.c_str(), DirectX::XMFLOAT2(200.0f, 10.0f), DirectX::Colors::LightGreen);
+
 
     // Cảnh báo có lượt nâng cấp
     if (m_player->GetUpgradePoints() > 0) {

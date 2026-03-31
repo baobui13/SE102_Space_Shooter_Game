@@ -136,18 +136,25 @@
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="ExplodingBullet.h" />
+    <ClInclude Include="ExplodingBulletSkill.h" />
     <ClInclude Include="ExpOrb.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameContext.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Laser.h" />
+    <ClInclude Include="LaserSkill.h" />
     <ClInclude Include="LevelUpScene.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Skill.h" />
+    <ClInclude Include="SkillManager.h" />
     <ClInclude Include="SpriteAnimation.h" />
     <ClInclude Include="Upgrade.h" />
     <ClInclude Include="UpgradeManager.h" />
@@ -159,18 +166,22 @@
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="ExplodingBullet.cpp" />
+    <ClCompile Include="ExplodingBulletSkill.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameObject.h" />
     <ClCompile Include="GameplayScene.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Laser.cpp" />
+    <ClCompile Include="LaserSkill.cpp" />
     <ClCompile Include="LevelUpScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SkillManager.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="UpgradeManager.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -178,6 +189,8 @@
   <ItemGroup>
     <Image Include="Assets\Bullets1.png" />
     <Image Include="Assets\Exit_BTN.png" />
+    <Image Include="Assets\ExplodingBullet_1.png" />
+    <Image Include="Assets\lazer_1.png" />
     <Image Include="Assets\Spaceship.png" />
     <Image Include="Assets\Start_BTN.png" />
   </ItemGroup>

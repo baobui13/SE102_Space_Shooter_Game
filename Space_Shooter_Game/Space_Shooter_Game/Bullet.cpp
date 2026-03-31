@@ -56,7 +56,7 @@ void Bullet::Update(float dt, ::GameContext& ctx) {
     }
 
     // LOGIC DỌN RÁC: Xóa viên đạn nếu nó bay khỏi màn hình
-    if (m_x < -100.0f || m_x > 900.0f || m_y < -100.0f || m_y > 1100.0f) {
+    if (m_x < -100.0f || m_x > ctx.screenWidth + 100.0f || m_y < -100.0f || m_y > ctx.screenHeight + 100.0f) {
         Destroy();
     }
 }

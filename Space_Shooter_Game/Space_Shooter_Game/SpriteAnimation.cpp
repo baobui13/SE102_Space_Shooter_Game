@@ -5,8 +5,8 @@ void SpriteAnimation::Initialize(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView
     m_texture = tex;
 }
 
-void SpriteAnimation::AddClip(const std::string& name, int x, int y, int w, int h, int count, int cols, float duration, bool loop) {
-    m_clips[name] = { x, y, w, h, count, cols, duration, loop };
+void SpriteAnimation::AddClip(const std::string& name, int x, int y, int w, int h, int count, int cols, float duration, bool loop, int spacingX, int spacingY) {
+    m_clips[name] = { x, y, w, h, count, cols, spacingX, spacingY, duration, loop };
 }
 
 void SpriteAnimation::Play(const std::string& name) {
@@ -55,10 +55,10 @@ void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float draw
     int row = m_localFrameIndex / m_currentClip->columns;
 
     RECT sourceRect = {
-        m_currentClip->startX + (col * m_currentClip->frameWidth),
-        m_currentClip->startY + (row * m_currentClip->frameHeight),
-        m_currentClip->startX + ((col + 1) * m_currentClip->frameWidth),
-        m_currentClip->startY + ((row + 1) * m_currentClip->frameHeight)
+        m_currentClip->startX + (col * (m_currentClip->frameWidth + m_currentClip->spacingX)),
+        m_currentClip->startY + (row * (m_currentClip->frameHeight + m_currentClip->spacingY)),
+        m_currentClip->startX + (col * (m_currentClip->frameWidth + m_currentClip->spacingX)) + m_currentClip->frameWidth,
+        m_currentClip->startY + (row * (m_currentClip->frameHeight + m_currentClip->spacingY)) + m_currentClip->frameHeight
     };
 
     RECT destRect = {
@@ -73,4 +73,19 @@ void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float draw
 
 bool SpriteAnimation::IsFinished() const {
     return m_isFinished;
+}
+
+RECT SpriteAnimation::GetCurrentFrameRect() const {
+    if (!m_currentClip) return { 0, 0, 0, 0 };
+
+    int col = m_localFrameIndex % m_currentClip->columns;
+    int row = m_localFrameIndex / m_currentClip->columns;
+
+    RECT rect;
+    rect.left = m_currentClip->startX + (col * (m_currentClip->frameWidth + m_currentClip->spacingX));
+    rect.top = m_currentClip->startY + (row * (m_currentClip->frameHeight + m_currentClip->spacingY));
+    rect.right = rect.left + m_currentClip->frameWidth;
+    rect.bottom = rect.top + m_currentClip->frameHeight;
+
+    return rect;
 }
