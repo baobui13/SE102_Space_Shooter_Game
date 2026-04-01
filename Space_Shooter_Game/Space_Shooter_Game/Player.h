@@ -26,6 +26,19 @@ private:
     float m_skillSizeMultiplier;
     bool m_isShielded;
 
+    bool m_isDashing;
+    float m_dashTimer;
+    float m_dashSpeed;
+    float m_dashDuration;
+    int m_dashCharges;
+    int m_maxDashCharges;
+    float m_dashRechargeTime;
+    float m_dashRechargeTimer;
+    float m_lastMoveDirX;
+    float m_lastMoveDirY;
+    float m_dashDirX;
+    float m_dashDirY;
+
     int m_upgradePoints = 0;
     SkillManager m_skillManager;
 
@@ -57,6 +70,9 @@ public:
     float GetSkillSizeMultiplier() const { return m_skillSizeMultiplier; }
     float GetSpeed() const { return m_speed; }
     bool IsShielded() const { return m_isShielded; }
+    bool IsDashing() const { return m_isDashing; }
+    int GetDashCharges() const { return m_dashCharges; }
+    int GetMaxDashCharges() const { return m_maxDashCharges; }
 
     int GetUpgradePoints() const { return m_upgradePoints; }
     void UseUpgradePoint() {
@@ -81,4 +97,14 @@ public:
     void SetSpeed(float speed) { m_speed = speed; }
     void SetAttackRange(float range) { m_attackRange = range; }
     void SetShielded(bool value) { m_isShielded = value; }
+
+private:
+    void UpdateAttackCooldown(float dt);
+    void UpdateDashRecharge(float dt);
+    void ReadMovementInput(const InputManager& input, float& dirX, float& dirY, bool& hasMoveInput);
+    void TryStartDash(const InputManager& input, float dirX, float dirY, bool hasMoveInput);
+    void UpdateDashMovement(float dt);
+    void UpdateAttack(GameContext& ctx);
+    void ApplyMovement(float dt, float dirX, float dirY);
+    void ClampToScreen(const GameContext& ctx);
 };
