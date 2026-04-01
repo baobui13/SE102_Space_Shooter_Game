@@ -107,6 +107,12 @@
     <ClInclude Include="LevelUpScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Shield.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="ShieldSkill.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -175,6 +181,12 @@
     <ClCompile Include="LevelUpScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Shield.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="ShieldSkill.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Exit_BTN.png">
@@ -193,6 +205,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Assets\ExplodingBullet_1.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Shield_1.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
