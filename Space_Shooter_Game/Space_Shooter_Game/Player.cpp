@@ -169,7 +169,7 @@ void Player::ReadMovementInput(const InputManager& input, float& dirX, float& di
 }
 
 void Player::TryStartDash(const InputManager& input, float dirX, float dirY, bool hasMoveInput) {
-    if (m_isDashing || !input.IsKeyPressed(VK_SPACE) || m_dashCharges <= 0) {
+    if (m_isDashing || !input.IsRightMouseClicked() || m_dashCharges <= 0) {
         return;
     }
 

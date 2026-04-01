@@ -57,6 +57,14 @@ LRESULT Window::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         m_inputManager.OnLeftMouseUp();
         break;
 
+    case WM_RBUTTONDOWN:
+        m_inputManager.OnRightMouseDown();
+        break;
+
+    case WM_RBUTTONUP:
+        m_inputManager.OnRightMouseUp();
+        break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
