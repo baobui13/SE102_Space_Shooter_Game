@@ -1,10 +1,9 @@
 #pragma once
 #include "Skill.h"
-#include "Laser.h"
 
 class LaserSkill : public Skill {
 private:
-    float m_duration;
+    float m_baseDuration;
     int m_baseDamage;
 
 public:
