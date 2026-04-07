@@ -1,32 +1,80 @@
 #include "Button.h"
 
-Button::Button(float x, float y, float width, float height)
-    : m_x(x), m_y(y), m_width(width), m_height(height), m_state(State::NORMAL) {
+namespace {
+constexpr int ORIGIN_TOP_LEFT = 1;
+constexpr int ORIGIN_BOTTOM_LEFT = 2;
+constexpr int ORIGIN_BOTTOM_RIGHT = 3;
+constexpr int ORIGIN_TOP_RIGHT = 4;
+}
+
+Button::Button(float x, float y, float width, float height, int origin)
+    : m_x(x)
+    , m_y(y)
+    , m_width(width)
+    , m_height(height)
+    , m_origin(ORIGIN_TOP_LEFT)
+    , m_state(State::NORMAL) {
+    SetOrigin(origin);
 }
 
 void Button::SetTextures(
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texNormal,
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texHover,
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texClicked)
-{
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texClicked) {
     m_texNormal = texNormal;
     m_texHover = texHover;
     m_texClicked = texClicked;
 }
 
-void Button::Update(float mouseX, float mouseY, bool isLeftClicked) {
-    // Thuật toán kiểm tra va chạm AABB
-    if (mouseX >= m_x && mouseX <= m_x + m_width &&
-        mouseY >= m_y && mouseY <= m_y + m_height) {
-
-        if (isLeftClicked) {
-            m_state = State::CLICKED;
-        }
-        else {
-            m_state = State::HOVER;
-        }
+void Button::SetOrigin(int origin) {
+    switch (origin) {
+    case ORIGIN_TOP_LEFT:
+    case ORIGIN_BOTTOM_LEFT:
+    case ORIGIN_BOTTOM_RIGHT:
+    case ORIGIN_TOP_RIGHT:
+        m_origin = origin;
+        break;
+    default:
+        m_origin = ORIGIN_TOP_LEFT;
+        break;
     }
-    else {
+}
+
+RECT Button::GetDestinationRect(float screenWidth, float screenHeight) const {
+    float left = m_x;
+    float top = m_y;
+
+    switch (m_origin) {
+    case ORIGIN_BOTTOM_LEFT:
+        top = screenHeight - m_y - m_height;
+        break;
+    case ORIGIN_BOTTOM_RIGHT:
+        left = screenWidth - m_x - m_width;
+        top = screenHeight - m_y - m_height;
+        break;
+    case ORIGIN_TOP_RIGHT:
+        left = screenWidth - m_x - m_width;
+        break;
+    default:
+        break;
+    }
+
+    RECT rect = {
+        static_cast<LONG>(left),
+        static_cast<LONG>(top),
+        static_cast<LONG>(left + m_width),
+        static_cast<LONG>(top + m_height)
+    };
+    return rect;
+}
+
+void Button::Update(float mouseX, float mouseY, bool isLeftClicked, float screenWidth, float screenHeight) {
+    const RECT bounds = GetDestinationRect(screenWidth, screenHeight);
+
+    if (mouseX >= bounds.left && mouseX <= bounds.right &&
+        mouseY >= bounds.top && mouseY <= bounds.bottom) {
+        m_state = isLeftClicked ? State::CLICKED : State::HOVER;
+    } else {
         m_state = State::NORMAL;
     }
 }
@@ -35,7 +83,6 @@ bool Button::IsClicked() const {
     return m_state == State::CLICKED;
 }
 
-// Trả về ảnh tương ứng với trạng thái để lớp Graphics đem đi vẽ
 ID3D11ShaderResourceView* Button::GetCurrentTexture() const {
     switch (m_state) {
     case State::HOVER:
