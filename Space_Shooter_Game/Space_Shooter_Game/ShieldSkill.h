@@ -1,13 +1,12 @@
 #pragma once
 #include "Skill.h"
 
-class ExplodingBulletSkill : public Skill {
+class ShieldSkill : public Skill {
 private:
-    float m_baseSpeed;
-    int m_baseDamage;
+    float m_baseDuration;
 
 public:
-    ExplodingBulletSkill();
+    ShieldSkill();
 
     bool CanActivate(GameContext& ctx) override;
     void Activate(GameContext& ctx) override;

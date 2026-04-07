@@ -1,110 +1,106 @@
 #include "Player.h"
-#include "GameContext.h"
-#include "BulletPool.h"
 #include "AssetManager.h"
-#include <cmath> // Dùng cho hàm sqrt (tính căn bậc 2)
+#include "BulletPool.h"
+#include "GameContext.h"
+#include <cmath>
+
+namespace {
+constexpr float PLAYER_SIZE = 64.0f;
+constexpr float PLAYER_BASE_SPEED = 300.0f;
+constexpr int PLAYER_BASE_HP = 100;
+constexpr int PLAYER_BASE_DAMAGE = 10;
+constexpr float PLAYER_BASE_ATTACK_SPEED = 3.0f;
+constexpr float PLAYER_BASE_ATTACK_RANGE = 250.0f;
+constexpr int PLAYER_START_LEVEL = 1;
+constexpr int PLAYER_START_EXP = 0;
+constexpr int PLAYER_BASE_EXP_TO_NEXT_LEVEL = 100;
+constexpr float PLAYER_BASE_MAGNET_RANGE = 100.0f;
+constexpr float PLAYER_BASE_COOLDOWN_MULTIPLIER = 1.0f;
+constexpr float PLAYER_BASE_SKILL_SIZE_MULTIPLIER = 1.0f;
+
+constexpr float PLAYER_DASH_SPEED = 900.0f;
+constexpr float PLAYER_DASH_DURATION = 0.18f;
+constexpr int PLAYER_MAX_DASH_CHARGES = 2;
+constexpr float PLAYER_DASH_RECHARGE_TIME = 1.5f;
+
+constexpr float PLAYER_BULLET_OFFSET = 8.0f;
+constexpr float PLAYER_BULLET_SPEED = 500.0f;
+}
 
 Player::Player(Graphics& gfx, float startX, float startY)
-// Gọi Constructor của class cha (GameObject) để thiết lập tọa độ và kích thước (64x64)
-    : GameObject(startX, startY, 64.0f, 64.0f),
-    m_skillManager(),
-    m_speed(300.0f),
-    m_maxHp(100), 
-    m_hp(100),                // Khởi đầu với 100/100 HP
-    m_attackDamage(10),                     // Sát thương khởi điểm
-    m_attackSpeed(3.0f),                    // Tốc độ đánh: 3 viên / 1 giây
-	m_attackRange(250.0f),                  // Tầm tấn công
-    m_attackTimer(0.0f),                    // Không cần chờ ở phát bắn đầu tiên
-    m_level(1), 
-    m_currentExp(0),
-    m_expToNextLevel(100),                  // Khởi đầu lv 1, cần 100 exp để lên lv 2
-    m_magnetRange(100.0f),
-    m_cooldownMultiplier(1.0f),
-    m_skillSizeMultiplier(1.0f)
-{
-    // Cài đặt Animation cho Player
+    : GameObject(startX, startY, PLAYER_SIZE, PLAYER_SIZE)
+    , m_speed(PLAYER_BASE_SPEED)
+    , m_hp(PLAYER_BASE_HP)
+    , m_maxHp(PLAYER_BASE_HP)
+    , m_attackDamage(PLAYER_BASE_DAMAGE)
+    , m_attackSpeed(PLAYER_BASE_ATTACK_SPEED)
+    , m_attackTimer(0.0f)
+    , m_attackRange(PLAYER_BASE_ATTACK_RANGE)
+    , m_level(PLAYER_START_LEVEL)
+    , m_currentExp(PLAYER_START_EXP)
+    , m_expToNextLevel(PLAYER_BASE_EXP_TO_NEXT_LEVEL)
+    , m_magnetRange(PLAYER_BASE_MAGNET_RANGE)
+    , m_cooldownMultiplier(PLAYER_BASE_COOLDOWN_MULTIPLIER)
+    , m_skillSizeMultiplier(PLAYER_BASE_SKILL_SIZE_MULTIPLIER)
+    , m_isShielded(false)
+    , m_isDashing(false)
+    , m_dashTimer(0.0f)
+    , m_dashSpeed(PLAYER_DASH_SPEED)
+    , m_dashDuration(PLAYER_DASH_DURATION)
+    , m_dashCharges(PLAYER_MAX_DASH_CHARGES)
+    , m_maxDashCharges(PLAYER_MAX_DASH_CHARGES)
+    , m_dashRechargeTime(PLAYER_DASH_RECHARGE_TIME)
+    , m_dashRechargeTimer(0.0f)
+    , m_lastMoveDirX(0.0f)
+    , m_lastMoveDirY(-1.0f)
+    , m_dashDirX(0.0f)
+    , m_dashDirY(0.0f)
+    , m_skillManager() {
     m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Spaceship.png"));
     m_anim.AddClip("Idle", 0, 0, 500, 500, 1, 1, 1.0f, true);
     m_anim.Play("Idle");
 }
 
-void Player::Update(float dt, ::GameContext& ctx) {
-    if (!m_isActive) return;
-
-    // -----------------------------------------
-    // 1. LOGIC TẤN CÔNG (ATTACK SPEED & TIMER)
-    // -----------------------------------------
-
-    if (m_attackTimer > 0.0f) {
-        m_attackTimer -= dt;
+void Player::Update(float dt, GameContext& ctx) {
+    if (!m_isActive) {
+        return;
     }
 
-    if (ctx.input.IsLeftMouseDown() && m_attackTimer <= 0.0f) {
-        float mouseX = (float)ctx.input.GetMouseX();
-        float mouseY = (float)ctx.input.GetMouseY();
-
-        float spawnX = m_x + (m_width / 2.0f) - 8.0f;
-        float spawnY = m_y + (m_height / 2.0f) - 8.0f;
-
-        float bulletSpeed = 500.0f;
-        float bulletDistanceRatio = 1.0f;
-        float finalMaxDistance = m_attackRange * bulletDistanceRatio;
-
-        // Lấy đạn từ Pool thay vì tạo mới
-        ctx.bulletPool.GetBullet(spawnX, spawnY, mouseX, mouseY, bulletSpeed, m_attackDamage, finalMaxDistance);
-
-        m_attackTimer = 1.0f / m_attackSpeed;
-    }
-
-    // -----------------------------------------
-    // 2. LOGIC DI CHUYỂN
-    // -----------------------------------------
+    UpdateAttackCooldown(dt);
+    UpdateDashRecharge(dt);
 
     float dirX = 0.0f;
     float dirY = 0.0f;
+    bool hasMoveInput = false;
+    ReadMovementInput(ctx.input, dirX, dirY, hasMoveInput);
 
-    if (ctx.input.IsKeyDown('W') || ctx.input.IsKeyDown(VK_UP)) dirY -= 1.0f;
-    if (ctx.input.IsKeyDown('S') || ctx.input.IsKeyDown(VK_DOWN)) dirY += 1.0f;
-    if (ctx.input.IsKeyDown('A') || ctx.input.IsKeyDown(VK_LEFT)) dirX -= 1.0f;
-    if (ctx.input.IsKeyDown('D') || ctx.input.IsKeyDown(VK_RIGHT)) dirX += 1.0f;
+    TryStartDash(ctx.input, dirX, dirY, hasMoveInput);
 
-    if (dirX != 0.0f || dirY != 0.0f) {
-        float length = std::sqrt(dirX * dirX + dirY * dirY);
-        dirX /= length;
-        dirY /= length;
-
-        m_x += dirX * m_speed * dt;
-        m_y += dirY * m_speed * dt;
+    if (m_isDashing) {
+        UpdateDashMovement(dt);
+    } else {
+        UpdateAttack(ctx);
+        ApplyMovement(dt, dirX, dirY);
     }
 
-    // -----------------------------------------
-    // 3. GIỚI HẠN MÀN HÌNH & CẬP NHẬT ANIM
-    // -----------------------------------------
-
-    if (m_x < 0) m_x = 0;
-    if (m_y < 0) m_y = 0;
-    if (m_x > ctx.screenWidth - m_width) m_x = ctx.screenWidth - m_width;
-    if (m_y > ctx.screenHeight - m_height) m_y = ctx.screenHeight - m_height;
-
+    ClampToScreen(ctx);
     m_anim.Update(dt);
-
     m_skillManager.Update(dt, ctx);
 }
 
 void Player::Render(Graphics& gfx) {
-    // Vẽ bản thân Player trước (bằng hàm Render của GameObject)
     GameObject::Render(gfx);
 }
 
-// -----------------------------------------
-// CÁC HÀM XỬ LÝ CHỈ SỐ (MÁU, KINH NGHIỆM)
-// -----------------------------------------
-
 void Player::TakeDamage(int damage) {
+    if (m_isShielded || m_isDashing) {
+        return;
+    }
+
     m_hp -= damage;
     if (m_hp <= 0) {
         m_hp = 0;
-        Destroy(); // Đánh dấu m_isActive = false
+        Destroy();
         OutputDebugStringA("[Player] Nhan vat da chet!\n");
     }
 }
@@ -115,7 +111,6 @@ void Player::GainExp(int amount) {
     std::string msg = "[Player] Nhan duoc " + std::to_string(amount) + " EXP!\n";
     OutputDebugStringA(msg.c_str());
 
-    // Dùng vòng lặp while để xử lý trường hợp nhận quá nhiều exp thăng nhiều cấp 1 lúc
     while (m_currentExp >= m_expToNextLevel) {
         LevelUp();
     }
@@ -123,8 +118,123 @@ void Player::GainExp(int amount) {
 
 void Player::LevelUp() {
     m_level++;
-    m_expToNextLevel = (int)(m_expToNextLevel * 1.3f);
-
-    // Tích lũy 1 lượt nâng cấp
+    m_expToNextLevel = static_cast<int>(m_expToNextLevel * 1.3f);
     m_upgradePoints++;
+}
+
+void Player::UpdateAttackCooldown(float dt) {
+    if (m_attackTimer > 0.0f) {
+        m_attackTimer -= dt;
+    }
+}
+
+void Player::UpdateDashRecharge(float dt) {
+    if (m_dashCharges >= m_maxDashCharges) {
+        return;
+    }
+
+    m_dashRechargeTimer -= dt;
+    if (m_dashRechargeTimer <= 0.0f) {
+        m_dashCharges++;
+        if (m_dashCharges < m_maxDashCharges) {
+            m_dashRechargeTimer += m_dashRechargeTime;
+        } else {
+            m_dashRechargeTimer = 0.0f;
+        }
+    }
+}
+
+void Player::ReadMovementInput(const InputManager& input, float& dirX, float& dirY, bool& hasMoveInput) {
+    const float horizontal =
+        (input.IsKeyDown('D') || input.IsKeyDown(VK_RIGHT) ? 1.0f : 0.0f) -
+        (input.IsKeyDown('A') || input.IsKeyDown(VK_LEFT) ? 1.0f : 0.0f);
+    const float vertical =
+        (input.IsKeyDown('S') || input.IsKeyDown(VK_DOWN) ? 1.0f : 0.0f) -
+        (input.IsKeyDown('W') || input.IsKeyDown(VK_UP) ? 1.0f : 0.0f);
+
+    dirX = horizontal;
+    dirY = vertical;
+    hasMoveInput = (dirX != 0.0f || dirY != 0.0f);
+
+    if (!hasMoveInput) {
+        return;
+    }
+
+    const float length = std::sqrt((dirX * dirX) + (dirY * dirY));
+    dirX /= length;
+    dirY /= length;
+
+    m_lastMoveDirX = dirX;
+    m_lastMoveDirY = dirY;
+}
+
+void Player::TryStartDash(const InputManager& input, float dirX, float dirY, bool hasMoveInput) {
+    if (m_isDashing || !input.IsRightMouseClicked() || m_dashCharges <= 0) {
+        return;
+    }
+
+    if (!hasMoveInput && m_lastMoveDirX == 0.0f && m_lastMoveDirY == 0.0f) {
+        return;
+    }
+
+    m_isDashing = true;
+    m_dashTimer = m_dashDuration;
+    m_dashDirX = hasMoveInput ? dirX : m_lastMoveDirX;
+    m_dashDirY = hasMoveInput ? dirY : m_lastMoveDirY;
+    m_dashCharges--;
+
+    if (m_dashCharges < m_maxDashCharges && m_dashRechargeTimer <= 0.0f) {
+        m_dashRechargeTimer = m_dashRechargeTime;
+    }
+}
+
+void Player::UpdateDashMovement(float dt) {
+    m_x += m_dashDirX * m_dashSpeed * dt;
+    m_y += m_dashDirY * m_dashSpeed * dt;
+
+    m_dashTimer -= dt;
+    if (m_dashTimer <= 0.0f) {
+        m_isDashing = false;
+        m_dashTimer = 0.0f;
+    }
+}
+
+void Player::UpdateAttack(GameContext& ctx) {
+    if (!ctx.input.IsLeftMouseDown() || m_attackTimer > 0.0f) {
+        return;
+    }
+
+    const float mouseX = static_cast<float>(ctx.input.GetMouseX());
+    const float mouseY = static_cast<float>(ctx.input.GetMouseY());
+
+    const float spawnX = m_x + (m_width * 0.5f) - PLAYER_BULLET_OFFSET;
+    const float spawnY = m_y + (m_height * 0.5f) - PLAYER_BULLET_OFFSET;
+
+    ctx.bulletPool.GetBullet(
+        spawnX,
+        spawnY,
+        mouseX,
+        mouseY,
+        PLAYER_BULLET_SPEED,
+        m_attackDamage,
+        m_attackRange
+    );
+
+    m_attackTimer = 1.0f / m_attackSpeed;
+}
+
+void Player::ApplyMovement(float dt, float dirX, float dirY) {
+    if (dirX == 0.0f && dirY == 0.0f) {
+        return;
+    }
+
+    m_x += dirX * m_speed * dt;
+    m_y += dirY * m_speed * dt;
+}
+
+void Player::ClampToScreen(const GameContext& ctx) {
+    if (m_x < 0.0f) m_x = 0.0f;
+    if (m_y < 0.0f) m_y = 0.0f;
+    if (m_x > ctx.screenWidth - m_width) m_x = ctx.screenWidth - m_width;
+    if (m_y > ctx.screenHeight - m_height) m_y = ctx.screenHeight - m_height;
 }

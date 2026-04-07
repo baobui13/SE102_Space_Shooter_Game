@@ -1,32 +1,41 @@
 #include "LaserSkill.h"
 #include "GameContext.h"
 #include "EntityManager.h"
+#include "Laser.h"
 #include "Player.h"
 
+namespace {
+constexpr char LASER_KEY = '1';
+constexpr float LASER_COOLDOWN = 10.0f;
+constexpr int LASER_MAX_LEVEL = 5;
+constexpr int LASER_LEVEL_DAMAGE_BONUS = 20;
+}
+
 LaserSkill::LaserSkill()
-    : Skill("Laser Beam", "Fires a massive laser beam from your ship.", SkillType::ACTIVE, 10.0f, 5) {
-    m_duration = 5.0f;
-    m_baseDamage = 50;
+    : Skill("Laser Beam",
+            "Fires a massive laser beam from your ship.",
+            SkillType::ACTIVE,
+            LASER_COOLDOWN,
+            LASER_MAX_LEVEL)
+    , m_baseDuration(5.0f)
+    , m_baseDamage(50) {
 }
 
 bool LaserSkill::CanActivate(GameContext& ctx) {
-    if (ctx.input.IsKeyDown('1')) {
-        return true;
-    }
-    return false;
+    return ctx.input.IsKeyPressed(LASER_KEY);
 }
 
 void LaserSkill::Activate(GameContext& ctx) {
-    // Sát thương tăng theo Level và scale theo tỉ lệ Attack của Player (ví dụ 1.5x)
-    int damage = m_baseDamage + (m_level - 1) * 20 + (int)(ctx.player.GetAttackDamage() * 1.5f);
-    
-    // Scale kích thước
+    int damage = m_baseDamage
+        + ((m_level - 1) * LASER_LEVEL_DAMAGE_BONUS)
+        + static_cast<int>(ctx.player.GetAttackDamage() * 1.5f);
+
     float sizeMultiplier = ctx.player.GetSkillSizeMultiplier();
-    
-    auto laser = std::make_unique<Laser>(ctx.gfx, m_duration, damage, sizeMultiplier);
+
+    auto laser = std::make_unique<Laser>(ctx.gfx, m_baseDuration, damage, sizeMultiplier);
     ctx.entityManager.AddEntity(std::move(laser));
 }
 
 void LaserSkill::OnLevelUp() {
-    // Làm gì đó khi nâng cấp, ví dụ buff damage, thêm tia...
+    m_baseDamage += LASER_LEVEL_DAMAGE_BONUS;
 }

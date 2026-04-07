@@ -153,6 +153,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Shield.h" />
+    <ClInclude Include="ShieldSkill.h" />
     <ClInclude Include="Skill.h" />
     <ClInclude Include="SkillManager.h" />
     <ClInclude Include="SpriteAnimation.h" />
@@ -181,6 +183,8 @@
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Shield.cpp" />
+    <ClCompile Include="ShieldSkill.cpp" />
     <ClCompile Include="SkillManager.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="UpgradeManager.cpp" />
@@ -191,6 +195,7 @@
     <Image Include="Assets\Exit_BTN.png" />
     <Image Include="Assets\ExplodingBullet_1.png" />
     <Image Include="Assets\lazer_1.png" />
+    <Image Include="Assets\Shield_1.png" />
     <Image Include="Assets\Spaceship.png" />
     <Image Include="Assets\Start_BTN.png" />
   </ItemGroup>

@@ -1,21 +1,25 @@
 #pragma once
 #include "GameObject.h"
-#include "GameContext.h"
 
-enum class ExplodingBulletState { FLYING, EXPLODING };
+enum class ExplodingBulletState {
+    Flying,
+    Exploding,
+};
 
 class ExplodingBullet : public GameObject {
 private:
     ExplodingBulletState m_state;
     float m_speed;
     int m_damage;
-    float m_dirX;
-    float m_dirY;
+    float m_directionX;
+    float m_directionY;
 
 public:
     ExplodingBullet(Graphics& gfx,
-                    float startX, float startY,
-                    float targetX, float targetY,
+                    float startX,
+                    float startY,
+                    float targetX,
+                    float targetY,
                     float speed = 160.0f,
                     float sizeMultiplier = 1.0f,
                     int damage = 50);
