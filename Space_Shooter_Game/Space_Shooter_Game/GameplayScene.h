@@ -7,6 +7,7 @@
 #include "Scene.h"
 #include <memory>
 #include <SpriteFont.h>
+#include "ProgressBar.h"
 
 #include "EntityManager.h"
 #include "BulletPool.h"
@@ -19,6 +20,7 @@ private:
     BulletPool m_bulletPool;
 
     std::unique_ptr<DirectX::SpriteFont> m_font;
+    std::unique_ptr<ProgressBar> m_hpBar;
 public:
     GameplayScene(Graphics& gfx);
     void Update(float dt, InputManager& input, SceneManager& manager) override;

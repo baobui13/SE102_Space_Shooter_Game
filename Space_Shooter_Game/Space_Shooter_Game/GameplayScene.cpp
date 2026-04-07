@@ -17,13 +17,20 @@ GameplayScene::GameplayScene(Graphics& gfx)
     m_player->AddSkill(std::make_unique<ExplodingBulletSkill>());
     m_player->AddSkill(std::make_unique<ShieldSkill>());
 
-    m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
+    m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/GoodTimingRg.spritefont");
 
     m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.125f, VIRTUAL_HEIGHT * 0.1f, 10));
     m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.875f, VIRTUAL_HEIGHT * 0.1f, 10));
     m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.125f, VIRTUAL_HEIGHT * 0.5f, 10));
     m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.875f, VIRTUAL_HEIGHT * 0.5f, 10));
     m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.5f, VIRTUAL_HEIGHT * 0.1f, 50));
+
+    m_hpBar = std::make_unique<ProgressBar>(20.0f, 20.0f, 500.0f, 30.0f, 2);
+    m_hpBar->SetTextures(
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/BarV1_Bar.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/BarV1_ProgressBar.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/BarV1_ProgressBarBorder.png")
+    );
 }
 
 void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager) {
@@ -48,6 +55,10 @@ void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager)
 
     if (input.IsKeyPressed('E')) {
         m_player->GainExp(50);
+    }
+
+    if (input.IsKeyPressed('R')) {
+        m_player->TakeDamage(20);
     }
 
     if (m_player->GetUpgradePoints() > 0 && input.IsKeyPressed('U')) {
@@ -98,5 +109,10 @@ void GameplayScene::Render(Graphics& gfx) {
         m_font->DrawString(spriteBatch, notify.c_str(), DirectX::XMFLOAT2(10.0f, 200.0f), DirectX::Colors::Cyan);
     }
 
+    // Draw HP Bar
+    float hpPercent = (float)m_player->GetHp() / m_player->GetMaxHp();
+    m_hpBar->Render(spriteBatch, hpPercent, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+
     spriteBatch->End();
 }
+
