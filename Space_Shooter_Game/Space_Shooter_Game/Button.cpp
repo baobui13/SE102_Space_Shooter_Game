@@ -1,4 +1,5 @@
 #include "Button.h"
+#include <DirectXColors.h>
 
 namespace {
 constexpr int ORIGIN_TOP_LEFT = 1;
@@ -7,13 +8,26 @@ constexpr int ORIGIN_BOTTOM_RIGHT = 3;
 constexpr int ORIGIN_TOP_RIGHT = 4;
 }
 
-Button::Button(float x, float y, float width, float height, int origin)
+Button::Button(
+    float x,
+    float y,
+    float width,
+    float height,
+    int origin,
+    const std::wstring& title,
+    DirectX::SpriteFont* font,
+    TextAlignment textAlignment,
+    float textScale)
     : m_x(x)
     , m_y(y)
     , m_width(width)
     , m_height(height)
     , m_origin(ORIGIN_TOP_LEFT)
-    , m_state(State::NORMAL) {
+    , m_state(State::NORMAL)
+    , m_title(title)
+    , m_font(font)
+    , m_textAlignment(textAlignment)
+    , m_textScale(textScale) {
     SetOrigin(origin);
 }
 
@@ -77,6 +91,78 @@ void Button::Update(float mouseX, float mouseY, bool isLeftClicked, float screen
     } else {
         m_state = State::NORMAL;
     }
+}
+
+DirectX::XMFLOAT2 Button::CalculateTextPosition(const RECT& rect, float textWidth, float textHeight, float padding) const {
+    float x = static_cast<float>(rect.left) + padding;
+    float y = static_cast<float>(rect.top) + padding;
+
+    switch (m_textAlignment) {
+    case TextAlignment::TOP_LEFT:
+        break;
+    case TextAlignment::TOP_CENTER:
+        x = static_cast<float>(rect.left + rect.right) * 0.5f - (textWidth * 0.5f);
+        break;
+    case TextAlignment::TOP_RIGHT:
+        x = static_cast<float>(rect.right) - textWidth - padding;
+        break;
+    case TextAlignment::MIDDLE_LEFT:
+        y = static_cast<float>(rect.top + rect.bottom) * 0.5f - (textHeight * 0.5f);
+        break;
+    case TextAlignment::CENTER:
+        x = static_cast<float>(rect.left + rect.right) * 0.5f - (textWidth * 0.5f);
+        y = static_cast<float>(rect.top + rect.bottom) * 0.5f - (textHeight * 0.5f);
+        break;
+    case TextAlignment::MIDDLE_RIGHT:
+        x = static_cast<float>(rect.right) - textWidth - padding;
+        y = static_cast<float>(rect.top + rect.bottom) * 0.5f - (textHeight * 0.5f);
+        break;
+    case TextAlignment::BOTTOM_LEFT:
+        y = static_cast<float>(rect.bottom) - textHeight - padding;
+        break;
+    case TextAlignment::BOTTOM_CENTER:
+        x = static_cast<float>(rect.left + rect.right) * 0.5f - (textWidth * 0.5f);
+        y = static_cast<float>(rect.bottom) - textHeight - padding;
+        break;
+    case TextAlignment::BOTTOM_RIGHT:
+        x = static_cast<float>(rect.right) - textWidth - padding;
+        y = static_cast<float>(rect.bottom) - textHeight - padding;
+        break;
+    }
+
+    return DirectX::XMFLOAT2(x, y);
+}
+
+void Button::Render(
+    DirectX::SpriteBatch* spriteBatch,
+    float screenWidth,
+    float screenHeight,
+    DirectX::FXMVECTOR tint,
+    DirectX::FXMVECTOR textColor,
+    float textScaleOverride,
+    float padding) const {
+    if (!spriteBatch) {
+        return;
+    }
+
+    const RECT rect = GetDestinationRect(screenWidth, screenHeight);
+    if (auto texture = GetCurrentTexture()) {
+        spriteBatch->Draw(texture, rect, tint);
+    }
+
+    if (!m_font || m_title.empty()) {
+        return;
+    }
+
+    const float textScale = textScaleOverride > 0.0f ? textScaleOverride : m_textScale;
+    DirectX::XMVECTOR measured = m_font->MeasureString(m_title.c_str());
+    DirectX::XMFLOAT2 textSize;
+    DirectX::XMStoreFloat2(&textSize, measured);
+    textSize.x *= textScale;
+    textSize.y *= textScale;
+
+    const DirectX::XMFLOAT2 textPos = CalculateTextPosition(rect, textSize.x, textSize.y, padding);
+    m_font->DrawString(spriteBatch, m_title.c_str(), textPos, textColor, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), textScale);
 }
 
 bool Button::IsClicked() const {
