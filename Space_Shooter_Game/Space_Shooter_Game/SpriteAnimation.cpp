@@ -48,7 +48,7 @@ void SpriteAnimation::Update(float dt) {
     }
 }
 
-void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH) {
+void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH, DirectX::XMVECTOR color) {
     if (!m_texture || !m_currentClip) return;
 
     int col = m_localFrameIndex % m_currentClip->columns;
@@ -69,6 +69,9 @@ void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float draw
     };
 
     gfx.GetSpriteBatch()->Draw(m_texture.Get(), destRect, &sourceRect);
+
+    // Truyền renderColor vào hàm Draw
+    gfx.GetSpriteBatch()->Draw(m_texture.Get(), destRect, &sourceRect, color);
 }
 
 bool SpriteAnimation::IsFinished() const {

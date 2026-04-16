@@ -42,6 +42,10 @@ private:
     int m_upgradePoints = 0;
     SkillManager m_skillManager;
 
+    float m_invulTimer = 0.0f;          // Thời gian còn lại của hiệu ứng nhấp nháy
+    const float m_invulDuration = 1.0f; // Tổng thời gian nhấp nháy (1 giây)
+    float m_blinkTimer = 0.0f;          // Timer nội bộ để tính toán hàm Sin
+
 public:
     Player(Graphics& gfx, float startX, float startY);
 

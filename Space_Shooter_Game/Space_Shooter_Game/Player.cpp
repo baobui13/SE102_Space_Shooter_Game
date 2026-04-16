@@ -66,6 +66,15 @@ void Player::Update(float dt, GameContext& ctx) {
         return;
     }
 
+    // Giảm timer hồi phục theo thời gian
+    if (m_invulTimer > 0.0f) {
+        m_invulTimer -= dt;
+        m_blinkTimer += dt;
+    }
+    else {
+        m_blinkTimer = 0.0f; // Reset khi hết nháy
+    }
+
     UpdateAttackCooldown(dt);
     UpdateDashRecharge(dt);
 
@@ -89,15 +98,30 @@ void Player::Update(float dt, GameContext& ctx) {
 }
 
 void Player::Render(Graphics& gfx) {
-    GameObject::Render(gfx);
+    if (!m_isActive) return; 
+    
+    if (m_invulTimer > 0.0f) {
+        // Tạo biến dao động từ 1.0f (bình thường) đến 3.0f (sáng rực)
+        float brightness = 1.0f + (std::sin(m_invulTimer * 25.0f) + 1.0f) * 1.0f;
+
+        // Tạo vector màu: R, G, B nhân với brightness, Alpha giữ nguyên là 1.0f
+        DirectX::XMVECTOR flashColor = DirectX::XMVectorSet(brightness, brightness, brightness, 1.0f);
+
+        m_anim.Render(gfx, m_x, m_y, m_width, m_height, flashColor);
+    }
+    else {
+        m_anim.Render(gfx, m_x, m_y, m_width, m_height);
+    }
 }
 
 void Player::TakeDamage(int damage) {
-    if (m_isShielded || m_isDashing) {
+    if (m_isShielded || m_isDashing || m_invulTimer > 0.0f) {
         return;
     }
 
+    m_invulTimer = m_invulDuration;
     m_hp -= damage;
+
     if (m_hp <= 0) {
         m_hp = 0;
         Destroy();

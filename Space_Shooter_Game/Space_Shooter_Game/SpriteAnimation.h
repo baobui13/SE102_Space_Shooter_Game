@@ -3,6 +3,7 @@
 #include <string>
 #include <wrl.h>
 #include <d3d11.h>
+#include <DirectXColors.h>
 
 struct AnimClip {
     int startX, startY;
@@ -23,7 +24,7 @@ public:
     void AddClip(const std::string& name, int x, int y, int w, int h, int count, int cols, float duration, bool loop, int spacingX = 0, int spacingY = 0);
     void Play(const std::string& name);
     void Update(float dt);
-    void Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH);
+    void Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH, DirectX::XMVECTOR color = DirectX::Colors::White);
     bool IsFinished() const;
 
     // Lấy Texture đang sử dụng
@@ -41,6 +42,8 @@ public:
     // Lấy Rect của Frame hiện tại (dùng nếu bạn muốn chính xác khung hình đang chạy)
     RECT GetCurrentFrameRect() const;
 
+    void SetAlpha(float alpha) { m_alpha = alpha; }
+
 private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 
@@ -48,10 +51,11 @@ private:
 
     std::string m_currentClipName;
 
-    // FIX: thêm biến này 👇
     const AnimClip* m_currentClip = nullptr;
 
     int m_localFrameIndex = 0;
     float m_timer = 0.0f;
     bool m_isFinished = false;
+
+    float m_alpha = 1.0f;
 };
