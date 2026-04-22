@@ -1,3 +1,4 @@
+#include "AudioManager.h"
 #include "Window.h"
 #include "Graphics.h"
 #include "SceneManager.h"
@@ -16,6 +17,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // Khởi tạo DirectX gắn vào handle (HWND) của cửa sổ vừa tạo
     Graphics gfx(gameWindow.GetHWND());
+
+    AudioManager& audio = AudioManager::GetInstance();
+    audio.Initialize();
 
     // Truyền tỉ lệ scale thực tế vào InputManager để tính tọa độ chuột chính xác
     gameWindow.GetInput().SetScale(gfx.GetScaleX(), gfx.GetScaleY());
@@ -52,6 +56,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         tp1 = tp2;
         float dt = elapsedTime.count();
 
+        audio.Update();
+
         // --- UPDATE (Cập nhật logic) ---
 
         // Truyền InputManager vào hàm Update của SceneManager
@@ -66,6 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         gameWindow.GetInput().Update();
     }
 
+    audio.Shutdown();
     CoUninitialize();
     return 0;
 }

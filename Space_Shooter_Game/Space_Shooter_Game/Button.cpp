@@ -1,4 +1,5 @@
 #include "Button.h"
+#include "AudioManager.h"
 #include <DirectXColors.h>
 
 namespace {
@@ -27,7 +28,10 @@ Button::Button(
     , m_title(title)
     , m_font(font)
     , m_textAlignment(textAlignment)
-    , m_textScale(textScale) {
+    , m_textScale(textScale)
+    , m_hoverSoundId(AudioIds::UiHover)
+    , m_clickSoundId(AudioIds::UiClick)
+    , m_wasHovered(false) {
     SetOrigin(origin);
 }
 
@@ -38,6 +42,11 @@ void Button::SetTextures(
     m_texNormal = texNormal;
     m_texHover = texHover;
     m_texClicked = texClicked;
+}
+
+void Button::SetSoundEffects(const std::string& hoverSoundId, const std::string& clickSoundId) {
+    m_hoverSoundId = hoverSoundId;
+    m_clickSoundId = clickSoundId;
 }
 
 void Button::SetOrigin(int origin) {
@@ -84,13 +93,25 @@ RECT Button::GetDestinationRect(float screenWidth, float screenHeight) const {
 
 void Button::Update(float mouseX, float mouseY, bool isLeftClicked, float screenWidth, float screenHeight) {
     const RECT bounds = GetDestinationRect(screenWidth, screenHeight);
+    const bool isHovered =
+        mouseX >= bounds.left && mouseX <= bounds.right &&
+        mouseY >= bounds.top && mouseY <= bounds.bottom;
 
-    if (mouseX >= bounds.left && mouseX <= bounds.right &&
-        mouseY >= bounds.top && mouseY <= bounds.bottom) {
+    if (isHovered && !m_wasHovered && !m_hoverSoundId.empty()) {
+        AudioManager::GetInstance().PlayUiEffect(m_hoverSoundId);
+    }
+
+    if (isHovered && isLeftClicked && !m_clickSoundId.empty()) {
+        AudioManager::GetInstance().PlayUiEffect(m_clickSoundId);
+    }
+
+    if (isHovered) {
         m_state = isLeftClicked ? State::CLICKED : State::HOVER;
     } else {
         m_state = State::NORMAL;
     }
+
+    m_wasHovered = isHovered;
 }
 
 DirectX::XMFLOAT2 Button::CalculateTextPosition(const RECT& rect, float textWidth, float textHeight, float padding) const {

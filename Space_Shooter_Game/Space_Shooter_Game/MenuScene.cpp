@@ -1,3 +1,4 @@
+#include "AudioManager.h"
 #include "MenuScene.h"
 #include "GameplayScene.h"
 #include "SceneManager.h"
@@ -5,6 +6,8 @@
 #include "InputManager.h"
 
 MenuScene::MenuScene(Graphics& gfx) : m_gfx(gfx) {
+    AudioManager::GetInstance().PlayMusic(AudioIds::MenuMusic);
+
     m_playButton = std::make_unique<Button>(200.0f, 400.0f, 400.0f, 100.0f);
     m_playButton->SetTextures(
         AssetManager::GetInstance().GetTexture(gfx, L"Assets/Start_BTN.png"),

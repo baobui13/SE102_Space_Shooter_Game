@@ -1,3 +1,4 @@
+#include "AudioManager.h"
 #include "LevelUpScene.h"
 #include "SceneManager.h"
 #include "InputManager.h"
@@ -63,6 +64,7 @@ void LevelUpScene::Update(float dt, InputManager& input, SceneManager& manager) 
 
     // 5. Áp dụng kỹ năng nếu đã chọn
     if (choice >= 0 && choice < m_currentChoices.size()) {
+        AudioManager::GetInstance().PlayUiEffect(AudioIds::UiSelectUpgrade);
         m_currentChoices[choice].applyEffect(m_player);
         m_player.UseUpgradePoint();
 

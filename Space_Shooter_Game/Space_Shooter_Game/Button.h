@@ -39,6 +39,7 @@ public:
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texHover,
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texClicked = nullptr
     );
+    void SetSoundEffects(const std::string& hoverSoundId, const std::string& clickSoundId);
 
     void Update(float mouseX, float mouseY, bool isLeftClicked, float screenWidth = 0.0f, float screenHeight = 0.0f);
     void Render(
@@ -91,4 +92,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texNormal;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texHover;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texClicked;
+    std::string m_hoverSoundId;
+    std::string m_clickSoundId;
+    bool m_wasHovered;
 };

@@ -1,3 +1,4 @@
+#include "AudioManager.h"
 #include "Player.h"
 #include "AssetManager.h"
 #include "BulletPool.h"
@@ -139,10 +140,12 @@ void Player::TakeDamage(int damage) {
         m_hp = 0;
         m_isDead = true;          // Đánh dấu trạng thái chết
         m_deathAnim.Play("Die");   // Chạy hiệu ứng nổ
+        AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerDeath);
         OutputDebugStringA("[Player] Bat dau hieu ung no!\n");
     }
     else {
         m_invulTimer = m_invulDuration;
+        AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerHit);
     }
 }
 
@@ -161,6 +164,7 @@ void Player::LevelUp() {
     m_level++;
     m_expToNextLevel = static_cast<int>(m_expToNextLevel * 1.3f);
     m_upgradePoints++;
+    AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerLevelUp);
 }
 
 void Player::UpdateAttackCooldown(float dt) {
@@ -223,6 +227,7 @@ void Player::TryStartDash(const InputManager& input, float dirX, float dirY, boo
     m_dashDirX = hasMoveInput ? dirX : m_lastMoveDirX;
     m_dashDirY = hasMoveInput ? dirY : m_lastMoveDirY;
     m_dashCharges--;
+    AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerDash);
 
     if (m_dashCharges < m_maxDashCharges && m_dashRechargeTimer <= 0.0f) {
         m_dashRechargeTimer = m_dashRechargeTime;
@@ -261,6 +266,7 @@ void Player::UpdateAttack(GameContext& ctx) {
         m_attackRange
     );
 
+    AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerShoot, 0.8f);
     m_attackTimer = 1.0f / m_attackSpeed;
 }
 

@@ -1,3 +1,4 @@
+#include "AudioManager.h"
 #include "GameplayScene.h"
 #include "ExplodingBulletSkill.h"
 #include "GameConfig.h"
@@ -12,6 +13,8 @@
 GameplayScene::GameplayScene(Graphics& gfx)
     : m_gfx(gfx)
     , m_bulletPool(gfx) {
+    AudioManager::GetInstance().PlayMusic(AudioIds::GameplayMusic);
+
     m_player = std::make_unique<Player>(gfx, VIRTUAL_WIDTH / 2.0f - 32.0f, VIRTUAL_HEIGHT - 200.0f);
     m_player->AddSkill(std::make_unique<LaserSkill>());
     m_player->AddSkill(std::make_unique<ExplodingBulletSkill>());
@@ -62,6 +65,7 @@ void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager)
     }
 
     if (m_player->GetUpgradePoints() > 0 && input.IsKeyPressed('U')) {
+        AudioManager::GetInstance().PlayUiEffect(AudioIds::UiOpenLevelUp);
         manager.PushScene(std::make_unique<LevelUpScene>(m_gfx, *m_player));
     }
 }
