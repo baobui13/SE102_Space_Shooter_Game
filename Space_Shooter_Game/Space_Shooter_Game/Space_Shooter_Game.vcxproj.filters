@@ -113,6 +113,12 @@
     <ClInclude Include="ShieldSkill.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyBullet.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -185,6 +191,12 @@
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="ShieldSkill.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyBullet.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
   </ItemGroup>

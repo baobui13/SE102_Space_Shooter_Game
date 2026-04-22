@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\New folder (2)\DirectXTK\Inc;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -135,6 +138,8 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="ExplodingBullet.h" />
     <ClInclude Include="ExplodingBulletSkill.h" />
@@ -168,6 +173,8 @@
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="ExplodingBullet.cpp" />
     <ClCompile Include="ExplodingBulletSkill.cpp" />
     <ClCompile Include="Button.cpp" />
