@@ -44,6 +44,9 @@
     <ClInclude Include="Button.h">
       <Filter>UI_System</Filter>
     </ClInclude>
+    <ClInclude Include="ProgressBar.h">
+      <Filter>UI_System</Filter>
+    </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -136,6 +139,9 @@
     <ClCompile Include="Button.cpp">
       <Filter>UI_System</Filter>
     </ClCompile>
+    <ClCompile Include="ProgressBar.cpp">
+      <Filter>UI_System</Filter>
+    </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
@@ -208,6 +214,15 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Shield_1.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BarV1_Bar.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BarV1_ProgressBar.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BarV1_ProgressBarBorder.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

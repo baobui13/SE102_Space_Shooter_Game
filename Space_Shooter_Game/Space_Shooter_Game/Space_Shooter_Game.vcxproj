@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ProgressBar.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shield.h" />
     <ClInclude Include="ShieldSkill.h" />
@@ -167,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="ExplodingBullet.cpp" />
     <ClCompile Include="ExplodingBulletSkill.cpp" />
@@ -182,6 +185,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="ShieldSkill.cpp" />
@@ -198,6 +202,9 @@
     <Image Include="Assets\Shield_1.png" />
     <Image Include="Assets\Spaceship.png" />
     <Image Include="Assets\Start_BTN.png" />
+    <Image Include="Assets\BarV1_Bar.png" />
+    <Image Include="Assets\BarV1_ProgressBar.png" />
+    <Image Include="Assets\BarV1_ProgressBarBorder.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Arial.spritefont" />

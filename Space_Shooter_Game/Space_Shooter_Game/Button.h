@@ -1,45 +1,98 @@
 #pragma once
-#include <string>
 #include <d3d11.h>
-#include <wrl.h> // Để dùng ComPtr quản lý bộ nhớ ảnh
+#include <DirectXMath.h>
+#include <SpriteBatch.h>
+#include <SpriteFont.h>
+#include <string>
+#include <wrl.h>
 
 class Button {
 public:
-    // Trạng thái của nút 
     enum class State { NORMAL, HOVER, CLICKED };
+    enum class TextAlignment {
+        TOP_LEFT,
+        TOP_CENTER,
+        TOP_RIGHT,
+        MIDDLE_LEFT,
+        CENTER,
+        MIDDLE_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_CENTER,
+        BOTTOM_RIGHT
+    };
 
-    // Khởi tạo nút với tọa độ và kích thước
-    Button(float x, float y, float width, float height);
+    Button(
+        float x,
+        float y,
+        float width,
+        float height,
+        int origin = 1,
+        const std::wstring& title = L"",
+        DirectX::SpriteFont* font = nullptr,
+        TextAlignment textAlignment = TextAlignment::CENTER,
+        float textScale = 1.0f
+    );
     ~Button() = default;
 
-    // Nạp ảnh cho các trạng thái (sẽ gọi sau khi tạo nút)
     void SetTextures(
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texNormal,
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texHover,
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texClicked = nullptr
     );
+    void SetSoundEffects(const std::string& hoverSoundId, const std::string& clickSoundId);
 
-    // Cập nhật trạng thái nút
-    void Update(float mouseX, float mouseY, bool isLeftClicked);
+    void Update(float mouseX, float mouseY, bool isLeftClicked, float screenWidth = 0.0f, float screenHeight = 0.0f);
+    void Render(
+        DirectX::SpriteBatch* spriteBatch,
+        float screenWidth = 0.0f,
+        float screenHeight = 0.0f,
+        DirectX::FXMVECTOR tint = DirectX::Colors::White,
+        DirectX::FXMVECTOR textColor = DirectX::Colors::Black,
+        float textScaleOverride = -1.0f,
+        float padding = 20.0f
+    ) const;
     bool IsClicked() const;
 
-    // Lấy tọa độ để vẽ
     float GetX() const { return m_x; }
     float GetY() const { return m_y; }
-
-	// Lấy kích thước để vẽ
     float GetWidth() const { return m_width; }
     float GetHeight() const { return m_height; }
 
-    // Trả về đúng bức ảnh cần vẽ dựa trên trạng thái hiện tại
+    void SetPosition(float x, float y) { m_x = x; m_y = y; }
+    void SetDimensions(float width, float height) { m_width = width; m_height = height; }
+    void SetOrigin(int origin);
+    int GetOrigin() const { return m_origin; }
+
+    void SetTitle(const std::wstring& title) { m_title = title; }
+    const std::wstring& GetTitle() const { return m_title; }
+    void SetFont(DirectX::SpriteFont* font) { m_font = font; }
+    DirectX::SpriteFont* GetFont() const { return m_font; }
+    void SetTextAlignment(TextAlignment alignment) { m_textAlignment = alignment; }
+    TextAlignment GetTextAlignment() const { return m_textAlignment; }
+    void SetTextScale(float textScale) { m_textScale = textScale; }
+    float GetTextScale() const { return m_textScale; }
+
     ID3D11ShaderResourceView* GetCurrentTexture() const;
+    RECT GetDestinationRect(float screenWidth = 0.0f, float screenHeight = 0.0f) const;
 
 private:
-    float m_x, m_y, m_width, m_height;
-    State m_state;
+    DirectX::XMFLOAT2 CalculateTextPosition(const RECT& rect, float textWidth, float textHeight, float padding) const;
 
-    // 3 biến chứa 3 bức ảnh của nút
+    float m_x;
+    float m_y;
+    float m_width;
+    float m_height;
+    int m_origin;
+    State m_state;
+    std::wstring m_title;
+    DirectX::SpriteFont* m_font;
+    TextAlignment m_textAlignment;
+    float m_textScale;
+
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texNormal;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texHover;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texClicked;
+    std::string m_hoverSoundId;
+    std::string m_clickSoundId;
+    bool m_wasHovered;
 };
