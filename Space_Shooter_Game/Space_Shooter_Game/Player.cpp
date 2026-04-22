@@ -59,11 +59,22 @@ Player::Player(Graphics& gfx, float startX, float startY)
     m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Spaceship.png"));
     m_anim.AddClip("Idle", 0, 0, 500, 500, 1, 1, 1.0f, true);
     m_anim.Play("Idle");
+
+    m_deathAnim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Explosion Animation.png"));
+    m_deathAnim.AddClip("Die", 0, 0, 64, 64, 11, 6, 0.1f, false);
 }
 
 void Player::Update(float dt, GameContext& ctx) {
     if (!m_isActive) {
         return;
+    }
+
+    if (m_isDead) {
+        m_deathAnim.Update(dt);
+        if (m_deathAnim.IsFinished()) {
+            Destroy(); // Thực sự biến mất sau khi nổ xong
+        }
+        return; // Thoát sớm, không cho di chuyển hay bắn đạn
     }
 
     // Giảm timer hồi phục theo thời gian
@@ -100,32 +111,38 @@ void Player::Update(float dt, GameContext& ctx) {
 void Player::Render(Graphics& gfx) {
     if (!m_isActive) return; 
     
-    if (m_invulTimer > 0.0f) {
-        // Tạo biến dao động từ 1.0f (bình thường) đến 3.0f (sáng rực)
-        float brightness = 1.0f + (std::sin(m_invulTimer * 25.0f) + 1.0f) * 1.0f;
-
-        // Tạo vector màu: R, G, B nhân với brightness, Alpha giữ nguyên là 1.0f
-        DirectX::XMVECTOR flashColor = DirectX::XMVectorSet(brightness, brightness, brightness, 1.0f);
-
-        m_anim.Render(gfx, m_x, m_y, m_width, m_height, flashColor);
+    if (m_isDead) {
+        // Vẽ hiệu ứng nổ tại vị trí hiện tại của Player
+        m_deathAnim.Render(gfx, m_x, m_y, m_width, m_height);
     }
     else {
-        m_anim.Render(gfx, m_x, m_y, m_width, m_height);
+        if (m_invulTimer > 0.0f) {
+            // Tạo biến dao động từ 1.0f (bình thường) đến 3.0f (sáng rực)
+            float brightness = 1.0f + (std::sin(m_invulTimer * 25.0f) + 1.0f) * 1.0f;
+
+            // Tạo vector màu: R, G, B nhân với brightness, Alpha giữ nguyên là 1.0f
+            DirectX::XMVECTOR flashColor = DirectX::XMVectorSet(brightness, brightness, brightness, 1.0f);
+
+            m_anim.Render(gfx, m_x, m_y, m_width, m_height, flashColor);
+        }
+        else {
+            m_anim.Render(gfx, m_x, m_y, m_width, m_height);
+        }
     }
 }
 
 void Player::TakeDamage(int damage) {
-    if (m_isShielded || m_isDashing || m_invulTimer > 0.0f) {
-        return;
-    }
+    if (m_isShielded || m_isDashing || m_invulTimer > 0.0f || m_isDead) return;
 
-    m_invulTimer = m_invulDuration;
     m_hp -= damage;
-
     if (m_hp <= 0) {
         m_hp = 0;
-        Destroy();
-        OutputDebugStringA("[Player] Nhan vat da chet!\n");
+        m_isDead = true;          // Đánh dấu trạng thái chết
+        m_deathAnim.Play("Die");   // Chạy hiệu ứng nổ
+        OutputDebugStringA("[Player] Bat dau hieu ung no!\n");
+    }
+    else {
+        m_invulTimer = m_invulDuration;
     }
 }
 
