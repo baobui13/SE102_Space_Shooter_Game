@@ -132,7 +132,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
-    <ClInclude Include="AudioManager.h" />    <ClInclude Include="BaseGameplayScene.h" />    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="BaseGameplayScene.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="EntityManager.h" />
@@ -142,7 +144,6 @@
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Laser.h" />
@@ -182,7 +183,6 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameplayScene.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Laser.cpp" />

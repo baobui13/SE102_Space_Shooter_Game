@@ -5,6 +5,7 @@
 Level3Scene::Level3Scene(Graphics& gfx)
     : BaseGameplayScene(gfx, 3) {
     SetBackgroundColor({0.03f, 0.12f, 0.03f});
+    InitializeLevel();
 }
 
 void Level3Scene::InitializeLevel() {

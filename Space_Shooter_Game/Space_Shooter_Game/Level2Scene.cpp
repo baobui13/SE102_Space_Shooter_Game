@@ -5,6 +5,7 @@
 Level2Scene::Level2Scene(Graphics& gfx)
     : BaseGameplayScene(gfx, 2) {
     SetBackgroundColor({0.12f, 0.03f, 0.03f});
+    InitializeLevel();
 }
 
 void Level2Scene::InitializeLevel() {

@@ -30,11 +30,10 @@ BaseGameplayScene::BaseGameplayScene(Graphics& gfx, int levelIndex)
     );
 
     auto buttonTexture = AssetManager::GetInstance().GetTexture(gfx, L"Assets/sheen__0011_Background.png");
-    m_pauseButton = std::make_unique<Button>(VIRTUAL_WIDTH - 220.0f, 20.0f, 200.0f, 70.0f, 1, L"Pause", m_font.get(), Button::TextAlignment::CENTER, 1.0f);
+    m_pauseButton = std::make_unique<Button>(VIRTUAL_WIDTH - 90.0f, 20.0f, 70.0f, 70.0f, 1, L"Pause", m_font.get(), Button::TextAlignment::CENTER, 1.0f);
     m_pauseButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
 
     InitializePlayer();
-    InitializeLevel();
 }
 
 void BaseGameplayScene::SetBackgroundColor(const DirectX::XMFLOAT3& color) {
@@ -171,7 +170,7 @@ void BaseGameplayScene::Render(Graphics& gfx) {
     m_hpBar->Render(spriteBatch, hpPercent, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
     if (m_pauseButton) {
-        m_pauseButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::White);
+        m_pauseButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::Black, 1.0f);
     }
 
     spriteBatch->End();

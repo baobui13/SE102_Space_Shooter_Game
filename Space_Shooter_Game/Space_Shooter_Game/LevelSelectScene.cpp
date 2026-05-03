@@ -114,7 +114,7 @@ void LevelSelectScene::Render(Graphics& gfx) {
         // Draw level label at bottom of card
         std::wstring levelName = m_levelNames[i];
         DirectX::XMFLOAT2 textPos(cardX + CARD_WIDTH / 2.0f, cardY + CARD_HEIGHT - 60.0f);
-        m_font->DrawString(spriteBatch, levelName.c_str(), textPos, DirectX::Colors::White,
+        m_font->DrawString(spriteBatch, levelName.c_str(), textPos, DirectX::Colors::Black,
             0.0f, DirectX::XMFLOAT2(0.5f, 0.5f), 1.1f);
 
         // Draw level number above name for clarity
