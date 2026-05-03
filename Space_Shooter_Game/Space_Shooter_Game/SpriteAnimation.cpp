@@ -68,9 +68,7 @@ void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float draw
         (LONG)(drawY + drawH)
     };
 
-    gfx.GetSpriteBatch()->Draw(m_texture.Get(), destRect, &sourceRect);
-
-    // Truyền renderColor vào hàm Draw
+    // Chỉ gọi Draw một lần với color
     gfx.GetSpriteBatch()->Draw(m_texture.Get(), destRect, &sourceRect, color);
 }
 

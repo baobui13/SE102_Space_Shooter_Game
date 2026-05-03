@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="BaseGameplayScene.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
@@ -143,13 +144,18 @@
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Laser.h" />
     <ClInclude Include="LaserSkill.h" />
     <ClInclude Include="LevelUpScene.h" />
+    <ClInclude Include="LevelSelectScene.h" />
+    <ClInclude Include="Level1Scene.h" />
+    <ClInclude Include="Level2Scene.h" />
+    <ClInclude Include="Level3Scene.h" />
+    <ClInclude Include="Level4Scene.h" />
     <ClInclude Include="MenuScene.h" />
+    <ClInclude Include="PauseScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
@@ -170,13 +176,13 @@
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="BaseGameplayScene.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="ExplodingBullet.cpp" />
     <ClCompile Include="ExplodingBulletSkill.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameplayScene.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Laser.cpp" />
@@ -184,6 +190,12 @@
     <ClCompile Include="LevelUpScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="PauseScene.cpp" />
+    <ClCompile Include="LevelSelectScene.cpp" />
+    <ClCompile Include="Level1Scene.cpp" />
+    <ClCompile Include="Level2Scene.cpp" />
+    <ClCompile Include="Level3Scene.cpp" />
+    <ClCompile Include="Level4Scene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="SceneManager.cpp" />

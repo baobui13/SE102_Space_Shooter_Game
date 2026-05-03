@@ -1,6 +1,7 @@
 #include "AudioManager.h"
+#include "AssetManager.h"
+#include "LevelSelectScene.h"
 #include "MenuScene.h"
-#include "GameplayScene.h"
 #include "SceneManager.h"
 #include "Graphics.h"
 #include "InputManager.h"
@@ -34,7 +35,7 @@ void MenuScene::Update(float dt, InputManager& input, SceneManager& manager) {
     m_exitButton->Update(mouseX, mouseY, isClicked);
 
     if (m_playButton->IsClicked()) {
-        manager.ChangeScene(std::make_unique<GameplayScene>(m_gfx));
+        manager.ChangeScene(std::make_unique<LevelSelectScene>(m_gfx));
     }
 
 	if (m_exitButton->IsClicked()) {

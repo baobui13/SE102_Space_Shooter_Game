@@ -1,32 +1,26 @@
 #include "AudioManager.h"
-#include "GameplayScene.h"
+#include "BaseGameplayScene.h"
+#include "AssetManager.h"
 #include "ExplodingBulletSkill.h"
 #include "GameConfig.h"
+#include "GameContext.h"
 #include "LaserSkill.h"
 #include "LevelUpScene.h"
 #include "MenuScene.h"
+#include "PauseScene.h"
 #include "SceneManager.h"
 #include "ShieldSkill.h"
 #include <DirectXColors.h>
 #include <string>
 
-GameplayScene::GameplayScene(Graphics& gfx)
+BaseGameplayScene::BaseGameplayScene(Graphics& gfx, int levelIndex)
     : m_gfx(gfx)
-    , m_bulletPool(gfx) {
+    , m_bulletPool(gfx)
+    , m_levelIndex(levelIndex)
+    , m_backgroundColor{ 0.02f, 0.02f, 0.1f } {
     AudioManager::GetInstance().PlayMusic(AudioIds::GameplayMusic);
 
-    m_player = std::make_unique<Player>(gfx, VIRTUAL_WIDTH / 2.0f - 32.0f, VIRTUAL_HEIGHT - 200.0f);
-    m_player->AddSkill(std::make_unique<LaserSkill>());
-    m_player->AddSkill(std::make_unique<ExplodingBulletSkill>());
-    m_player->AddSkill(std::make_unique<ShieldSkill>());
-
     m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/GoodTimingRg.spritefont");
-
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.125f, VIRTUAL_HEIGHT * 0.1f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.875f, VIRTUAL_HEIGHT * 0.1f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.125f, VIRTUAL_HEIGHT * 0.5f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.875f, VIRTUAL_HEIGHT * 0.5f, 10));
-    m_entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, VIRTUAL_WIDTH * 0.5f, VIRTUAL_HEIGHT * 0.1f, 50));
 
     m_hpBar = std::make_unique<ProgressBar>(20.0f, 20.0f, 500.0f, 30.0f, 2);
     m_hpBar->SetTextures(
@@ -34,9 +28,50 @@ GameplayScene::GameplayScene(Graphics& gfx)
         AssetManager::GetInstance().GetTexture(gfx, L"Assets/BarV1_ProgressBar.png"),
         AssetManager::GetInstance().GetTexture(gfx, L"Assets/BarV1_ProgressBarBorder.png")
     );
+
+    auto buttonTexture = AssetManager::GetInstance().GetTexture(gfx, L"Assets/sheen__0011_Background.png");
+    m_pauseButton = std::make_unique<Button>(VIRTUAL_WIDTH - 90.0f, 20.0f, 70.0f, 70.0f, 1, L"Pause", m_font.get(), Button::TextAlignment::CENTER, 1.0f);
+    m_pauseButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
+
+    InitializePlayer();
 }
 
-void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager) {
+void BaseGameplayScene::SetBackgroundColor(const DirectX::XMFLOAT3& color) {
+    m_backgroundColor = color;
+    m_backgroundTexture.Reset();
+}
+
+void BaseGameplayScene::SetBackgroundTexture(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture) {
+    m_backgroundTexture = texture;
+}
+
+void BaseGameplayScene::InitializePlayer() {
+    m_player = std::make_unique<Player>(m_gfx, VIRTUAL_WIDTH / 2.0f - 32.0f, VIRTUAL_HEIGHT - 200.0f);
+    m_player->AddSkill(std::make_unique<LaserSkill>());
+    m_player->AddSkill(std::make_unique<ExplodingBulletSkill>());
+    m_player->AddSkill(std::make_unique<ShieldSkill>());
+}
+
+void BaseGameplayScene::InitializeLevel() {
+    // Default implementation - empty. Subclasses override to add enemies
+}
+
+void BaseGameplayScene::HandleLevelInput(InputManager& input, SceneManager& manager) {
+    // Default implementation - can be overridden in subclasses
+    if (input.IsKeyPressed('E')) {
+        m_player->GainExp(50);
+    }
+
+    if (input.IsKeyPressed('R')) {
+        m_player->TakeDamage(20);
+    }
+}
+
+void BaseGameplayScene::RenderLevelElements(DirectX::SpriteBatch* spriteBatch) {
+    // Default implementation - empty. Subclasses override to render level-specific elements
+}
+
+void BaseGameplayScene::Update(float dt, InputManager& input, SceneManager& manager) {
     GameContext ctx(
         m_gfx,
         input,
@@ -52,17 +87,21 @@ void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager)
     m_entityManager.UpdateAll(dt, ctx);
     m_bulletPool.Update(dt, ctx);
 
-    if (input.IsKeyDown(VK_ESCAPE)) {
-        manager.ChangeScene(std::make_unique<MenuScene>(m_gfx));
+    float mouseX = (float)input.GetMouseX();
+    float mouseY = (float)input.GetMouseY();
+    bool isClicked = input.IsLeftMouseClicked();
+    if (m_pauseButton) {
+        m_pauseButton->Update(mouseX, mouseY, isClicked, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+        if (m_pauseButton->IsClicked()) {
+            manager.PushScene(std::make_unique<PauseScene>(m_gfx));
+        }
     }
 
-    if (input.IsKeyPressed('E')) {
-        m_player->GainExp(50);
+    if (input.IsKeyPressed(VK_ESCAPE)) {
+        manager.PushScene(std::make_unique<PauseScene>(m_gfx));
     }
 
-    if (input.IsKeyPressed('R')) {
-        m_player->TakeDamage(20);
-    }
+    HandleLevelInput(input, manager);
 
     if (m_player->GetUpgradePoints() > 0 && input.IsKeyPressed('U')) {
         AudioManager::GetInstance().PlayUiEffect(AudioIds::UiOpenLevelUp);
@@ -70,8 +109,14 @@ void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager)
     }
 }
 
-void GameplayScene::Render(Graphics& gfx) {
-    gfx.ClearBuffer(0.02f, 0.02f, 0.1f);
+void BaseGameplayScene::Render(Graphics& gfx) {
+    if (m_backgroundTexture) {
+        gfx.ClearBuffer(0.0f, 0.0f, 0.0f);
+    }
+    else {
+        gfx.ClearBuffer(m_backgroundColor.x, m_backgroundColor.y, m_backgroundColor.z);
+    }
+
     auto spriteBatch = gfx.GetSpriteBatch();
 
     spriteBatch->Begin(
@@ -84,9 +129,16 @@ void GameplayScene::Render(Graphics& gfx) {
         gfx.GetScaleMatrix()
     );
 
+    if (m_backgroundTexture) {
+        RECT bgRect = { 0, 0, (LONG)VIRTUAL_WIDTH, (LONG)VIRTUAL_HEIGHT };
+        spriteBatch->Draw(m_backgroundTexture.Get(), bgRect, DirectX::Colors::White);
+    }
+
     m_entityManager.RenderAll(gfx);
     m_bulletPool.Render(gfx);
     m_player->Render(gfx);
+
+    RenderLevelElements(spriteBatch);
 
     std::wstring uiLeft =
         L"--- PLAYER STATS ---\n"
@@ -117,6 +169,9 @@ void GameplayScene::Render(Graphics& gfx) {
     float hpPercent = (float)m_player->GetHp() / m_player->GetMaxHp();
     m_hpBar->Render(spriteBatch, hpPercent, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
+    if (m_pauseButton) {
+        m_pauseButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::Black, 1.0f);
+    }
+
     spriteBatch->End();
 }
-

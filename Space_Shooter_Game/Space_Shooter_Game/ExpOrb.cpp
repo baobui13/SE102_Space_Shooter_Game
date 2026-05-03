@@ -11,6 +11,7 @@ ExpOrb::ExpOrb(Graphics& gfx, float x, float y, int expValue)
     m_vx = 0.0f;
     m_vy = 50.0f;
 
+    // Sửa về texture đúng
     m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Bullets1.png"));
     m_anim.AddClip("Idle", 15, 80, 17, 17, 1, 1, 1.0f, true);
     m_anim.Play("Idle");
