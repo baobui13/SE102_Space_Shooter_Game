@@ -5,6 +5,7 @@
 #include "LaserSkill.h"
 #include "LevelUpScene.h"
 #include "MenuScene.h"
+#include "PauseScene.h"
 #include "SceneManager.h"
 #include "ShieldSkill.h"
 #include <DirectXColors.h>
@@ -52,8 +53,8 @@ void GameplayScene::Update(float dt, InputManager& input, SceneManager& manager)
     m_entityManager.UpdateAll(dt, ctx);
     m_bulletPool.Update(dt, ctx);
 
-    if (input.IsKeyDown(VK_ESCAPE)) {
-        manager.ChangeScene(std::make_unique<MenuScene>(m_gfx));
+    if (input.IsKeyPressed(VK_ESCAPE)) {
+        manager.PushScene(std::make_unique<PauseScene>(m_gfx));
     }
 
     if (input.IsKeyPressed('E')) {

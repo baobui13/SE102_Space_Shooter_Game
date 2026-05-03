@@ -12,19 +12,21 @@ void SceneManager::PushScene(std::unique_ptr<Scene> scene) {
 }
 
 void SceneManager::PopScene() {
-    // Nếu danh sách không rỗng thì gỡ màn hình trên cùng đi
-    if (!m_scenes.empty()) {
-        m_scenes.pop_back();
-    }
+    // Request a pop instead of deleting immediately
+    m_requestPop = true;
 }
 
 void SceneManager::Update(float dt, InputManager& input) {
-	// Cập nhật cho màn hình trên cùng, pause màn hình dưới nếu có
     if (!m_scenes.empty()) {
         m_scenes.back()->Update(dt, input, *this);
     }
 
-    // Nếu có Scene mới đang chờ được nạp, thay thế an toàn tại cuối vòng lặp
+    // Process pending pop after Update returns
+    if (m_requestPop) {
+        if (!m_scenes.empty()) m_scenes.pop_back();
+        m_requestPop = false;
+    }
+
     if (m_nextScene) {
         m_scenes.clear();
         m_scenes.push_back(std::move(m_nextScene));

@@ -18,4 +18,5 @@ public:
 private:
     std::vector<std::unique_ptr<Scene>> m_scenes; // Danh sách các màn hình
     std::unique_ptr<Scene> m_nextScene;           // Scene đang chờ nạp
+    bool m_requestPop = false;
 };
