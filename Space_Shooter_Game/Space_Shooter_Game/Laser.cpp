@@ -4,6 +4,8 @@
 #include "Player.h"
 #include <DirectXColors.h>
 #include <DirectXMath.h>
+#include "EntityManager.h"
+#include "BaseEnemy.h"
 
 namespace {
 constexpr wchar_t LASER_TEXTURE_PATH[] = L"Assets/lazer_1.png";
@@ -33,9 +35,7 @@ Laser::Laser(Graphics& gfx, float duration, int damage, float sizeMultiplier)
 }
 
 void Laser::Update(float dt, GameContext& ctx) {
-    if (!m_isActive) {
-        return;
-    }
+    if (!m_isActive) return;
 
     m_remainingDuration -= dt;
     if (m_remainingDuration <= 0.0f) {
@@ -43,8 +43,37 @@ void Laser::Update(float dt, GameContext& ctx) {
         return;
     }
 
-    m_x = ctx.player.GetX() + (ctx.player.GetWidth() * 0.5f);
-    m_y = ctx.player.GetY() + LASER_PLAYER_Y_OFFSET;
+    // Cập nhật vị trí Laser bám theo Player
+    m_x = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
+    m_y = ctx.player.GetY() - 10.0f; // LASER_PLAYER_Y_OFFSET
+
+    // Tính toán vùng AABB của tia Laser (Tia bắn thẳng lên trên)
+    float thickness = 5.0f * m_sizeMultiplier; // 5.0f là LASER_BASE_THICKNESS
+    float laserLeft = m_x - thickness / 2.0f;
+    float laserRight = m_x + thickness / 2.0f;
+    float laserTop = 0.0f;
+    float laserBottom = m_y;
+
+    auto& allEntities = ctx.entityManager.GetEntities();
+    for (auto& entity : allEntities) {
+        if (!entity->IsActive()) continue;
+
+        BaseEnemy* enemy = dynamic_cast<BaseEnemy*>(entity.get());
+        if (enemy) {
+            float eLeft = enemy->GetX();
+            float eRight = enemy->GetX() + enemy->GetWidth();
+            float eTop = enemy->GetY();
+            float eBottom = enemy->GetY() + enemy->GetHeight();
+
+            // Kiểm tra va chạm giữa HCN của Laser và HCN của Enemy
+            if (laserLeft < eRight && laserRight > eLeft &&
+                laserTop < eBottom && laserBottom > eTop)
+            {
+                // Sát thương theo thời gian: (Damage * dt * Hệ số)
+                enemy->TakeDamage(m_damage * dt * 10.0f);
+            }
+        }
+    }
 }
 
 void Laser::Render(Graphics& gfx) {

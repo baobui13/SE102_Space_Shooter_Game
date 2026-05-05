@@ -84,6 +84,7 @@ void BaseGameplayScene::Update(float dt, InputManager& input, SceneManager& mana
     );
 
     m_player->Update(dt, ctx);
+    m_enemySpawner.Update(dt, m_gfx, m_entityManager);
     m_entityManager.UpdateAll(dt, ctx);
     m_bulletPool.Update(dt, ctx);
 

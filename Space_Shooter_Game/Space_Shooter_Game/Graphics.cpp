@@ -2,6 +2,7 @@
 #include "GameConfig.h"
 #include <WICTextureLoader.h>
 #include <stdexcept>
+#include <cmath>
 
 Graphics::Graphics(HWND hwnd) {
     DXGI_SWAP_CHAIN_DESC sd = {};
@@ -93,6 +94,35 @@ void Graphics::EndFrame() {
     if (FAILED(hr)) {
         OutputDebugString(L"[Graphics] Present failed\n");
     }
+}
+
+void Graphics::DrawLine(ID3D11ShaderResourceView* pixelTexture, float x1, float y1, float x2, float y2, float thickness, DirectX::XMVECTOR color) {
+    if (!pixelTexture) return;
+
+    // Tính toán vector chỉ hướng
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+
+    // Tính chiều dài và góc xoay
+    float length = std::sqrt(dx * dx + dy * dy);
+    float angle = std::atan2(dy, dx);
+
+    DirectX::XMFLOAT2 position(x1, y1);
+    DirectX::XMFLOAT2 origin(0.0f, 0.5f); // Tâm xoay nằm ở mép trái giữa của texture
+    DirectX::XMFLOAT2 scale(length, thickness); // Kéo dài theo trục X (length) và độ dày trục Y (thickness)
+
+    // Giả sử biến SpriteBatch của bạn tên là m_spriteBatch (hoặc GetSpriteBatch())
+    GetSpriteBatch()->Draw(
+        pixelTexture,
+        position,
+        nullptr,       // Nguồn rect (nullptr = toàn bộ ảnh)
+        color,
+        angle,
+        origin,
+        scale,
+        DirectX::SpriteEffects_None,
+        0.0f
+    );
 }
 
 // Hàm đọc file ảnh (.png, .jpg) từ ổ cứng và biến nó thành Texture của DirectX

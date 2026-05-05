@@ -24,7 +24,7 @@ public:
     void AddClip(const std::string& name, int x, int y, int w, int h, int count, int cols, float duration, bool loop, int spacingX = 0, int spacingY = 0);
     void Play(const std::string& name);
     void Update(float dt);
-    void Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH, DirectX::XMVECTOR color = DirectX::Colors::White);
+    void Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH, DirectX::XMVECTOR color = DirectX::Colors::White, float rotation = 0.0f);
     bool IsFinished() const;
 
     // Lấy Texture đang sử dụng

@@ -40,6 +40,8 @@ public:
     float GetScaleY() const { return m_scaleY; }
     DirectX::XMMATRIX GetScaleMatrix() const { return m_scaleMatrix; }
 
+    void DrawLine(ID3D11ShaderResourceView* pixelTexture, float x1, float y1, float x2, float y2, float thickness, DirectX::XMVECTOR color);
+
 private:
     // Các thành phần cốt lõi của DirectX 11
     Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;                 // Quản lý bộ nhớ GPU, tạo tài nguyên (texture, buffer...)

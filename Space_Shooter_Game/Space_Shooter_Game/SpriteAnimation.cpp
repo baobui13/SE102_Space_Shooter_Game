@@ -48,12 +48,13 @@ void SpriteAnimation::Update(float dt) {
     }
 }
 
-void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH, DirectX::XMVECTOR color) {
+void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH, DirectX::XMVECTOR color, float rotation) {
     if (!m_texture || !m_currentClip) return;
 
     int col = m_localFrameIndex % m_currentClip->columns;
     int row = m_localFrameIndex / m_currentClip->columns;
 
+    // tính toán sourceRect để cắt đúng frame ảnh
     RECT sourceRect = {
         m_currentClip->startX + (col * (m_currentClip->frameWidth + m_currentClip->spacingX)),
         m_currentClip->startY + (row * (m_currentClip->frameHeight + m_currentClip->spacingY)),
@@ -61,15 +62,27 @@ void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float draw
         m_currentClip->startY + (row * (m_currentClip->frameHeight + m_currentClip->spacingY)) + m_currentClip->frameHeight
     };
 
-    RECT destRect = {
-        (LONG)drawX,
-        (LONG)drawY,
-        (LONG)(drawX + drawW),
-        (LONG)(drawY + drawH)
-    };
+    // Origin (Tâm quay): Tính dựa trên kích thước của frame ảnh gốc
+    DirectX::XMFLOAT2 origin(m_currentClip->frameWidth / 2.0f, m_currentClip->frameHeight / 2.0f);
 
-    // Chỉ gọi Draw một lần với color
-    gfx.GetSpriteBatch()->Draw(m_texture.Get(), destRect, &sourceRect, color);
+    // Position (Vị trí vẽ): Dịch từ góc trên-trái (drawX, drawY) vào đúng tâm của quái vật
+    DirectX::XMFLOAT2 position(drawX + drawW / 2.0f, drawY + drawH / 2.0f);
+
+    // Scale (Tỉ lệ): Do hàm Draw này không tự bóp ảnh theo drawW/drawH như destRect, ta phải tự tính scale
+    DirectX::XMFLOAT2 scale(drawW / (float)m_currentClip->frameWidth, drawH / (float)m_currentClip->frameHeight);
+
+    // Gọi hàm Draw hỗ trợ xoay
+    gfx.GetSpriteBatch()->Draw(
+        m_texture.Get(),             // Texture
+        position,                    // Tọa độ vẽ (Tâm)
+        &sourceRect,                 // Vùng cắt trên ảnh
+        color,                       // Màu sắc / Alpha
+        rotation,                    // Góc xoay (Radian)
+        origin,                      // Tâm quay (Local của frame)
+        scale,                       // Tỉ lệ scale
+        DirectX::SpriteEffects_None, // Hiệu ứng lật ảnh (nếu có)
+        0.0f                         // Độ sâu (Layer Depth)
+    );
 }
 
 bool SpriteAnimation::IsFinished() const {

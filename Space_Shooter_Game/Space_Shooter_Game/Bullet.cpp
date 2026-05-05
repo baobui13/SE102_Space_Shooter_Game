@@ -2,6 +2,8 @@
 #include "GameContext.h"
 #include "AssetManager.h"
 #include <cmath>
+#include "EntityManager.h"
+#include "BaseEnemy.h"
 
 Bullet::Bullet(Graphics& gfx)
     : GameObject(0, 0, 16.0f, 16.0f), m_damage(0), m_maxDistance(0), m_distanceTraveled(0)
@@ -43,20 +45,41 @@ void Bullet::ReInitialize(float startX, float startY, float targetX, float targe
 }
 
 void Bullet::Update(float dt, ::GameContext& ctx) {
+    if (!m_isActive) return;
+
     // Kế thừa logic di chuyển mặc định từ GameObject (m_x += m_vx * dt)
     GameObject::Update(dt, ctx);
 
-    // TÍNH TOÁN QUÃNG ĐƯỜNG ĐÃ BAY
-    float speed = std::sqrt(m_vx * m_vx + m_vy * m_vy);
-    m_distanceTraveled += speed * dt;
+    // Tính toán khoảng cách đạn bay để xóa khi bay quá xa
+    float moveDist = std::sqrt(m_vx * m_vx + m_vy * m_vy) * dt;
+    m_distanceTraveled += moveDist;
 
-    // DỌN RÁC : Xóa đạn nếu bay quá tầm BÁN KÍNH cho phép
     if (m_distanceTraveled >= m_maxDistance) {
         Destroy();
+        return;
     }
 
-    // LOGIC DỌN RÁC: Xóa viên đạn nếu nó bay khỏi màn hình
-    if (m_x < -100.0f || m_x > ctx.screenWidth + 100.0f || m_y < -100.0f || m_y > ctx.screenHeight + 100.0f) {
-        Destroy();
+    auto& allEntities = ctx.entityManager.GetEntities();
+    for (auto& entity : allEntities) {
+        // Bỏ qua các object đã chết hoặc bị vô hiệu hóa
+        if (!entity->IsActive()) continue;
+
+        // Ép kiểu để xem entity này có phải là Enemy hay không
+        BaseEnemy* enemy = dynamic_cast<BaseEnemy*>(entity.get());
+
+        if (enemy) {
+            // Hàm CheckCollision được kế thừa sẵn từ class GameObject
+            if (this->CheckCollision(*enemy)) {
+
+                // Trừ máu quái vật
+                enemy->TakeDamage(m_damage);
+
+                // Đạn trúng mục tiêu thì tự biến mất
+                this->Destroy();
+
+                // Thoát vòng lặp ngay vì đạn thường không xuyên thấu
+                break;
+            }
+        }
     }
 }
