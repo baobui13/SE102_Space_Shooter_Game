@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="BaseEnemy.h" />
     <ClInclude Include="BaseGameplayScene.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletPool.h" />
@@ -154,9 +155,11 @@
     <ClInclude Include="Level2Scene.h" />
     <ClInclude Include="Level3Scene.h" />
     <ClInclude Include="Level4Scene.h" />
+    <ClInclude Include="MeleeEnemy1.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="PauseScene.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RangeEnemy1.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ProgressBar.h" />
@@ -176,6 +179,7 @@
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="BaseEnemy.cpp" />
     <ClCompile Include="BaseGameplayScene.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="ExplodingBullet.cpp" />
@@ -196,14 +200,18 @@
     <ClCompile Include="Level2Scene.cpp" />
     <ClCompile Include="Level3Scene.cpp" />
     <ClCompile Include="Level4Scene.cpp" />
+    <ClCompile Include="MeleeEnemy1.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
+    <ClCompile Include="RangeEnemy1.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="ShieldSkill.cpp" />
     <ClCompile Include="SkillManager.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="UpgradeManager.cpp" />
+    <ClCompile Include="EnemyFactory.cpp" />
+    <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

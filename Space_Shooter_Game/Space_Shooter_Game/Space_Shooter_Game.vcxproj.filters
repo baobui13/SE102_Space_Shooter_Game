@@ -116,6 +116,24 @@
     <ClInclude Include="ShieldSkill.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="BaseEnemy.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="MeleeEnemy1.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="IMovementStrategy.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementStrategies.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyFactory.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySpawner.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -192,6 +210,18 @@
     </ClCompile>
     <ClCompile Include="ShieldSkill.cpp">
       <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseEnemy.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="MeleeEnemy1.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyFactory.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySpawner.cpp">
+      <Filter>Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

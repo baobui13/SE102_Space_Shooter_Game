@@ -14,6 +14,7 @@
 #include "ProgressBar.h"
 #include "EntityManager.h"
 #include "BulletPool.h"
+#include "EnemySpawner.h"
 
 // Base class for all gameplay scenes - handles common player logic, rendering, etc.
 class BaseGameplayScene : public Scene {
@@ -22,6 +23,7 @@ protected:
     std::unique_ptr<Player> m_player;
     EntityManager m_entityManager;
     BulletPool m_bulletPool;
+    EnemySpawner m_enemySpawner;
 
     std::unique_ptr<DirectX::SpriteFont> m_font;
     std::unique_ptr<ProgressBar> m_hpBar;
