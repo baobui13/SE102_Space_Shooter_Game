@@ -15,6 +15,8 @@
 #include "EntityManager.h"
 #include "BulletPool.h"
 #include "EnemySpawner.h"
+#include <utility>
+#include <vector>
 
 // Base class for all gameplay scenes - handles common player logic, rendering, etc.
 class BaseGameplayScene : public Scene {
@@ -52,6 +54,8 @@ protected:
 
     // Initialize level-specific entities - override this in subclasses to add enemies
     virtual void InitializeLevel();
+
+    void SetEnemyPhases(std::vector<EnemyPhaseDefinition> phases);
 
     // Handle level-specific input - override this in subclasses
     virtual void HandleLevelInput(InputManager& input, SceneManager& manager);

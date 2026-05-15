@@ -128,6 +128,15 @@
     <ClInclude Include="Level4Scene.h" />
     <ClInclude Include="PauseScene.h" />
     <ClInclude Include="RangeEnemy1.h" />
+    <ClInclude Include="EnemyDefinitions.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyPool.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEnemyPool.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -223,6 +232,12 @@
     <ClCompile Include="Level3Scene.cpp" />
     <ClCompile Include="Level4Scene.cpp" />
     <ClCompile Include="RangeEnemy1.cpp" />
+    <ClCompile Include="EnemyPool.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEnemyPool.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Bullets1.png">

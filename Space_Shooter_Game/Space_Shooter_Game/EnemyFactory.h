@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseEnemy.h"
+#include "EnemyDefinitions.h"
 #include "Graphics.h"
 #include <memory>
 
@@ -10,5 +11,9 @@ public:
     static std::unique_ptr<BaseEnemy> Create(
         EnemyType type, Graphics& gfx,
         float x, float y
+    );
+
+    static std::unique_ptr<BaseEnemy> Create(
+        const LevelEnemySpawnDefinition& spawn, Graphics& gfx
     );
 };

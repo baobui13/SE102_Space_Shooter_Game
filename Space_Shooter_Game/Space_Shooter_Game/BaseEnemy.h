@@ -23,6 +23,7 @@ protected:
     bool m_isAttacking;
     float m_attackCooldown;
     float m_rotation = 0.0f;
+    float m_spriteForwardAngle = 0.0f;
 
     EnemyType m_type;
     int m_expReward;
@@ -52,6 +53,9 @@ public:
 
     // Đổi chiến lược di chuyển runtime
     void SetMovementStrategy(std::unique_ptr<IMovementStrategy> strategy);
+    void SetSpriteForwardAngle(float radians) { m_spriteForwardAngle = radians; }
+    void FacePoint(float targetX, float targetY);
+    float GetAimAngle() const { return m_rotation + m_spriteForwardAngle; }
 
     // Getter
     float GetHealth() const { return m_health; }
@@ -65,4 +69,5 @@ public:
     int GetExpReward() const { return m_expReward; }
     void SetExpReward(int exp) { m_expReward = exp; }
     float GetRotation() const { return m_rotation; }
+    float GetSpriteForwardAngle() const { return m_spriteForwardAngle; }
 };

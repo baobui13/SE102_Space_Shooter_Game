@@ -21,7 +21,9 @@ private:
 
 public:
     RangeEnemy1(float x, float y, float width, float height,
-        float health, float moveSpeed, float attackPower);
+        float health, float moveSpeed, float attackPower,
+        float attackSpeed = 1.0f, float attackRange = 500.0f,
+        EnemyType type = EnemyType::Ranged_Basic);
 
     void Update(float dt, GameContext& ctx) override;
     void Render(Graphics& gfx) override;

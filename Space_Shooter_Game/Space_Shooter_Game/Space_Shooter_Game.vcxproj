@@ -139,6 +139,8 @@
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="EnemyDefinitions.h" />
+    <ClInclude Include="EnemyPool.h" />
     <ClInclude Include="ExplodingBullet.h" />
     <ClInclude Include="ExplodingBulletSkill.h" />
     <ClInclude Include="ExpOrb.h" />
@@ -151,6 +153,7 @@
     <ClInclude Include="LaserSkill.h" />
     <ClInclude Include="LevelUpScene.h" />
     <ClInclude Include="LevelSelectScene.h" />
+    <ClInclude Include="LevelEnemyPool.h" />
     <ClInclude Include="Level1Scene.h" />
     <ClInclude Include="Level2Scene.h" />
     <ClInclude Include="Level3Scene.h" />
@@ -185,6 +188,7 @@
     <ClCompile Include="ExplodingBullet.cpp" />
     <ClCompile Include="ExplodingBulletSkill.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="EnemyPool.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -196,6 +200,7 @@
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="PauseScene.cpp" />
     <ClCompile Include="LevelSelectScene.cpp" />
+    <ClCompile Include="LevelEnemyPool.cpp" />
     <ClCompile Include="Level1Scene.cpp" />
     <ClCompile Include="Level2Scene.cpp" />
     <ClCompile Include="Level3Scene.cpp" />

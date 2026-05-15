@@ -1,23 +1,32 @@
 #include "EnemySpawner.h"
 
-void EnemySpawner::AddWave(WaveDefinition wave) {
-    m_waves.push_back(std::move(wave));
+void EnemySpawner::AddWave(EnemyPhaseDefinition wave) {
+    AddPhase(std::move(wave));
+}
+
+void EnemySpawner::AddPhase(EnemyPhaseDefinition phase) {
+    m_phases.push_back(std::move(phase));
+}
+
+void EnemySpawner::LoadPhases(std::vector<EnemyPhaseDefinition> phases) {
+    m_phases = std::move(phases);
+    Reset();
 }
 
 void EnemySpawner::Update(float dt, Graphics& gfx, EntityManager& entityManager) {
     m_elapsedTime += dt;
 
     bool allDone = true;
-    for (auto& wave : m_waves) {
-        if (!wave.triggered && m_elapsedTime >= wave.triggerTime) {
-            // Spawn tất cả enemy trong wave này
-            for (auto& entry : wave.entries) {
-                auto enemy = EnemyFactory::Create(entry.type, gfx, entry.x, entry.y);
+    for (auto& phase : m_phases) {
+        if (!phase.triggered && m_elapsedTime >= phase.triggerTime) {
+            // Spawn tất cả enemy trong phase này
+            for (auto& entry : phase.enemies) {
+                auto enemy = EnemyFactory::Create(entry, gfx);
                 entityManager.AddEntity(std::move(enemy));
             }
-            wave.triggered = true;
+            phase.triggered = true;
         }
-        if (!wave.triggered) {
+        if (!phase.triggered) {
             allDone = false;
         }
     }
@@ -27,15 +36,15 @@ void EnemySpawner::Update(float dt, Graphics& gfx, EntityManager& entityManager)
 void EnemySpawner::Reset() {
     m_elapsedTime = 0.0f;
     m_allWavesComplete = false;
-    for (auto& wave : m_waves) {
-        wave.triggered = false;
+    for (auto& phase : m_phases) {
+        phase.triggered = false;
     }
 }
 
 size_t EnemySpawner::GetTriggeredWaveCount() const {
     size_t count = 0;
-    for (const auto& wave : m_waves) {
-        if (wave.triggered) count++;
+    for (const auto& phase : m_phases) {
+        if (phase.triggered) count++;
     }
     return count;
 }

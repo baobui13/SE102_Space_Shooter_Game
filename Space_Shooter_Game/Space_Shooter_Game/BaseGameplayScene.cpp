@@ -66,6 +66,10 @@ void BaseGameplayScene::InitializeLevel() {
     // Default implementation - empty. Subclasses override to add enemies
 }
 
+void BaseGameplayScene::SetEnemyPhases(std::vector<EnemyPhaseDefinition> phases) {
+    m_enemySpawner.LoadPhases(std::move(phases));
+}
+
 void BaseGameplayScene::HandleLevelInput(InputManager& input, SceneManager& manager) {
     // Default implementation - can be overridden in subclasses
     if (input.IsKeyPressed('E')) {

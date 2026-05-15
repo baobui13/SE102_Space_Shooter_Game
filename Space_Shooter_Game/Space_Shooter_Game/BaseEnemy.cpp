@@ -18,7 +18,8 @@ BaseEnemy::BaseEnemy(float x, float y, float width, float height,
     m_attackCooldown(0.0f),
     m_type(type),
     m_expReward(10),
-    m_rotation(0.0f)
+    m_rotation(0.0f),
+    m_spriteForwardAngle(0.0f)
 {
 }
 
@@ -35,19 +36,10 @@ void BaseEnemy::Update(float dt, GameContext& ctx) {
     Move(dt, ctx);
 
     // 4. Tính toán góc xoay hướng về Player
-    float centerX = m_x + m_width / 2.0f;
-    float centerY = m_y + m_height / 2.0f;
-
     float playerCX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
     float playerCY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
 
-    float dx = playerCX - centerX;
-    float dy = playerCY - centerY;
-
-    // atan2 tính góc giữa enemy và player. 
-    // Trừ PI/2 (90 độ) vì đầu quái nằm ở dưới cùng của ảnh.
-    const float PI = 3.1415926535f;
-    m_rotation = std::atan2(dy, dx) - (PI / 2.0f);
+    FacePoint(playerCX, playerCY);
 }
 
 void BaseEnemy::Render(Graphics& gfx) {
@@ -125,4 +117,14 @@ void BaseEnemy::UpdateAnimation(float dt) {
 
 void BaseEnemy::SetMovementStrategy(std::unique_ptr<IMovementStrategy> strategy) {
     m_movementStrategy = std::move(strategy);
+}
+
+void BaseEnemy::FacePoint(float targetX, float targetY) {
+    float centerX = m_x + m_width / 2.0f;
+    float centerY = m_y + m_height / 2.0f;
+
+    float dx = targetX - centerX;
+    float dy = targetY - centerY;
+
+    m_rotation = std::atan2(dy, dx) - m_spriteForwardAngle;
 }

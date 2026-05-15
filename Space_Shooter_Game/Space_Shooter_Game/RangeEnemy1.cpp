@@ -5,8 +5,9 @@
 #include <cmath>
 
 RangeEnemy1::RangeEnemy1(float x, float y, float width, float height,
-    float health, float moveSpeed, float attackPower)
-    : BaseEnemy(x, y, width, height, health, moveSpeed, attackPower, 1.0f, 500.0f, EnemyType::Ranged_Basic)
+    float health, float moveSpeed, float attackPower,
+    float attackSpeed, float attackRange, EnemyType type)
+    : BaseEnemy(x, y, width, height, health, moveSpeed, attackPower, attackSpeed, attackRange, type)
 {
     m_state = RangeState::Moving;
     m_stateTimer = 0.0f;
@@ -64,8 +65,9 @@ void RangeEnemy1::Update(float dt, GameContext& ctx) {
 
         if (m_stateTimer >= TIME_SHOOT) {
             // Thực hiện bắn viên đạn cực nhanh theo hướng m_rotation đã khóa
-            float targetX = myCX + std::cos(m_rotation) * 100.0f;
-            float targetY = myCY + std::sin(m_rotation) * 100.0f;
+            float aimAngle = GetAimAngle();
+            float targetX = myCX + std::cos(aimAngle) * 100.0f;
+            float targetY = myCY + std::sin(aimAngle) * 100.0f;
 
             ctx.bulletPool.GetBullet(
                 myCX, myCY,
@@ -92,8 +94,9 @@ void RangeEnemy1::Render(Graphics& gfx) {
 
         // Tính điểm kết thúc của đường kẻ (kéo dài ra hết màn hình, ví dụ 2000px)
         float lineLength = 2000.0f;
-        float endX = myCX + std::cos(m_rotation) * lineLength;
-        float endY = myCY + std::sin(m_rotation) * lineLength;
+        float aimAngle = GetAimAngle();
+        float endX = myCX + std::cos(aimAngle) * lineLength;
+        float endY = myCY + std::sin(aimAngle) * lineLength;
 
         auto whitePixel = AssetManager::GetInstance().GetTexture(gfx, L"Assets/WhitePixel.png"); // Nhớ tạo file WhitePixel.png 1x1 nhé
 
@@ -112,5 +115,5 @@ void RangeEnemy1::UpdateRotationToPlayer(GameContext& ctx) {
     float myCX = m_x + m_width / 2.0f;
     float myCY = m_y + m_height / 2.0f;
 
-    m_rotation = std::atan2(playerCY - myCY, playerCX - myCX);
+    FacePoint(playerCX, playerCY);
 }

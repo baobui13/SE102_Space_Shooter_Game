@@ -4,7 +4,8 @@
 class MeleeEnemy1 : public BaseEnemy {
 public:
     MeleeEnemy1(float x, float y, float width, float height,
-                float health, float moveSpeed, float attackPower, float attackRange);
+                float health, float moveSpeed, float attackPower, float attackRange,
+                float attackSpeed = 1.0f, EnemyType type = EnemyType::Melee_Basic);
 
     void Update(float dt, GameContext& ctx) override;
     void Attack(GameObject* target) override;

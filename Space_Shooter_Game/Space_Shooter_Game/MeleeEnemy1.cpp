@@ -4,8 +4,9 @@
 #include <cmath>
 
 MeleeEnemy1::MeleeEnemy1(float x, float y, float width, float height,
-                       float health, float moveSpeed, float attackPower, float attackRange)
-    : BaseEnemy(x, y, width, height, health, moveSpeed, attackPower, 1.0f, attackRange, EnemyType::Melee_Basic)
+                       float health, float moveSpeed, float attackPower, float attackRange,
+                       float attackSpeed, EnemyType type)
+    : BaseEnemy(x, y, width, height, health, moveSpeed, attackPower, attackSpeed, attackRange, type)
 {
 }
 
@@ -27,11 +28,7 @@ void MeleeEnemy1::Update(float dt, GameContext& ctx) {
     float playerCX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
     float playerCY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
 
-    float dx = playerCX - centerX;
-    float dy = playerCY - centerY;
-
-    const float PI = 3.1415926535f;
-    m_rotation = std::atan2(dy, dx) - (PI / 2.0f);
+    FacePoint(playerCX, playerCY);
 
     if (CheckCollision(ctx.player)) {
         m_x = prevX;
