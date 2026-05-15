@@ -53,13 +53,13 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
 
     // Gán sprite/animation cho enemy
     if (type == EnemyType::Melee_Basic || type == EnemyType::Melee_Fast) {
-        auto tex = AssetManager::GetInstance().GetTexture(gfx, L"Assets/Enemy/Enemy_3_A_Small_NoLight.png");
+        auto tex = AssetManager::GetInstance().GetTexture(gfx, L"Assets/Enemy/Enemy1_lv1.png");
         enemy->GetAnim().Initialize(tex);
         enemy->GetAnim().AddClip("idle", 0, 0, 128, 128, 1, 1, 1.0f, true);
         enemy->GetAnim().Play("idle");
     }
     else if (type == EnemyType::Ranged_Basic) {
-        auto tex = AssetManager::GetInstance().GetTexture(gfx, L"Assets/Enemy/Enemy_4_A_Small_NoLight.png");
+        auto tex = AssetManager::GetInstance().GetTexture(gfx, L"Assets/Enemy/Enemy2_lv1.png");
         enemy->GetAnim().Initialize(tex);
         enemy->GetAnim().AddClip("idle", 0, 0, 128, 128, 1, 1, 1.0f, true);
         enemy->GetAnim().Play("idle");

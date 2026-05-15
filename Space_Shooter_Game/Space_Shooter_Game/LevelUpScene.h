@@ -28,6 +28,7 @@ private:
 
     float m_mouseX = 0.0f;
     float m_mouseY = 0.0f;
+    int m_hoveredCard = -1;
 
     void GenerateChoices();
 

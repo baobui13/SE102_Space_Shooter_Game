@@ -3,6 +3,7 @@
 #include "GameContext.h"
 #include "Player.h"
 #include "Shield.h"
+#include "AudioManager.h"
 #include <memory>
 
 namespace {
@@ -29,6 +30,7 @@ void ShieldSkill::Activate(GameContext& ctx) {
     float sizeMultiplier = ctx.player.GetSkillSizeMultiplier();
     auto shield = std::make_unique<Shield>(ctx.gfx, m_baseDuration, sizeMultiplier);
     ctx.entityManager.AddEntity(std::move(shield));
+    AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerShield);
 }
 
 void ShieldSkill::OnLevelUp() {

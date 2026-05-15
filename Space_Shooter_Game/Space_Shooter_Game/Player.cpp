@@ -105,6 +105,15 @@ void Player::Update(float dt, GameContext& ctx) {
     }
 
     ClampToScreen(ctx);
+
+    if (m_shootRecoilOffset > 0.0f) {
+        m_shootRecoilOffset -= m_shootRecoilRecoverSpeed * dt;
+
+        if (m_shootRecoilOffset < 0.0f) {
+            m_shootRecoilOffset = 0.0f;
+        }
+    }
+
     m_anim.Update(dt);
     m_skillManager.Update(dt, ctx);
 }
@@ -124,10 +133,10 @@ void Player::Render(Graphics& gfx) {
             // Tạo vector màu: R, G, B nhân với brightness, Alpha giữ nguyên là 1.0f
             DirectX::XMVECTOR flashColor = DirectX::XMVectorSet(brightness, brightness, brightness, 1.0f);
 
-            m_anim.Render(gfx, m_x, m_y, m_width, m_height, flashColor);
+            m_anim.Render(gfx, m_x, m_y + m_shootRecoilOffset, m_width, m_height, flashColor);
         }
         else {
-            m_anim.Render(gfx, m_x, m_y, m_width, m_height);
+            m_anim.Render(gfx, m_x, m_y + m_shootRecoilOffset, m_width, m_height);
         }
     }
 }
@@ -267,6 +276,7 @@ void Player::UpdateAttack(GameContext& ctx) {
     );
 
     AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerShoot, 0.8f);
+    m_shootRecoilOffset = 10.0f;
     m_attackTimer = 1.0f / m_attackSpeed;
 }
 

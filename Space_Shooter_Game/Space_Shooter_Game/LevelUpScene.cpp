@@ -43,6 +43,29 @@ void LevelUpScene::Update(float dt, InputManager& input, SceneManager& manager) 
     float startX = (VIRTUAL_WIDTH - totalWidth) / 2.0f;
     float startY = (VIRTUAL_HEIGHT - CARD_HEIGHT) / 2.0f + 50.0f;
 
+    int newHoveredCard = -1;
+
+    for (size_t i = 0; i < m_currentChoices.size(); ++i) {
+        float cardX = startX + i * (CARD_WIDTH + CARD_SPACING);
+        float cardY = startY;
+
+        bool isHovered =
+            (m_mouseX >= cardX && m_mouseX <= cardX + CARD_WIDTH &&
+                m_mouseY >= cardY && m_mouseY <= cardY + CARD_HEIGHT);
+
+        if (isHovered) {
+            newHoveredCard = (int)i;
+            break;
+        }
+    }
+
+    // Chỉ phát âm thanh khi vừa hover vào card mới
+    if (newHoveredCard != -1 && newHoveredCard != m_hoveredCard) {
+        AudioManager::GetInstance().PlayUiEffect(AudioIds::UiHoverLevel);
+    }
+
+    m_hoveredCard = newHoveredCard;
+
     // 3. Xử lý khi click chuột trái (VK_LBUTTON là mã phím chuột trái mặc định của Windows)
     if (input.IsLeftMouseClicked()) {
         for (size_t i = 0; i < m_currentChoices.size(); ++i) {

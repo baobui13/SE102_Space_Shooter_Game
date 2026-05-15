@@ -29,16 +29,26 @@ BaseGameplayScene::BaseGameplayScene(Graphics& gfx, int levelIndex)
         AssetManager::GetInstance().GetTexture(gfx, L"Assets/BarV1_ProgressBarBorder.png")
     );
 
-    auto buttonTexture = AssetManager::GetInstance().GetTexture(gfx, L"Assets/sheen__0011_Background.png");
-    m_pauseButton = std::make_unique<Button>(VIRTUAL_WIDTH - 90.0f, 20.0f, 70.0f, 70.0f, 1, L"Pause", m_font.get(), Button::TextAlignment::CENTER, 1.0f);
-    m_pauseButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
+
+    m_pauseButton = std::make_unique<Button>(
+        VIRTUAL_WIDTH - 190.0f, - 30.0f, 200.0f, 200.0f
+    );
+    m_pauseButton->SetTextures(
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Pause_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Pause_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Pause_BTN.png")
+    );
 
     InitializePlayer();
+    m_backgroundTexture =
+        AssetManager::GetInstance().GetTexture(
+            gfx,
+            L"Assets/background.png"
+        );
 }
 
 void BaseGameplayScene::SetBackgroundColor(const DirectX::XMFLOAT3& color) {
     m_backgroundColor = color;
-    m_backgroundTexture.Reset();
 }
 
 void BaseGameplayScene::SetBackgroundTexture(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture) {
@@ -108,6 +118,11 @@ void BaseGameplayScene::Update(float dt, InputManager& input, SceneManager& mana
         AudioManager::GetInstance().PlayUiEffect(AudioIds::UiOpenLevelUp);
         manager.PushScene(std::make_unique<LevelUpScene>(m_gfx, *m_player));
     }
+    m_backgroundOffsetY += m_backgroundScrollSpeed * dt;
+
+    if (m_backgroundOffsetY >= VIRTUAL_HEIGHT) {
+        m_backgroundOffsetY = 0.0f;
+    }
 }
 
 void BaseGameplayScene::Render(Graphics& gfx) {
@@ -131,8 +146,57 @@ void BaseGameplayScene::Render(Graphics& gfx) {
     );
 
     if (m_backgroundTexture) {
-        RECT bgRect = { 0, 0, (LONG)VIRTUAL_WIDTH, (LONG)VIRTUAL_HEIGHT };
-        spriteBatch->Draw(m_backgroundTexture.Get(), bgRect, DirectX::Colors::White);
+
+        auto resource = m_backgroundTexture.Get();
+
+        Microsoft::WRL::ComPtr<ID3D11Resource> texResource;
+        resource->GetResource(&texResource);
+
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> tex2D;
+        texResource.As(&tex2D);
+
+        D3D11_TEXTURE2D_DESC desc;
+        tex2D->GetDesc(&desc);
+
+        float texWidth = (float)desc.Width;
+        float texHeight = (float)desc.Height;
+
+        float scaleX = VIRTUAL_WIDTH / texWidth;
+        float scaleY = VIRTUAL_HEIGHT / texHeight;
+
+        DirectX::XMFLOAT2 scale(scaleX, scaleY);
+
+        float scaledHeight = texHeight * scaleY;
+
+        DirectX::XMFLOAT2 pos1(
+            0.0f,
+            m_backgroundOffsetY - scaledHeight
+        );
+
+        DirectX::XMFLOAT2 pos2(
+            0.0f,
+            m_backgroundOffsetY
+        );
+
+        spriteBatch->Draw(
+            m_backgroundTexture.Get(),
+            pos1,
+            nullptr,
+            DirectX::Colors::White,
+            0.0f,
+            DirectX::XMFLOAT2(0, 0),
+            scale
+        );
+
+        spriteBatch->Draw(
+            m_backgroundTexture.Get(),
+            pos2,
+            nullptr,
+            DirectX::Colors::White,
+            0.0f,
+            DirectX::XMFLOAT2(0, 0),
+            scale
+        );
     }
 
     m_entityManager.RenderAll(gfx);
@@ -171,7 +235,7 @@ void BaseGameplayScene::Render(Graphics& gfx) {
     m_hpBar->Render(spriteBatch, hpPercent, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
     if (m_pauseButton) {
-        m_pauseButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::Black, 1.0f);
+        m_pauseButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
     }
 
     spriteBatch->End();

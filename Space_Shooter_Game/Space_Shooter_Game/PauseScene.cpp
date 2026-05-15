@@ -10,39 +10,67 @@
 PauseScene::PauseScene(Graphics& gfx) : m_gfx(gfx) {
     m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
 
-    // Load button texture
-    auto buttonTexture = AssetManager::GetInstance().GetTexture(gfx, L"Assets/sheen__0011_Background.png");
+    float buttonWidth = 520.0f;
+    float buttonHeight = 220.0f;
 
-    // Buttons positioned vertically on the left side
-    float buttonWidth = 300.0f;
-    float buttonHeight = 80.0f;
-    float startX = 100.0f;
-    float startY = 300.0f;
-    float spacing = 100.0f;
+    // spacing tự động theo chiều cao nút
+    float spacing = buttonHeight * 0.25f; // 25% chiều cao nút
+
+    // Tổng chiều cao UI
+    float totalHeight = 4 * buttonHeight + 3 * spacing;
+
+    // Nếu bị tràn màn hình → scale xuống
+    if (totalHeight > VIRTUAL_HEIGHT * 0.9f) {
+        float scale = (VIRTUAL_HEIGHT * 0.9f) / totalHeight;
+        buttonHeight *= scale;
+        spacing *= scale;
+        buttonWidth *= scale;
+        totalHeight = 4 * buttonHeight + 3 * spacing;
+    }
+
+    // Căn giữa
+    float startY = (VIRTUAL_HEIGHT - totalHeight) / 2.0f;
+    float startX = (VIRTUAL_WIDTH - buttonWidth) / 2.0f;
 
     m_continueButton = std::make_unique<Button>(
-        startX, startY, buttonWidth, buttonHeight, 1,
-        L"Continue", m_font.get(), Button::TextAlignment::CENTER, 1.0f
+        startX, startY, buttonWidth, buttonHeight
     );
-    m_continueButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
+
+    m_continueButton->SetTextures(
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Continue_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Continue_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Continue_BTN.png")
+    );
 
     m_settingButton = std::make_unique<Button>(
-        startX, startY + spacing, buttonWidth, buttonHeight, 1,
-        L"Setting", m_font.get(), Button::TextAlignment::CENTER, 1.0f
+        startX, startY + (buttonHeight + spacing), buttonWidth, buttonHeight
     );
-    m_settingButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
+
+    m_settingButton->SetTextures(
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Setting_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Setting_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Setting_BTN.png")
+    );
 
     m_menuButton = std::make_unique<Button>(
-        startX, startY + 2 * spacing, buttonWidth, buttonHeight, 1,
-        L"Menu", m_font.get(), Button::TextAlignment::CENTER, 1.0f
+        startX, startY + 2 * (buttonHeight + spacing), buttonWidth, buttonHeight
     );
-    m_menuButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
+
+    m_menuButton->SetTextures(
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Menu_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Menu_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Menu_BTN.png")
+    );
 
     m_exitButton = std::make_unique<Button>(
-        startX, startY + 3 * spacing, buttonWidth, buttonHeight, 1,
-        L"Exit", m_font.get(), Button::TextAlignment::CENTER, 1.0f
+        startX, startY + 3 * (buttonHeight + spacing), buttonWidth, buttonHeight
     );
-    m_exitButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
+
+    m_exitButton->SetTextures(
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_Scene_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_Scene_BTN.png"),
+        AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_Scene_BTN.png")
+    );
 }
 
 void PauseScene::Update(float dt, InputManager& input, SceneManager& manager) {
@@ -84,10 +112,10 @@ void PauseScene::Render(Graphics& gfx) {
     // But SpriteBatch doesn't support alpha directly, perhaps use a texture or skip
 
     // For simplicity, just render buttons without overlay
-    m_continueButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::Black, 1.0f);
-    m_settingButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::Black, 1.0f);
-    m_menuButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::Black, 1.0f);
-    m_exitButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, DirectX::Colors::White, DirectX::Colors::Black, 1.0f);
+    m_continueButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+    m_settingButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+    m_menuButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+    m_exitButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
     spriteBatch->End();
 }

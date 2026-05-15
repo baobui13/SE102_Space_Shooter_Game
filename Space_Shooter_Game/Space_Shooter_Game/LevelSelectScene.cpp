@@ -9,6 +9,7 @@
 #include "GameConfig.h"
 #include <DirectXColors.h>
 #include <string>
+#include "AudioManager.h"
 
 constexpr float CARD_WIDTH = 260.0f;
 constexpr float CARD_HEIGHT = 520.0f;
@@ -23,9 +24,16 @@ LevelSelectScene::LevelSelectScene(Graphics& gfx)
     m_texCardBG = cardTexture;
     m_texOverlay = assets.GetTexture(gfx, L"Assets/WhitePoint.png");
 
-    auto buttonTexture = assets.GetTexture(gfx, L"Assets/sheen__0011_Background.png");
-    m_backButton = std::make_unique<Button>(50.0f, 40.0f, 180.0f, 60.0f, 1, L"Back", m_font.get(), Button::TextAlignment::CENTER, 0.9f);
-    m_backButton->SetTextures(buttonTexture, buttonTexture, buttonTexture);
+    m_backButton = std::make_unique<Button>(0, 0, 300.0f, 200.0f);
+    m_backButton->SetTextures(
+        assets.GetTexture(gfx, L"Assets/Back_BTN.png"),
+        assets.GetTexture(gfx, L"Assets/Back_BTN.png"),
+        assets.GetTexture(gfx, L"Assets/Back_BTN.png")
+    );
+
+    m_backgroundTexture =
+        assets.GetTexture(gfx, L"Assets/background.png");
+    m_titleTexture = assets.GetTexture(gfx, L"Assets/Choose_Level_BTN.png");
 
     m_levelNames = {
         L"Level 1",
@@ -52,52 +60,138 @@ void LevelSelectScene::Update(float dt, InputManager& input, SceneManager& manag
         return;
     }
 
-    if (input.IsLeftMouseClicked()) {
-        float totalWidth = (4 * CARD_WIDTH) + (3 * CARD_SPACING);
-        float startX = (VIRTUAL_WIDTH - totalWidth) / 2.0f;
-        float cardY = (VIRTUAL_HEIGHT - CARD_HEIGHT) / 2.0f;
+    float totalWidth = (4 * CARD_WIDTH) + (3 * CARD_SPACING);
+    float startX = (VIRTUAL_WIDTH - totalWidth) / 2.0f;
+    float cardY = (VIRTUAL_HEIGHT - CARD_HEIGHT) / 2.0f;
 
-        for (int i = 0; i < 4; ++i) {
-            float cardX = startX + i * (CARD_WIDTH + CARD_SPACING);
-            if (m_mouseX >= cardX && m_mouseX <= cardX + CARD_WIDTH &&
-                m_mouseY >= cardY && m_mouseY <= cardY + CARD_HEIGHT) {
-                switch (i) {
-                case 0:
-                    manager.ChangeScene(std::make_unique<Level1Scene>(m_gfx));
-                    break;
-                case 1:
-                    manager.ChangeScene(std::make_unique<Level2Scene>(m_gfx));
-                    break;
-                case 2:
-                    manager.ChangeScene(std::make_unique<Level3Scene>(m_gfx));
-                    break;
-                case 3:
-                    manager.ChangeScene(std::make_unique<Level4Scene>(m_gfx));
-                    break;
-                }
-                return;
-            }
+    for (int i = 0; i < 4; ++i) {
+
+        float cardX = startX + i * (CARD_WIDTH + CARD_SPACING);
+
+        bool isHovered =
+            m_mouseX >= cardX &&
+            m_mouseX <= cardX + CARD_WIDTH &&
+            m_mouseY >= cardY &&
+            m_mouseY <= cardY + CARD_HEIGHT;
+
+        // Hover sound
+        if (isHovered && !m_wasHovered[i]) {
+            AudioManager::GetInstance().PlayUiEffect(AudioIds::UiHoverLevel);
         }
+
+        // Lưu trạng thái hover
+        m_wasHovered[i] = isHovered;
+
+        // Click vào level
+        if (isHovered && input.IsLeftMouseClicked()) {
+
+            switch (i) {
+            case 0:
+                manager.ChangeScene(std::make_unique<Level1Scene>(m_gfx));
+                break;
+
+            case 1:
+                manager.ChangeScene(std::make_unique<Level2Scene>(m_gfx));
+                break;
+
+            case 2:
+                manager.ChangeScene(std::make_unique<Level3Scene>(m_gfx));
+                break;
+
+            case 3:
+                manager.ChangeScene(std::make_unique<Level4Scene>(m_gfx));
+                break;
+            }
+
+            return;
+        }
+    }
+    m_backgroundOffsetY += m_backgroundScrollSpeed * dt;
+
+    if (m_backgroundOffsetY >= VIRTUAL_HEIGHT) {
+        m_backgroundOffsetY = 0.0f;
     }
 }
 
 void LevelSelectScene::Render(Graphics& gfx) {
-    gfx.ClearBuffer(0.08f, 0.08f, 0.18f);
+    gfx.ClearBuffer(0.0f, 0.0f, 0.0f);
     auto spriteBatch = gfx.GetSpriteBatch();
 
     spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, gfx.GetStates()->NonPremultiplied(), nullptr, nullptr, nullptr, nullptr, gfx.GetScaleMatrix());
+
+    if (m_backgroundTexture) {
+
+        LONG y = (LONG)m_backgroundOffsetY;
+
+        RECT rect1 = {
+            0,
+            y - (LONG)VIRTUAL_HEIGHT,
+            (LONG)VIRTUAL_WIDTH,
+            y
+        };
+
+        RECT rect2 = {
+            0,
+            y,
+            (LONG)VIRTUAL_WIDTH,
+            y + (LONG)VIRTUAL_HEIGHT
+        };
+
+        spriteBatch->Draw(
+            m_backgroundTexture.Get(),
+            rect1,
+            nullptr,
+            DirectX::Colors::White
+        );
+
+        spriteBatch->Draw(
+            m_backgroundTexture.Get(),
+            rect2,
+            nullptr,
+            DirectX::Colors::White
+        );
+    }
 
     if (m_texOverlay) {
         RECT bgRect = { 0, 0, (LONG)VIRTUAL_WIDTH, (LONG)VIRTUAL_HEIGHT };
         spriteBatch->Draw(m_texOverlay.Get(), bgRect, DirectX::Colors::Black * 0.45f);
     }
 
-    std::wstring title = L"CHOOSE LEVEL";
-    m_font->DrawString(spriteBatch, title.c_str(), DirectX::XMFLOAT2(VIRTUAL_WIDTH / 2.0f - 240.0f, 80.0f), DirectX::Colors::Gold);
+    // ====== CĂN GIỮA UI ======
+    const float titleW = 700.0f;
+    const float titleH = 300.0f;
+    const float gap = 1.0f;
 
+    // tổng chiều cao
+    float totalHeight = titleH + gap + CARD_HEIGHT;
+
+    // căn giữa dọc
+    float startY = (VIRTUAL_HEIGHT - totalHeight) / 2;
+
+    // vị trí title
+    m_titlePos = {
+        (VIRTUAL_WIDTH - titleW) / 2,
+        startY
+    };
+
+    // card nằm dưới title
+    float cardY = startY + titleH + gap;
+
+    // căn giữa ngang
     float totalWidth = (4 * CARD_WIDTH) + (3 * CARD_SPACING);
     float startX = (VIRTUAL_WIDTH - totalWidth) / 2.0f;
-    float cardY = (VIRTUAL_HEIGHT - CARD_HEIGHT) / 2.0f;
+
+    // ====== VẼ TITLE ======
+    RECT titleRect = {
+        (LONG)m_titlePos.x,
+        (LONG)m_titlePos.y,
+        (LONG)(m_titlePos.x + titleW),
+        (LONG)(m_titlePos.y + titleH)
+    };
+
+    if (m_titleTexture) {
+        spriteBatch->Draw(m_titleTexture.Get(), titleRect);
+    }
 
     for (int i = 0; i < 4; ++i) {
         float cardX = startX + i * (CARD_WIDTH + CARD_SPACING);

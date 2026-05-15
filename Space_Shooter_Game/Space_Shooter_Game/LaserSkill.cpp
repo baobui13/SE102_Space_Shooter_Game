@@ -3,6 +3,7 @@
 #include "EntityManager.h"
 #include "Laser.h"
 #include "Player.h"
+#include "AudioManager.h"
 
 namespace {
 constexpr char LASER_KEY = '1';
@@ -34,6 +35,9 @@ void LaserSkill::Activate(GameContext& ctx) {
 
     auto laser = std::make_unique<Laser>(ctx.gfx, m_baseDuration, damage, sizeMultiplier);
     ctx.entityManager.AddEntity(std::move(laser));
+
+    // Phát âm thanh laser
+    AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerLaser);
 }
 
 void LaserSkill::OnLevelUp() {

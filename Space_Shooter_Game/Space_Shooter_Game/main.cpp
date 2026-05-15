@@ -22,7 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     audio.Initialize();
 
     // Truyền tỉ lệ scale thực tế vào InputManager để tính tọa độ chuột chính xác
-    gameWindow.GetInput().SetScale(gfx.GetScaleX(), gfx.GetScaleY());
+ 
 
     // Khởi tạo SceneManager
     SceneManager sceneManager;
@@ -61,6 +61,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         // --- UPDATE (Cập nhật logic) ---
 
         // Truyền InputManager vào hàm Update của SceneManager
+        RECT rect;
+        GetClientRect(gameWindow.GetHWND(), &rect);
+
+        float scaleX = (float)(rect.right - rect.left) / VIRTUAL_WIDTH;
+        float scaleY = (float)(rect.bottom - rect.top) / VIRTUAL_HEIGHT;
+
+        gameWindow.GetInput().SetScale(scaleX, scaleY);
         sceneManager.Update(dt, gameWindow.GetInput());
 
         // --- RENDER (Vẽ đồ họa) ---

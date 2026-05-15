@@ -33,6 +33,9 @@ protected:
     DirectX::XMFLOAT3 m_backgroundColor;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_backgroundTexture;
 
+    float m_backgroundOffsetY = 0.0f;
+    float m_backgroundScrollSpeed = 40.0f;
+
 public:
     BaseGameplayScene(Graphics& gfx, int levelIndex = 1);
     virtual ~BaseGameplayScene() = default;

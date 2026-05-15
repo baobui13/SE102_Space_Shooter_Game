@@ -215,16 +215,28 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Assets\background_lv2.png" />
+    <Image Include="Assets\background_lv3.png" />
+    <Image Include="Assets\background_lv4.png" />
+    <Image Include="Assets\Back_BTN.png" />
+    <Image Include="Assets\background.png" />
     <Image Include="Assets\Bullets1.png" />
+    <Image Include="Assets\Choose_Level_BTN.png" />
+    <Image Include="Assets\Continue_BTN.png" />
     <Image Include="Assets\Exit_BTN.png" />
+    <Image Include="Assets\Exit_Scene_BTN.png" />
     <Image Include="Assets\ExplodingBullet_1.png" />
     <Image Include="Assets\lazer_1.png" />
+    <Image Include="Assets\Menu_BTN.png" />
+    <Image Include="Assets\Pause_BTN.png" />
+    <Image Include="Assets\Setting_BTN.png" />
     <Image Include="Assets\Shield_1.png" />
     <Image Include="Assets\Spaceship.png" />
-    <Image Include="Assets\Start_BTN.png" />
     <Image Include="Assets\BarV1_Bar.png" />
     <Image Include="Assets\BarV1_ProgressBar.png" />
     <Image Include="Assets\BarV1_ProgressBarBorder.png" />
+    <Image Include="Assets\Start_BTN.png" />
+    <Image Include="Assets\Volume_BTN.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Arial.spritefont" />

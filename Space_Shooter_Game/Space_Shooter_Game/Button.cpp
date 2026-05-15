@@ -168,7 +168,15 @@ void Button::Render(
 
     const RECT rect = GetDestinationRect(screenWidth, screenHeight);
     if (auto texture = GetCurrentTexture()) {
-        spriteBatch->Draw(texture, rect, tint);
+
+        DirectX::XMVECTOR finalTint = tint;
+
+        // Hover sáng hơn
+        if (m_state == State::HOVER) {
+            finalTint = DirectX::XMVectorSet(1.5f, 1.5f, 1.5f, 1.0f);
+        }
+
+        spriteBatch->Draw(texture, rect, finalTint);
     }
 
     if (!m_font || m_title.empty()) {

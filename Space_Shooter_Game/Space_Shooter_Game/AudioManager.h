@@ -23,9 +23,12 @@ inline constexpr const char* PlayerDash = "sfx.player.dash";
 inline constexpr const char* PlayerHit = "sfx.player.hit";
 inline constexpr const char* PlayerDeath = "sfx.player.death";
 inline constexpr const char* PlayerLevelUp = "sfx.player.levelup";
+inline constexpr const char* PlayerLaser = "sfx.player.laser";
+inline constexpr const char* PlayerShield = "sfx.player.shield";
 
 inline constexpr const char* UiHover = "ui.hover";
 inline constexpr const char* UiClick = "ui.click";
+inline constexpr const char* UiHoverLevel = "ui.hoverlevel";
 inline constexpr const char* UiOpenLevelUp = "ui.levelup.open";
 inline constexpr const char* UiSelectUpgrade = "ui.levelup.select";
 }

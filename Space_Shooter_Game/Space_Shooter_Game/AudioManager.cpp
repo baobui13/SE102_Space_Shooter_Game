@@ -183,7 +183,7 @@ void AudioManager::RegisterDefaultClips() {
         return;
     }
 
-    RegisterClip(AudioIds::MenuMusic, L"Assets/Audio/BGM/menu_theme.wav", AudioCategory::BackgroundMusic, 0.7f);
+    RegisterClip(AudioIds::MenuMusic, L"Assets/Audio/BGM/menu_theme.wav", AudioCategory::BackgroundMusic, 0.5f);
     RegisterClip(AudioIds::GameplayMusic, L"Assets/Audio/BGM/gameplay_theme.wav", AudioCategory::BackgroundMusic, 0.8f);
 
     RegisterClip(AudioIds::PlayerShoot, L"Assets/Audio/SFX/player_shoot.wav", AudioCategory::SoundEffect, 0.7f);
@@ -191,10 +191,12 @@ void AudioManager::RegisterDefaultClips() {
     RegisterClip(AudioIds::PlayerHit, L"Assets/Audio/SFX/player_hit.wav", AudioCategory::SoundEffect, 0.9f);
     RegisterClip(AudioIds::PlayerDeath, L"Assets/Audio/SFX/player_death.wav", AudioCategory::SoundEffect, 1.0f);
     RegisterClip(AudioIds::PlayerLevelUp, L"Assets/Audio/SFX/player_levelup.wav", AudioCategory::SoundEffect, 0.95f);
+    RegisterClip(AudioIds::PlayerLaser, L"Assets/Audio/SFX/laser.wav", AudioCategory::SoundEffect, 1.0f);
+    RegisterClip(AudioIds::PlayerShield, L"Assets/Audio/SFX/shield1.wav", AudioCategory::SoundEffect, 1.0f);
 
-    RegisterClip(AudioIds::UiHover, L"Assets/Audio/UI/ui_hover.wav", AudioCategory::UiEffect, 0.5f);
+    RegisterClip(AudioIds::UiHover, L"Assets/Audio/UI/ui_hover.wav", AudioCategory::UiEffect, 1.0f);
     RegisterClip(AudioIds::UiClick, L"Assets/Audio/UI/ui_click.wav", AudioCategory::UiEffect, 0.75f);
-    RegisterClip(AudioIds::UiOpenLevelUp, L"Assets/Audio/UI/ui_open_levelup.wav", AudioCategory::UiEffect, 0.8f);
+    RegisterClip(AudioIds::UiHoverLevel, L"Assets/Audio/UI/ui_hover_level.wav", AudioCategory::UiEffect, 0.5f);
     RegisterClip(AudioIds::UiSelectUpgrade, L"Assets/Audio/UI/ui_select_upgrade.wav", AudioCategory::UiEffect, 0.85f);
 
     m_defaultClipsRegistered = true;

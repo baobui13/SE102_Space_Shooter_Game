@@ -6,7 +6,12 @@
 Level4Scene::Level4Scene(Graphics& gfx)
     : BaseGameplayScene(gfx, 4) {
     auto bgTexture = AssetManager::GetInstance().GetTexture(gfx, L"Assets/sheen__0011_Background.png");
-    SetBackgroundTexture(bgTexture);
+    SetBackgroundTexture(
+        AssetManager::GetInstance().GetTexture(
+            gfx,
+            L"Assets/background_lv4.png"
+        )
+    );
     InitializeLevel();
 }
 

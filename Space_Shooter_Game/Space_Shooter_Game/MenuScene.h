@@ -19,4 +19,10 @@ private:
     // Danh sách các nút trên Menu
     std::unique_ptr<Button> m_playButton;
     std::unique_ptr<Button> m_exitButton;
+    std::unique_ptr<Button> m_volumeButton;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_backgroundTexture;
+
+    float m_backgroundOffsetY = 0.0f;
+    float m_backgroundScrollSpeed = 40.0f;
 };

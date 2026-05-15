@@ -46,6 +46,9 @@ private:
     const float m_invulDuration = 1.0f; // Tổng thời gian nhấp nháy (1 giây)
     float m_blinkTimer = 0.0f;          // Timer nội bộ để tính toán hàm Sin
 
+    float m_shootRecoilOffset = 0.0f;             //Biến giật nhẹ
+    float m_shootRecoilRecoverSpeed = 80.0f;
+
     SpriteAnimation m_deathAnim; // Animation khi chết
     bool m_isDead = false;       // Trạng thái đã chết nhưng đang chạy anim
 
