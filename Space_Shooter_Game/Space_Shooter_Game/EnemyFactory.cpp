@@ -6,7 +6,7 @@
 #include "AssetManager.h"
 
 namespace {
-std::unique_ptr<IMovementStrategy> CreateMovementStrategy(const EnemyMovementDefinition& movement) {
+std::unique_ptr<IMovementStrategy> CreateSingleMovementStrategy(const EnemyMovementDefinition& movement) {
     switch (movement.kind) {
     case EnemyMovementKind::Chase:
         return std::make_unique<ChaseMovement>(movement.a);
@@ -21,6 +21,81 @@ std::unique_ptr<IMovementStrategy> CreateMovementStrategy(const EnemyMovementDef
     }
 }
 
+class SequencedMovementStrategy : public IMovementStrategy {
+public:
+    explicit SequencedMovementStrategy(EnemyMovementSequenceDefinition sequence)
+        : m_sequence(std::move(sequence)) {
+        if (!m_sequence.steps.empty()) {
+            m_currentStrategy = CreateSingleMovementStrategy(m_sequence.steps[0].movement);
+        }
+    }
+
+    void CalculateVelocity(float cx, float cy, float dt, GameContext& ctx,
+        float& outVx, float& outVy) override {
+        AdvanceStep(dt);
+
+        if (m_currentStrategy) {
+            m_currentStrategy->CalculateVelocity(cx, cy, dt, ctx, outVx, outVy);
+        }
+        else {
+            outVx = 0.0f;
+            outVy = 0.0f;
+        }
+    }
+
+private:
+    EnemyMovementSequenceDefinition m_sequence;
+    std::unique_ptr<IMovementStrategy> m_currentStrategy;
+    size_t m_currentStepIndex = 0;
+    float m_stepElapsed = 0.0f;
+
+    void AdvanceStep(float dt) {
+        if (m_sequence.steps.empty()) {
+            return;
+        }
+
+        m_stepElapsed += dt;
+
+        while (ShouldAdvanceCurrentStep()) {
+            size_t nextIndex = m_currentStepIndex + 1;
+            if (nextIndex >= m_sequence.steps.size()) {
+                if (m_sequence.mode == EnemyMovementSequenceMode::Loop) {
+                    nextIndex = 0;
+                }
+                else {
+                    return;
+                }
+            }
+
+            m_currentStepIndex = nextIndex;
+            m_stepElapsed = 0.0f;
+            m_currentStrategy = CreateSingleMovementStrategy(m_sequence.steps[m_currentStepIndex].movement);
+        }
+    }
+
+    bool ShouldAdvanceCurrentStep() const {
+        if (m_sequence.steps.empty()) {
+            return false;
+        }
+
+        if (m_sequence.mode == EnemyMovementSequenceMode::Linear &&
+            m_currentStepIndex + 1 >= m_sequence.steps.size()) {
+            return false;
+        }
+
+        float duration = m_sequence.steps[m_currentStepIndex].duration;
+        return duration > 0.0f && m_stepElapsed >= duration;
+    }
+};
+
+std::unique_ptr<IMovementStrategy> CreateMovementStrategy(EnemyMovementSequenceDefinition sequence) {
+    if (sequence.steps.empty()) {
+        return CreateSingleMovementStrategy(EnemyMovementDefinition::Chase(80.0f));
+    }
+
+    return std::make_unique<SequencedMovementStrategy>(std::move(sequence));
+}
+
 LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
     switch (type) {
     case EnemyType::Melee_Fast:
@@ -29,7 +104,7 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
             x,
             y,
             { 50.0f, 150.0f, 5.0f, 1.0f, 20.0f, 15 },
-            EnemyMovementDefinition::SineWave(120.0f, 60.0f, 3.0f)
+            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::SineWave(120.0f, 60.0f, 3.0f))
         };
     case EnemyType::Ranged_Basic:
         return {
@@ -37,7 +112,7 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
             x,
             y,
             { 80.0f, 100.0f, 15.0f, 1.0f, 500.0f, 20 },
-            EnemyMovementDefinition::Linear(0.0f, 50.0f)
+            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 50.0f))
         };
     case EnemyType::Melee_Basic:
     default:
@@ -46,7 +121,7 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
             x,
             y,
             { 100.0f, 80.0f, 10.0f, 1.0f, 30.0f, 10 },
-            EnemyMovementDefinition::Chase(80.0f)
+            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(80.0f))
         };
     }
 }
@@ -71,8 +146,8 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
         enemy = std::make_unique<MeleeEnemy1>(
             spawn.x,
             spawn.y,
-            visual.width,
-            visual.height,
+            visual.displayWidth,
+            visual.displayHeight,
             stats.health,
             stats.moveSpeed,
             stats.attackPower,
@@ -86,8 +161,8 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
         enemy = std::make_unique<RangeEnemy1>(
             spawn.x,
             spawn.y,
-            visual.width,
-            visual.height,
+            visual.displayWidth,
+            visual.displayHeight,
             stats.health,
             stats.moveSpeed,
             stats.attackPower,
@@ -101,8 +176,8 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
         enemy = std::make_unique<MeleeEnemy1>(
             spawn.x,
             spawn.y,
-            visual.width,
-            visual.height,
+            visual.displayWidth,
+            visual.displayHeight,
             stats.health,
             stats.moveSpeed,
             stats.attackPower,
@@ -113,7 +188,7 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
         break;
     }
 
-    enemy->SetMovementStrategy(CreateMovementStrategy(spawn.movement));
+    enemy->SetMovementStrategy(CreateMovementStrategy(spawn.movementSequence));
     enemy->SetSpriteForwardAngle(visual.spriteForwardAngle);
     enemy->SetExpReward(stats.expReward);
 

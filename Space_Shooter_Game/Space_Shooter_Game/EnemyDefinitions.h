@@ -30,8 +30,8 @@ inline float SpriteHeadDirectionToRadians(SpriteHeadDirection direction) {
 
 struct EnemyVisualDefinition {
     EnemyType type;
-    float width;
-    float height;
+    float displayWidth;
+    float displayHeight;
     std::wstring texturePath;
     std::string clipName;
     int frameX;
@@ -87,12 +87,46 @@ struct EnemyMovementDefinition {
     }
 };
 
+struct EnemyMovementStepDefinition {
+    float duration;
+    EnemyMovementDefinition movement;
+
+    static EnemyMovementStepDefinition Step(float durationSeconds, EnemyMovementDefinition movementDefinition) {
+        return { durationSeconds, movementDefinition };
+    }
+};
+
+enum class EnemyMovementSequenceMode {
+    Linear,
+    Loop
+};
+
+struct EnemyMovementSequenceDefinition {
+    EnemyMovementSequenceMode mode;
+    std::vector<EnemyMovementStepDefinition> steps;
+
+    static EnemyMovementSequenceDefinition Single(EnemyMovementDefinition movement) {
+        return {
+            EnemyMovementSequenceMode::Linear,
+            { EnemyMovementStepDefinition::Step(0.0f, movement) }
+        };
+    }
+
+    static EnemyMovementSequenceDefinition Linear(std::vector<EnemyMovementStepDefinition> movementSteps) {
+        return { EnemyMovementSequenceMode::Linear, std::move(movementSteps) };
+    }
+
+    static EnemyMovementSequenceDefinition Loop(std::vector<EnemyMovementStepDefinition> movementSteps) {
+        return { EnemyMovementSequenceMode::Loop, std::move(movementSteps) };
+    }
+};
+
 struct LevelEnemySpawnDefinition {
     EnemyType type;
     float x;
     float y;
     EnemyStatsDefinition stats;
-    EnemyMovementDefinition movement;
+    EnemyMovementSequenceDefinition movementSequence;
 };
 
 struct EnemyPhaseDefinition {

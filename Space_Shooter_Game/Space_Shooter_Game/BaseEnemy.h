@@ -1,4 +1,5 @@
 #pragma once
+#include "AttackMarkerDefinitions.h"
 #include "GameObject.h"
 #include "IMovementStrategy.h"
 #include <memory>
@@ -56,6 +57,7 @@ public:
     void SetSpriteForwardAngle(float radians) { m_spriteForwardAngle = radians; }
     void FacePoint(float targetX, float targetY);
     float GetAimAngle() const { return m_rotation + m_spriteForwardAngle; }
+    void SpawnAttackMarker(GameContext& ctx, const AttackMarkerSpawnData& markerData);
 
     // Getter
     float GetHealth() const { return m_health; }

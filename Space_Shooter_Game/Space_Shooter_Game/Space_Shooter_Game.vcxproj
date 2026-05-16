@@ -132,6 +132,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="AttackMarker.h" />
+    <ClInclude Include="AttackMarkerDefinitions.h" />
+    <ClInclude Include="AttackMarkerPool.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="BaseEnemy.h" />
     <ClInclude Include="BaseGameplayScene.h" />
@@ -181,6 +184,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="AttackMarker.cpp" />
+    <ClCompile Include="AttackMarkerPool.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BaseEnemy.cpp" />
     <ClCompile Include="BaseGameplayScene.cpp" />

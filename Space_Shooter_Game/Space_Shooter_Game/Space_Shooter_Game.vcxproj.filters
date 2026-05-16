@@ -137,6 +137,15 @@
     <ClInclude Include="LevelEnemyPool.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="AttackMarker.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackMarkerDefinitions.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackMarkerPool.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -236,6 +245,12 @@
       <Filter>Managers</Filter>
     </ClCompile>
     <ClCompile Include="LevelEnemyPool.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackMarker.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackMarkerPool.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
   </ItemGroup>

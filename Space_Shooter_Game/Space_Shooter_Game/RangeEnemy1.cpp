@@ -31,28 +31,36 @@ void RangeEnemy1::Update(float dt, GameContext& ctx) {
 
     switch (m_state) {
     case RangeState::Moving:
-        // Cập nhật hướng về player để trông tự nhiên
         UpdateRotationToPlayer(ctx);
 
         if (dist < SAFE_DISTANCE) {
-            // Player ở gần -> bỏ chạy
             float moveDirX = -dx / dist;
             float moveDirY = -dy / dist;
             m_x += moveDirX * m_moveSpeed * dt;
             m_y += moveDirY * m_moveSpeed * dt;
         }
         else {
-            // THÊM ĐOẠN NÀY: Player ở xa -> Di chuyển bình thường đi vào màn hình
             Move(dt, ctx);
         }
 
         if (m_stateTimer >= TIME_MOVE) {
+            float aimAngle = GetAimAngle();
+            SpawnAttackMarker(
+                ctx,
+                AttackMarkerSpawnData::Line(
+                    AttackMarkerType::DangerLine,
+                    myCX,
+                    myCY,
+                    myCX + std::cos(aimAngle) * 2000.0f,
+                    myCY + std::sin(aimAngle) * 2000.0f,
+                    TIME_AIM
+                )
+            );
             ResetState(RangeState::Aiming);
         }
         break;
 
     case RangeState::Aiming:
-        // Trong lúc ngắm, xoay liên tục đuổi theo Player
         UpdateRotationToPlayer(ctx);
 
         if (m_stateTimer >= TIME_AIM) {
@@ -61,10 +69,7 @@ void RangeEnemy1::Update(float dt, GameContext& ctx) {
         break;
 
     case RangeState::Shooting:
-        // Đứng im, KHÔNG cập nhật rotation (khóa hướng bắn)
-
         if (m_stateTimer >= TIME_SHOOT) {
-            // Thực hiện bắn viên đạn cực nhanh theo hướng m_rotation đã khóa
             float aimAngle = GetAimAngle();
             float targetX = myCX + std::cos(aimAngle) * 100.0f;
             float targetY = myCY + std::sin(aimAngle) * 100.0f;
@@ -84,24 +89,7 @@ void RangeEnemy1::Update(float dt, GameContext& ctx) {
 }
 
 void RangeEnemy1::Render(Graphics& gfx) {
-    // Vẽ quái vật
     BaseEnemy::Render(gfx);
-
-    // Nếu đang ở trạng thái ngắm, vẽ đường line màu đỏ
-    if (m_state == RangeState::Aiming && m_isActive) {
-        float myCX = m_x + m_width / 2.0f;
-        float myCY = m_y + m_height / 2.0f;
-
-        // Tính điểm kết thúc của đường kẻ (kéo dài ra hết màn hình, ví dụ 2000px)
-        float lineLength = 2000.0f;
-        float aimAngle = GetAimAngle();
-        float endX = myCX + std::cos(aimAngle) * lineLength;
-        float endY = myCY + std::sin(aimAngle) * lineLength;
-
-        auto whitePixel = AssetManager::GetInstance().GetTexture(gfx, L"Assets/WhitePixel.png"); // Nhớ tạo file WhitePixel.png 1x1 nhé
-
-        gfx.DrawLine(whitePixel.Get(), myCX, myCY, endX, endY, 2.0f, DirectX::Colors::Red);
-    }
 }
 
 void RangeEnemy1::ResetState(RangeState newState) {
@@ -112,8 +100,6 @@ void RangeEnemy1::ResetState(RangeState newState) {
 void RangeEnemy1::UpdateRotationToPlayer(GameContext& ctx) {
     float playerCX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
     float playerCY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
-    float myCX = m_x + m_width / 2.0f;
-    float myCY = m_y + m_height / 2.0f;
 
     FacePoint(playerCX, playerCY);
 }

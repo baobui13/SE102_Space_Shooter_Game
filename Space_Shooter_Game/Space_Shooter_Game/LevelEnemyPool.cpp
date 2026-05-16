@@ -17,9 +17,9 @@ LevelEnemySpawnDefinition Enemy(
     float x,
     float y,
     EnemyStatsDefinition stats,
-    EnemyMovementDefinition movement)
+    EnemyMovementSequenceDefinition movementSequence)
 {
-    return { type, x, y, stats, movement };
+    return { type, x, y, stats, std::move(movementSequence) };
 }
 
 const EnemyStatsDefinition MELEE_BASIC = Stats(100.0f, 80.0f, 10.0f, 30.0f, 10);
@@ -27,15 +27,40 @@ const EnemyStatsDefinition MELEE_FAST = Stats(50.0f, 150.0f, 5.0f, 20.0f, 15);
 const EnemyStatsDefinition RANGED_BASIC = Stats(80.0f, 100.0f, 15.0f, 500.0f, 20);
 
 LevelEnemySpawnDefinition MeleeBasic(float x, float y) {
-    return Enemy(EnemyType::Melee_Basic, x, y, MELEE_BASIC, EnemyMovementDefinition::Chase(80.0f));
+    return Enemy(
+        EnemyType::Melee_Basic,
+        x,
+        y,
+        MELEE_BASIC,
+        EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(80.0f))
+    );
 }
 
 LevelEnemySpawnDefinition MeleeFast(float x, float y) {
-    return Enemy(EnemyType::Melee_Fast, x, y, MELEE_FAST, EnemyMovementDefinition::SineWave(120.0f, 60.0f, 3.0f));
+    return Enemy(
+        EnemyType::Melee_Fast,
+        x,
+        y,
+        MELEE_FAST,
+        EnemyMovementSequenceDefinition::Loop({
+            EnemyMovementStepDefinition::Step(2.0f, EnemyMovementDefinition::SineWave(120.0f, 60.0f, 3.0f)),
+            EnemyMovementStepDefinition::Step(1.0f, EnemyMovementDefinition::Chase(150.0f)),
+        })
+    );
 }
 
 LevelEnemySpawnDefinition RangedBasic(float x, float y) {
-    return Enemy(EnemyType::Ranged_Basic, x, y, RANGED_BASIC, EnemyMovementDefinition::Linear(0.0f, 50.0f));
+    return Enemy(
+        EnemyType::Ranged_Basic,
+        x,
+        y,
+        RANGED_BASIC,
+        EnemyMovementSequenceDefinition::Linear({
+            EnemyMovementStepDefinition::Step(2.0f, EnemyMovementDefinition::Linear(0.0f, 50.0f)),
+            EnemyMovementStepDefinition::Step(1.5f, EnemyMovementDefinition::SineWave(70.0f, 40.0f, 2.0f)),
+            EnemyMovementStepDefinition::Step(0.0f, EnemyMovementDefinition::Linear(0.0f, 30.0f)),
+        })
+    );
 }
 }
 

@@ -1,4 +1,5 @@
 #include "BaseEnemy.h"
+#include "AttackMarker.h"
 #include "GameContext.h"
 #include "EntityManager.h" 
 #include "Player.h"
@@ -127,4 +128,8 @@ void BaseEnemy::FacePoint(float targetX, float targetY) {
     float dy = targetY - centerY;
 
     m_rotation = std::atan2(dy, dx) - m_spriteForwardAngle;
+}
+
+void BaseEnemy::SpawnAttackMarker(GameContext& ctx, const AttackMarkerSpawnData& markerData) {
+    ctx.entityManager.AddEntity(std::make_unique<AttackMarker>(markerData));
 }
