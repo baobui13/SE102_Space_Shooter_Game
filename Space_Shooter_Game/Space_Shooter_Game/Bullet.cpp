@@ -12,6 +12,8 @@ Bullet::Bullet(Graphics& gfx)
     , m_maxDistance(0.0f)
     , m_distanceTraveled(0.0f)
     , m_owner(BulletOwner::Player)
+    , m_rotation(0.0f)
+    , m_spriteForwardAngle(0.0f)
 {
     SetDefaultAnimation(gfx);
 }
@@ -50,6 +52,9 @@ void Bullet::ReInitialize(float startX, float startY, float targetX, float targe
 
     m_vx = dx * speed;
     m_vy = dy * speed;
+
+    // Tính toán góc xoay ban đầu
+    m_rotation = std::atan2(m_vy, m_vx) - m_spriteForwardAngle;
 }
 
 void Bullet::SetDefaultAnimation(Graphics& gfx) {
@@ -122,4 +127,13 @@ void Bullet::Update(float dt, ::GameContext& ctx) {
             break;
         }
     }
+}
+
+void Bullet::SetSpriteForwardAngle(float radians) {
+    m_spriteForwardAngle = radians;
+    m_rotation = std::atan2(m_vy, m_vx) - m_spriteForwardAngle;
+}
+
+void Bullet::Render(Graphics& gfx) {
+    m_anim.Render(gfx, m_x, m_y, m_width, m_height, DirectX::Colors::White, m_rotation);
 }

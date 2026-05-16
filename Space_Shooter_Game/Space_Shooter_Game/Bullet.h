@@ -14,6 +14,9 @@ private:
     float m_distanceTraveled;
     BulletOwner m_owner;
 
+    float m_rotation = 0.0f;
+    float m_spriteForwardAngle = 0.0f;
+
 public:
     Bullet(Graphics& gfx);
     Bullet(Graphics& gfx, float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance);
@@ -35,4 +38,9 @@ public:
 
     int GetDamage() const { return m_damage; }
     BulletOwner GetOwner() const { return m_owner; }
+    
+    void SetSpriteForwardAngle(float radians);
+    float GetRotation() const { return m_rotation; }
+
+    void Render(Graphics& gfx) override;
 };
