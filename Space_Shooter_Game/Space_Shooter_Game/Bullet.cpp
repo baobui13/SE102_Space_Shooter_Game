@@ -1,16 +1,19 @@
 #include "Bullet.h"
-#include "GameContext.h"
 #include "AssetManager.h"
-#include <cmath>
-#include "EntityManager.h"
 #include "BaseEnemy.h"
+#include "EntityManager.h"
+#include "GameContext.h"
+#include "Player.h"
+#include <cmath>
 
 Bullet::Bullet(Graphics& gfx)
-    : GameObject(0, 0, 16.0f, 16.0f), m_damage(0), m_maxDistance(0), m_distanceTraveled(0)
+    : GameObject(0, 0, 16.0f, 16.0f)
+    , m_damage(0)
+    , m_maxDistance(0.0f)
+    , m_distanceTraveled(0.0f)
+    , m_owner(BulletOwner::Player)
 {
-    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Bullets1.png"));
-    m_anim.AddClip("Fly", 15, 15, 17, 17, 1, 1, 1.0f, true);
-    m_anim.Play("Fly");
+    SetDefaultAnimation(gfx);
 }
 
 Bullet::Bullet(Graphics& gfx, float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance)
@@ -20,11 +23,16 @@ Bullet::Bullet(Graphics& gfx, float startX, float startY, float targetX, float t
 }
 
 void Bullet::ReInitialize(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance) {
+    ReInitialize(startX, startY, targetX, targetY, speed, damage, maxDistance, BulletOwner::Player);
+}
+
+void Bullet::ReInitialize(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance, BulletOwner owner) {
     m_x = startX;
     m_y = startY;
     m_damage = damage;
     m_maxDistance = maxDistance;
     m_distanceTraveled = 0.0f;
+    m_owner = owner;
     m_isActive = true;
 
     float dx = targetX - startX;
@@ -44,13 +52,49 @@ void Bullet::ReInitialize(float startX, float startY, float targetX, float targe
     m_vy = dy * speed;
 }
 
+void Bullet::SetDefaultAnimation(Graphics& gfx) {
+    m_width = 16.0f;
+    m_height = 16.0f;
+    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Bullets1.png"));
+    m_anim.AddClip("Fly", 15, 15, 17, 17, 1, 1, 1.0f, true);
+    m_anim.Play("Fly");
+}
+
+void Bullet::SetAnimation(Graphics& gfx, const wchar_t* texturePath, const std::string& clipName,
+    int frameX, int frameY, int frameWidth, int frameHeight,
+    int frameCount, int columns, float frameDuration, bool loop,
+    int spacingX, int spacingY)
+{
+    SetAnimation(gfx, texturePath, clipName, frameX, frameY, frameWidth, frameHeight,
+        frameCount, columns, frameDuration, loop, (float)frameWidth, (float)frameHeight, spacingX, spacingY);
+}
+
+void Bullet::SetAnimation(Graphics& gfx, const wchar_t* texturePath, const std::string& clipName,
+    int frameX, int frameY, int frameWidth, int frameHeight,
+    int frameCount, int columns, float frameDuration, bool loop,
+    float displayWidth, float displayHeight,
+    int spacingX, int spacingY)
+{
+    m_width = displayWidth;
+    m_height = displayHeight;
+    auto texture = AssetManager::GetInstance().GetTexture(gfx, texturePath);
+    if (!texture) {
+        SetDefaultAnimation(gfx);
+        m_width = displayWidth;
+        m_height = displayHeight;
+        return;
+    }
+
+    m_anim.Initialize(texture);
+    m_anim.AddClip(clipName, frameX, frameY, frameWidth, frameHeight, frameCount, columns, frameDuration, loop, spacingX, spacingY);
+    m_anim.Play(clipName);
+}
+
 void Bullet::Update(float dt, ::GameContext& ctx) {
     if (!m_isActive) return;
 
-    // Kế thừa logic di chuyển mặc định từ GameObject (m_x += m_vx * dt)
     GameObject::Update(dt, ctx);
 
-    // Tính toán khoảng cách đạn bay để xóa khi bay quá xa
     float moveDist = std::sqrt(m_vx * m_vx + m_vy * m_vy) * dt;
     m_distanceTraveled += moveDist;
 
@@ -59,27 +103,23 @@ void Bullet::Update(float dt, ::GameContext& ctx) {
         return;
     }
 
+    if (m_owner == BulletOwner::Enemy) {
+        if (CheckCollision(ctx.player)) {
+            ctx.player.TakeDamage(m_damage);
+            Destroy();
+        }
+        return;
+    }
+
     auto& allEntities = ctx.entityManager.GetEntities();
     for (auto& entity : allEntities) {
-        // Bỏ qua các object đã chết hoặc bị vô hiệu hóa
         if (!entity->IsActive()) continue;
 
-        // Ép kiểu để xem entity này có phải là Enemy hay không
         BaseEnemy* enemy = dynamic_cast<BaseEnemy*>(entity.get());
-
-        if (enemy) {
-            // Hàm CheckCollision được kế thừa sẵn từ class GameObject
-            if (this->CheckCollision(*enemy)) {
-
-                // Trừ máu quái vật
-                enemy->TakeDamage(m_damage);
-
-                // Đạn trúng mục tiêu thì tự biến mất
-                this->Destroy();
-
-                // Thoát vòng lặp ngay vì đạn thường không xuyên thấu
-                break;
-            }
+        if (enemy && CheckCollision(*enemy)) {
+            enemy->TakeDamage(m_damage);
+            Destroy();
+            break;
         }
     }
 }

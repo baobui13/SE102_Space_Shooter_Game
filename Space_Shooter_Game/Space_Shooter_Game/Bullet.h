@@ -1,22 +1,38 @@
 #pragma once
 #include "GameObject.h"
+#include <string>
+
+enum class BulletOwner {
+    Player,
+    Enemy
+};
 
 class Bullet : public GameObject {
 private:
-    int m_damage; // Lượng sát thương viên đạn mang theo
-    float m_maxDistance;      // Khoảng cách tối đa đạn có thể bay
-    float m_distanceTraveled; // Khoảng cách đạn ĐÃ bay được
+    int m_damage;
+    float m_maxDistance;
+    float m_distanceTraveled;
+    BulletOwner m_owner;
+
 public:
-    // Constructor mặc định cho pooling
     Bullet(Graphics& gfx);
     Bullet(Graphics& gfx, float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance);
 
-    // Dùng để tái sử dụng viên đạn từ Pool
     void ReInitialize(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance);
+    void ReInitialize(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance, BulletOwner owner);
+    void SetDefaultAnimation(Graphics& gfx);
+    void SetAnimation(Graphics& gfx, const wchar_t* texturePath, const std::string& clipName,
+        int frameX, int frameY, int frameWidth, int frameHeight,
+        int frameCount, int columns, float frameDuration, bool loop,
+        int spacingX = 0, int spacingY = 0);
+    void SetAnimation(Graphics& gfx, const wchar_t* texturePath, const std::string& clipName,
+        int frameX, int frameY, int frameWidth, int frameHeight,
+        int frameCount, int columns, float frameDuration, bool loop,
+        float displayWidth, float displayHeight,
+        int spacingX = 0, int spacingY = 0);
 
-    // Override lại Update để xử lý việc bay ra khỏi màn hình
     void Update(float dt, ::GameContext& ctx) override;
 
-    // Hàm để quái vật (Enemy) gọi khi bị trúng đạn
     int GetDamage() const { return m_damage; }
+    BulletOwner GetOwner() const { return m_owner; }
 };

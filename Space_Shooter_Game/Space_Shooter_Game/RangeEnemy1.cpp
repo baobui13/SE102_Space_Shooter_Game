@@ -1,7 +1,8 @@
 #include "RangeEnemy1.h"
+#include "Bullet.h"
+#include "BulletPool.h"
 #include "GameContext.h"
 #include "Player.h"
-#include "BulletPool.h"
 #include <cmath>
 
 RangeEnemy1::RangeEnemy1(float x, float y, float width, float height,
@@ -20,68 +21,43 @@ void RangeEnemy1::Update(float dt, GameContext& ctx) {
     UpdateAnimation(dt);
     m_stateTimer += dt;
 
-    float playerCX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
-    float playerCY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
     float myCX = m_x + m_width / 2.0f;
     float myCY = m_y + m_height / 2.0f;
 
-    float dx = playerCX - myCX;
-    float dy = playerCY - myCY;
-    float dist = std::sqrt(dx * dx + dy * dy);
-
     switch (m_state) {
     case RangeState::Moving:
-        UpdateRotationToPlayer(ctx);
-
-        if (dist < SAFE_DISTANCE) {
-            float moveDirX = -dx / dist;
-            float moveDirY = -dy / dist;
-            m_x += moveDirX * m_moveSpeed * dt;
-            m_y += moveDirY * m_moveSpeed * dt;
-        }
-        else {
-            Move(dt, ctx);
-        }
+        Move(dt, ctx);
+        UpdateRotationToMovement();
 
         if (m_stateTimer >= TIME_MOVE) {
-            float aimAngle = GetAimAngle();
+            UpdateRotationToPlayer(ctx);
             SpawnAttackMarker(
                 ctx,
-                AttackMarkerSpawnData::Line(
+                AttackMarkerSpawnData::FollowPlayerLine(
                     AttackMarkerType::DangerLine,
                     myCX,
                     myCY,
-                    myCX + std::cos(aimAngle) * 2000.0f,
-                    myCY + std::sin(aimAngle) * 2000.0f,
-                    TIME_AIM
+                    TIME_MARKER
                 )
             );
-            ResetState(RangeState::Aiming);
+            ResetState(RangeState::Marking);
         }
         break;
 
-    case RangeState::Aiming:
+    case RangeState::Marking:
         UpdateRotationToPlayer(ctx);
 
-        if (m_stateTimer >= TIME_AIM) {
-            ResetState(RangeState::Shooting);
+        if (m_stateTimer >= TIME_MARKER) {
+            m_lockedAimAngle = GetAimAngle();
+            ResetState(RangeState::WaitingAttack);
         }
         break;
 
-    case RangeState::Shooting:
-        if (m_stateTimer >= TIME_SHOOT) {
-            float aimAngle = GetAimAngle();
-            float targetX = myCX + std::cos(aimAngle) * 100.0f;
-            float targetY = myCY + std::sin(aimAngle) * 100.0f;
+    case RangeState::WaitingAttack:
+        m_rotation = m_lockedAimAngle - m_spriteForwardAngle;
 
-            ctx.bulletPool.GetBullet(
-                myCX, myCY,
-                targetX, targetY,
-                BULLET_SPEED,
-                (int)m_attackPower,
-                m_attackRange
-            );
-
+        if (m_stateTimer >= TIME_WAIT_ATTACK) {
+            FireLockedShot(ctx);
             ResetState(RangeState::Moving);
         }
         break;
@@ -102,4 +78,51 @@ void RangeEnemy1::UpdateRotationToPlayer(GameContext& ctx) {
     float playerCY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
 
     FacePoint(playerCX, playerCY);
+}
+
+void RangeEnemy1::UpdateRotationToMovement() {
+    float speedSq = m_vx * m_vx + m_vy * m_vy;
+    if (speedSq > 0.001f) {
+        m_rotation = std::atan2(m_vy, m_vx) - m_spriteForwardAngle;
+    }
+}
+
+void RangeEnemy1::FireLockedShot(GameContext& ctx) {
+    float myCX = m_x + m_width / 2.0f;
+    float myCY = m_y + m_height / 2.0f;
+    float dirX = std::cos(m_lockedAimAngle);
+    float dirY = std::sin(m_lockedAimAngle);
+    float spawnDistance = (m_width > m_height ? m_width : m_height) * 0.5f + BULLET_DISPLAY_SIZE * 0.5f + 4.0f;
+    float spawnX = myCX + dirX * spawnDistance - BULLET_DISPLAY_SIZE * 0.5f;
+    float spawnY = myCY + dirY * spawnDistance - BULLET_DISPLAY_SIZE * 0.5f;
+    float targetX = spawnX + dirX * 100.0f;
+    float targetY = spawnY + dirY * 100.0f;
+
+    Bullet* bullet = ctx.bulletPool.GetEnemyBullet(
+        spawnX,
+        spawnY,
+        targetX,
+        targetY,
+        BULLET_SPEED,
+        (int)m_attackPower,
+        BULLET_MAX_DISTANCE
+    );
+
+    if (bullet) {
+        bullet->SetAnimation(
+            ctx.gfx,
+            L"Assets/Bullets/All_Fire_Bullet_Pixel_16x16_03.png",
+            "EnemyFire",
+            256,
+            128,
+            16,
+            16,
+            4,
+            4,
+            0.08f,
+            true,
+            BULLET_DISPLAY_SIZE,
+            BULLET_DISPLAY_SIZE
+        );
+    }
 }

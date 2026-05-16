@@ -35,6 +35,7 @@ struct AttackMarkerSpawnData {
     float radius;
     float rotation;
     float lifetime;
+    bool followPlayer;
 
     static AttackMarkerSpawnData Line(
         AttackMarkerType markerType,
@@ -44,7 +45,16 @@ struct AttackMarkerSpawnData {
         float endY,
         float duration)
     {
-        return { markerType, startX, startY, endX, endY, 0.0f, 0.0f, 0.0f, 0.0f, duration };
+        return { markerType, startX, startY, endX, endY, 0.0f, 0.0f, 0.0f, 0.0f, duration, false };
+    }
+
+    static AttackMarkerSpawnData FollowPlayerLine(
+        AttackMarkerType markerType,
+        float startX,
+        float startY,
+        float duration)
+    {
+        return { markerType, startX, startY, startX, startY, 0.0f, 0.0f, 0.0f, 0.0f, duration, true };
     }
 
     static AttackMarkerSpawnData Circle(
@@ -54,7 +64,7 @@ struct AttackMarkerSpawnData {
         float circleRadius,
         float duration)
     {
-        return { markerType, centerX, centerY, centerX, centerY, 0.0f, 0.0f, circleRadius, 0.0f, duration };
+        return { markerType, centerX, centerY, centerX, centerY, 0.0f, 0.0f, circleRadius, 0.0f, duration, false };
     }
 
     static AttackMarkerSpawnData Rectangle(
@@ -66,6 +76,6 @@ struct AttackMarkerSpawnData {
         float rectRotation,
         float duration)
     {
-        return { markerType, centerX, centerY, centerX, centerY, rectWidth, rectHeight, 0.0f, rectRotation, duration };
+        return { markerType, centerX, centerY, centerX, centerY, rectWidth, rectHeight, 0.0f, rectRotation, duration, false };
     }
 };

@@ -1,6 +1,8 @@
 #include "AttackMarker.h"
 #include "AssetManager.h"
 #include "AttackMarkerPool.h"
+#include "GameContext.h"
+#include "Player.h"
 #include <DirectXColors.h>
 #include <cmath>
 
@@ -18,6 +20,11 @@ AttackMarker::AttackMarker(const AttackMarkerSpawnData& spawnData)
 
 void AttackMarker::Update(float dt, GameContext& ctx) {
     m_elapsed += dt;
+    if (m_spawnData.followPlayer) {
+        m_spawnData.targetX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
+        m_spawnData.targetY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
+    }
+
     if (m_elapsed >= m_spawnData.lifetime) {
         Destroy();
     }

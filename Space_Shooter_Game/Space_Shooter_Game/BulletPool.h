@@ -1,9 +1,9 @@
 #pragma once
-#include <vector>
-#include <memory>
 #include "Bullet.h"
-#include "Graphics.h"
 #include "GameContext.h"
+#include "Graphics.h"
+#include <memory>
+#include <vector>
 
 class BulletPool {
 private:
@@ -15,22 +15,31 @@ public:
     BulletPool(Graphics& gfx, size_t initialSize = 100) : m_gfx(gfx), m_poolSize(initialSize) {
         for (size_t i = 0; i < initialSize; ++i) {
             auto bullet = std::make_unique<Bullet>(m_gfx);
-            bullet->Destroy(); // Mặc định là Deactive
+            bullet->Destroy();
             m_pool.push_back(std::move(bullet));
         }
     }
 
     Bullet* GetBullet(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance) {
+        return GetBullet(startX, startY, targetX, targetY, speed, damage, maxDistance, BulletOwner::Player);
+    }
+
+    Bullet* GetEnemyBullet(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance) {
+        return GetBullet(startX, startY, targetX, targetY, speed, damage, maxDistance, BulletOwner::Enemy);
+    }
+
+    Bullet* GetBullet(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance, BulletOwner owner) {
         for (auto& bullet : m_pool) {
             if (!bullet->IsActive()) {
-                bullet->ReInitialize(startX, startY, targetX, targetY, speed, damage, maxDistance);
+                bullet->ReInitialize(startX, startY, targetX, targetY, speed, damage, maxDistance, owner);
+                bullet->SetDefaultAnimation(m_gfx);
                 return bullet.get();
             }
         }
-        
-        // Nếu hết đạn trong pool, tạo mới và thêm vào pool (tự động mở rộng)
+
         auto newBullet = std::make_unique<Bullet>(m_gfx);
-        newBullet->ReInitialize(startX, startY, targetX, targetY, speed, damage, maxDistance);
+        newBullet->ReInitialize(startX, startY, targetX, targetY, speed, damage, maxDistance, owner);
+        newBullet->SetDefaultAnimation(m_gfx);
         Bullet* ptr = newBullet.get();
         m_pool.push_back(std::move(newBullet));
         return ptr;
@@ -51,7 +60,7 @@ public:
             }
         }
     }
-    
+
     const std::vector<std::unique_ptr<Bullet>>& GetActiveBullets() const {
         return m_pool;
     }
