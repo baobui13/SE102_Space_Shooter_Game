@@ -24,6 +24,7 @@ LevelEnemySpawnDefinition Enemy(
 
 const EnemyStatsDefinition MELEE_BASIC = Stats(100.0f, 80.0f, 10.0f, 30.0f, 10);
 const EnemyStatsDefinition MELEE_FAST = Stats(50.0f, 150.0f, 5.0f, 20.0f, 15);
+const EnemyStatsDefinition MELEE_SPAWNER = Stats(300.0f, 40.0f, 12.0f, 30.0f, 25);
 const EnemyStatsDefinition RANGED_BASIC = Stats(80.0f, 100.0f, 15.0f, 500.0f, 20);
 
 LevelEnemySpawnDefinition MeleeBasic(float x, float y) {
@@ -42,10 +43,7 @@ LevelEnemySpawnDefinition MeleeFast(float x, float y) {
         x,
         y,
         MELEE_FAST,
-        EnemyMovementSequenceDefinition::Loop({
-            EnemyMovementStepDefinition::Step(2.0f, EnemyMovementDefinition::SineWave(120.0f, 60.0f, 3.0f)),
-            EnemyMovementStepDefinition::Step(1.0f, EnemyMovementDefinition::Chase(150.0f)),
-        })
+		EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(150.0f))
     );
 }
 
@@ -61,6 +59,24 @@ LevelEnemySpawnDefinition RangedBasic(float x, float y) {
             EnemyMovementStepDefinition::Step(0.0f, EnemyMovementDefinition::Linear(0.0f, 30.0f)),
         })
     );
+}
+
+LevelEnemySpawnDefinition MeleeSpawner(
+    float x,
+    float y,
+    std::vector<LevelEnemySpawnDefinition> spawnEntries)
+{
+    LevelEnemySpawnDefinition spawner = Enemy(
+        EnemyType::Melee_Spawner,
+        x,
+        y,
+        MELEE_SPAWNER,
+        EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(40.0f))
+    );
+    spawner.spawnEntries = std::move(spawnEntries);
+    spawner.periodicSpawnInterval = 3.0f;
+    spawner.deathSpawnCount = 3;
+    return spawner;
 }
 }
 
@@ -86,6 +102,12 @@ std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel1() {
             MeleeBasic(300.0f, -50.0f),
             MeleeBasic(500.0f, -50.0f),
             RangedBasic(300.0f, -100.0f),
+            MeleeSpawner(500.0f, -50.0f, {
+                MeleeFast(0.0f, 0.0f),
+            }),
+            MeleeSpawner(800.0f, -50.0f, {
+                RangedBasic(0.0f, 0.0f),
+            }),
         }),
         EnemyPhaseDefinition(10.0f, {
             RangedBasic(50.0f, -50.0f),
@@ -222,6 +244,12 @@ std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel4() {
             MeleeFast(250.0f, -100.0f),
             MeleeFast(350.0f, -100.0f),
             MeleeFast(450.0f, -100.0f),
+        }),
+        EnemyPhaseDefinition(35.0f, {
+            MeleeSpawner(300.0f, -80.0f, {
+                MeleeFast(0.0f, 0.0f),
+                MeleeBasic(0.0f, 0.0f),
+            }),
         }),
     };
 }

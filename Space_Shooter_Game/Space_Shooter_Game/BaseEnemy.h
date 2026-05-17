@@ -8,6 +8,7 @@
 enum class EnemyType {
     Melee_Basic,
     Melee_Fast,
+    Melee_Spawner,
     Ranged_Basic,
     Ranged_Burst,
     Boss_Stage1,

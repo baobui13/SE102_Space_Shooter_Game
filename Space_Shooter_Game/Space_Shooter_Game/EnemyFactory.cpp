@@ -1,6 +1,7 @@
 #include "EnemyFactory.h"
 #include "EnemyPool.h"
 #include "MeleeEnemy1.h"
+#include "MeleeEnemy2.h"
 #include "RangeEnemy1.h"
 #include "MovementStrategies.h"
 #include "AssetManager.h"
@@ -104,7 +105,7 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
             x,
             y,
             { 50.0f, 150.0f, 5.0f, 1.0f, 20.0f, 15 },
-            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::SineWave(120.0f, 60.0f, 3.0f))
+            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(120.0f))
         };
     case EnemyType::Ranged_Basic:
         return {
@@ -113,6 +114,14 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
             y,
             { 80.0f, 100.0f, 15.0f, 1.0f, 500.0f, 20 },
             EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 50.0f))
+        };
+    case EnemyType::Melee_Spawner:
+        return {
+            EnemyType::Melee_Spawner,
+            x,
+            y,
+            { 300.0f, 40.0f, 12.0f, 1.0f, 30.0f, 25 },
+            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(50.0f))
         };
     case EnemyType::Melee_Basic:
     default:
@@ -156,6 +165,28 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
             spawn.type
         );
         break;
+
+    case EnemyType::Melee_Spawner: {
+        auto spawner = std::make_unique<MeleeEnemy2>(
+            spawn.x,
+            spawn.y,
+            visual.displayWidth,
+            visual.displayHeight,
+            stats.health,
+            stats.moveSpeed,
+            stats.attackPower,
+            stats.attackRange,
+            stats.attackSpeed,
+            spawn.type
+        );
+        if (!spawn.spawnEntries.empty()) {
+            spawner->SetSpawnEntries(spawn.spawnEntries);
+        }
+        spawner->SetPeriodicSpawnInterval(spawn.periodicSpawnInterval);
+        spawner->SetDeathSpawnCount(spawn.deathSpawnCount);
+        enemy = std::move(spawner);
+        break;
+    }
 
     case EnemyType::Ranged_Basic:
         enemy = std::make_unique<RangeEnemy1>(

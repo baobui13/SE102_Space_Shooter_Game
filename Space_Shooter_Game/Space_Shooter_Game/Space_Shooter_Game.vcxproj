@@ -162,6 +162,7 @@
     <ClInclude Include="Level3Scene.h" />
     <ClInclude Include="Level4Scene.h" />
     <ClInclude Include="MeleeEnemy1.h" />
+    <ClInclude Include="MeleeEnemy2.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="PauseScene.h" />
     <ClInclude Include="Player.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="Level3Scene.cpp" />
     <ClCompile Include="Level4Scene.cpp" />
     <ClCompile Include="MeleeEnemy1.cpp" />
+    <ClCompile Include="MeleeEnemy2.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="RangeEnemy1.cpp" />

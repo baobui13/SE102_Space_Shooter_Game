@@ -127,6 +127,11 @@ struct LevelEnemySpawnDefinition {
     float y;
     EnemyStatsDefinition stats;
     EnemyMovementSequenceDefinition movementSequence;
+
+    // Cấu hình cho Melee_Spawner (MeleeEnemy2): danh sách enemy được sinh ra
+    std::vector<LevelEnemySpawnDefinition> spawnEntries;
+    float periodicSpawnInterval = 3.0f;
+    int deathSpawnCount = 3;
 };
 
 struct EnemyPhaseDefinition {

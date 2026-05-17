@@ -119,6 +119,9 @@
     <ClInclude Include="MeleeEnemy1.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="MeleeEnemy2.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="BaseGameplayScene.h" />
     <ClInclude Include="LevelSelectScene.h" />
@@ -224,6 +227,9 @@
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="MeleeEnemy1.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="MeleeEnemy2.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="EnemyFactory.cpp">
