@@ -89,6 +89,11 @@ void BaseEnemy::Move(float dt, GameContext& ctx) {
         // Cập nhật vị trí
         m_x += m_vx * dt;
         m_y += m_vy * dt;
+
+        if (m_x < 0.0f) m_x = 0.0f;
+        if (m_y < 0.0f) m_y = 0.0f;
+        if (m_x > ctx.screenWidth - m_width) m_x = ctx.screenWidth - m_width;
+        if (m_y > ctx.screenHeight - m_height) m_y = ctx.screenHeight - m_height;
     }
 }
 

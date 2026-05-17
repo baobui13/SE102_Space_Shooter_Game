@@ -105,6 +105,10 @@ struct EnemyMovementSequenceDefinition {
     EnemyMovementSequenceMode mode;
     std::vector<EnemyMovementStepDefinition> steps;
 
+    // Tránh player: kích hoạt khi player trong fleeTriggerDistance (0 = tắt)
+    float fleeTriggerDistance = 0.0f;
+    float fleeSpeed = 0.0f; // 0 = dùng moveSpeed của enemy
+
     static EnemyMovementSequenceDefinition Single(EnemyMovementDefinition movement) {
         return {
             EnemyMovementSequenceMode::Linear,
@@ -118,6 +122,16 @@ struct EnemyMovementSequenceDefinition {
 
     static EnemyMovementSequenceDefinition Loop(std::vector<EnemyMovementStepDefinition> movementSteps) {
         return { EnemyMovementSequenceMode::Loop, std::move(movementSteps) };
+    }
+
+    static EnemyMovementSequenceDefinition WithFleeFromPlayer(
+        EnemyMovementSequenceDefinition sequence,
+        float triggerDistance,
+        float fleeSpeed = 0.0f)
+    {
+        sequence.fleeTriggerDistance = triggerDistance;
+        sequence.fleeSpeed = fleeSpeed;
+        return sequence;
     }
 };
 

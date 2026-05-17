@@ -90,11 +90,36 @@ private:
 };
 
 std::unique_ptr<IMovementStrategy> CreateMovementStrategy(EnemyMovementSequenceDefinition sequence) {
+    float fleeTriggerDistance = sequence.fleeTriggerDistance;
+    float fleeSpeed = sequence.fleeSpeed;
+
     if (sequence.steps.empty()) {
-        return CreateSingleMovementStrategy(EnemyMovementDefinition::Chase(80.0f));
+        auto strategy = CreateSingleMovementStrategy(EnemyMovementDefinition::Chase(80.0f));
+        if (fleeTriggerDistance > 0.0f) {
+            if (fleeSpeed <= 0.0f) fleeSpeed = 80.0f;
+            return std::make_unique<FleeFromPlayerMovement>(
+                std::move(strategy), fleeTriggerDistance, fleeSpeed);
+        }
+        return strategy;
     }
 
-    return std::make_unique<SequencedMovementStrategy>(std::move(sequence));
+    auto strategy = std::make_unique<SequencedMovementStrategy>(std::move(sequence));
+    if (fleeTriggerDistance > 0.0f) {
+        if (fleeSpeed <= 0.0f) fleeSpeed = 80.0f;
+        return std::make_unique<FleeFromPlayerMovement>(
+            std::move(strategy), fleeTriggerDistance, fleeSpeed);
+    }
+    return strategy;
+}
+
+std::unique_ptr<IMovementStrategy> CreateMovementStrategy(
+    EnemyMovementSequenceDefinition sequence,
+    float defaultFleeSpeed)
+{
+    if (sequence.fleeTriggerDistance > 0.0f && sequence.fleeSpeed <= 0.0f) {
+        sequence.fleeSpeed = defaultFleeSpeed;
+    }
+    return CreateMovementStrategy(std::move(sequence));
 }
 
 LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
@@ -113,7 +138,9 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
             x,
             y,
             { 80.0f, 100.0f, 15.0f, 1.0f, 500.0f, 20 },
-            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 50.0f))
+            EnemyMovementSequenceDefinition::WithFleeFromPlayer(
+                EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 50.0f)),
+                220.0f)
         };
     case EnemyType::Melee_Spawner:
         return {
@@ -219,7 +246,7 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
         break;
     }
 
-    enemy->SetMovementStrategy(CreateMovementStrategy(spawn.movementSequence));
+    enemy->SetMovementStrategy(CreateMovementStrategy(spawn.movementSequence, stats.moveSpeed));
     enemy->SetSpriteForwardAngle(visual.spriteForwardAngle);
     enemy->SetExpReward(stats.expReward);
 

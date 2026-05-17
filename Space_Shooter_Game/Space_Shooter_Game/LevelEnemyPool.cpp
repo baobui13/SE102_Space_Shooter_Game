@@ -53,11 +53,13 @@ LevelEnemySpawnDefinition RangedBasic(float x, float y) {
         x,
         y,
         RANGED_BASIC,
-        EnemyMovementSequenceDefinition::Linear({
-            EnemyMovementStepDefinition::Step(2.0f, EnemyMovementDefinition::Linear(0.0f, 50.0f)),
-            EnemyMovementStepDefinition::Step(1.5f, EnemyMovementDefinition::SineWave(70.0f, 40.0f, 2.0f)),
-            EnemyMovementStepDefinition::Step(0.0f, EnemyMovementDefinition::Linear(0.0f, 30.0f)),
-        })
+        EnemyMovementSequenceDefinition::WithFleeFromPlayer(
+            EnemyMovementSequenceDefinition::Linear({
+                EnemyMovementStepDefinition::Step(2.0f, EnemyMovementDefinition::Linear(0.0f, 50.0f)),
+                EnemyMovementStepDefinition::Step(1.5f, EnemyMovementDefinition::SineWave(70.0f, 40.0f, 2.0f)),
+                EnemyMovementStepDefinition::Step(0.0f, EnemyMovementDefinition::Linear(0.0f, 30.0f)),
+            }),
+            500.0f)
     );
 }
 

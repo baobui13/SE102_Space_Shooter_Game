@@ -3,6 +3,7 @@
 #include "GameContext.h"
 #include "Player.h"
 #include <cmath>
+#include <memory>
 
 // ============================================================
 // Di chuyển đuổi theo Player
@@ -85,6 +86,54 @@ public:
             outVx = (targetX - cx) / dt;
             outVy = (targetY - cy) / dt;
         } else {
+            outVx = 0.0f;
+            outVy = 0.0f;
+        }
+    }
+};
+
+// ============================================================
+// Bọc movement khác: tránh xa player khi quá gần
+// ============================================================
+class FleeFromPlayerMovement : public IMovementStrategy {
+    std::unique_ptr<IMovementStrategy> m_inner;
+    float m_triggerDistance;
+    float m_fleeSpeed;
+
+public:
+    FleeFromPlayerMovement(std::unique_ptr<IMovementStrategy> inner,
+                           float triggerDistance,
+                           float fleeSpeed)
+        : m_inner(std::move(inner)),
+        m_triggerDistance(triggerDistance),
+        m_fleeSpeed(fleeSpeed) {}
+
+    void CalculateVelocity(float cx, float cy, float dt, GameContext& ctx,
+                           float& outVx, float& outVy) override {
+        float playerCX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
+        float playerCY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
+        float dx = cx - playerCX;
+        float dy = cy - playerCY;
+        float distSq = dx * dx + dy * dy;
+        float triggerSq = m_triggerDistance * m_triggerDistance;
+
+        if (distSq < triggerSq) {
+            if (distSq > 1e-4f) {
+                float dist = std::sqrt(distSq);
+                outVx = m_fleeSpeed * dx / dist;
+                outVy = m_fleeSpeed * dy / dist;
+            }
+            else {
+                outVx = 0.0f;
+                outVy = -m_fleeSpeed;
+            }
+            return;
+        }
+
+        if (m_inner) {
+            m_inner->CalculateVelocity(cx, cy, dt, ctx, outVx, outVy);
+        }
+        else {
             outVx = 0.0f;
             outVy = 0.0f;
         }
