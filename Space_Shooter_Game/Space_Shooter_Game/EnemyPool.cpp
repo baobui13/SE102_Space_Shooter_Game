@@ -2,7 +2,7 @@
 #include <array>
 
 namespace {
-const std::array<EnemyVisualDefinition, 4> ENEMY_VISUALS = { {
+const std::array<EnemyVisualDefinition, 5> ENEMY_VISUALS = { {
     {
         .type = EnemyType::Melee_Basic,
         .displayWidth = 128.0f,
@@ -67,6 +67,24 @@ const std::array<EnemyVisualDefinition, 4> ENEMY_VISUALS = { {
         .frameY = 0,
         .frameWidth = 1024,
         .frameHeight = 1024,
+        .frameCount = 1,
+        .columns = 1,
+        .frameDuration = 1.0f,
+        .loop = true,
+        .spacingX = 0,
+        .spacingY = 0,
+        .spriteForwardAngle = SpriteHeadDirectionToRadians(SpriteHeadDirection::Down)
+    },
+    {
+        .type = EnemyType::Ranged_Burst,
+        .displayWidth = 72.0f,
+        .displayHeight = 72.0f,
+        .texturePath = L"Assets/Enemy/Enemy5.png",
+        .clipName = "idle",
+        .frameX = 0,
+        .frameY = 0,
+        .frameWidth = 512,
+        .frameHeight = 512,
         .frameCount = 1,
         .columns = 1,
         .frameDuration = 1.0f,

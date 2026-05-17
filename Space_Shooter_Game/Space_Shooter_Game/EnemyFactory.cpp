@@ -3,6 +3,7 @@
 #include "MeleeEnemy1.h"
 #include "MeleeEnemy2.h"
 #include "RangeEnemy1.h"
+#include "RangeEnemy2.h"
 #include "MovementStrategies.h"
 #include "AssetManager.h"
 
@@ -142,6 +143,16 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
                 EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 50.0f)),
                 220.0f)
         };
+    case EnemyType::Ranged_Burst:
+        return {
+            type,
+            x,
+            y,
+            { 100.0f, 70.0f, 20.0f, 1.0f, 600.0f, 30 },
+            EnemyMovementSequenceDefinition::WithFleeFromPlayer(
+                EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 40.0f)),
+                280.0f)
+        };
     case EnemyType::Melee_Spawner:
         return {
             EnemyType::Melee_Spawner,
@@ -217,6 +228,21 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
 
     case EnemyType::Ranged_Basic:
         enemy = std::make_unique<RangeEnemy1>(
+            spawn.x,
+            spawn.y,
+            visual.displayWidth,
+            visual.displayHeight,
+            stats.health,
+            stats.moveSpeed,
+            stats.attackPower,
+            stats.attackSpeed,
+            stats.attackRange,
+            spawn.type
+        );
+        break;
+
+    case EnemyType::Ranged_Burst:
+        enemy = std::make_unique<RangeEnemy2>(
             spawn.x,
             spawn.y,
             visual.displayWidth,

@@ -26,6 +26,7 @@ const EnemyStatsDefinition MELEE_BASIC = Stats(100.0f, 80.0f, 10.0f, 30.0f, 10);
 const EnemyStatsDefinition MELEE_FAST = Stats(50.0f, 150.0f, 5.0f, 20.0f, 15);
 const EnemyStatsDefinition MELEE_SPAWNER = Stats(300.0f, 40.0f, 12.0f, 30.0f, 25);
 const EnemyStatsDefinition RANGED_BASIC = Stats(80.0f, 100.0f, 15.0f, 500.0f, 20);
+const EnemyStatsDefinition RANGED_BURST = Stats(100.0f, 70.0f, 20.0f, 600.0f, 30);
 
 LevelEnemySpawnDefinition MeleeBasic(float x, float y) {
     return Enemy(
@@ -54,12 +55,20 @@ LevelEnemySpawnDefinition RangedBasic(float x, float y) {
         y,
         RANGED_BASIC,
         EnemyMovementSequenceDefinition::WithFleeFromPlayer(
-            EnemyMovementSequenceDefinition::Linear({
-                EnemyMovementStepDefinition::Step(2.0f, EnemyMovementDefinition::Linear(0.0f, 50.0f)),
-                EnemyMovementStepDefinition::Step(1.5f, EnemyMovementDefinition::SineWave(70.0f, 40.0f, 2.0f)),
-                EnemyMovementStepDefinition::Step(0.0f, EnemyMovementDefinition::Linear(0.0f, 30.0f)),
-            }),
-            500.0f)
+			EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(70.0f)),
+            600.0f)
+    );
+}
+
+LevelEnemySpawnDefinition RangedBurst(float x, float y) {
+    return Enemy(
+        EnemyType::Ranged_Burst,
+        x,
+        y,
+        RANGED_BURST,
+        EnemyMovementSequenceDefinition::WithFleeFromPlayer(
+            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(70.0f)),
+            600.0f)
     );
 }
 
@@ -117,6 +126,9 @@ std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel1() {
             MeleeFast(150.0f, -50.0f),
             MeleeFast(450.0f, -50.0f),
             MeleeBasic(300.0f, -80.0f),
+			RangedBurst(300.0f, -50.0f),
+			RangedBurst(100.0f, -50.0f),
+			RangedBurst(500.0f, -50.0f),
         }),
         EnemyPhaseDefinition(20.0f, {
             MeleeBasic(50.0f, -50.0f),
@@ -252,6 +264,10 @@ std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel4() {
                 MeleeFast(0.0f, 0.0f),
                 MeleeBasic(0.0f, 0.0f),
             }),
+        }),
+        EnemyPhaseDefinition(40.0f, {
+            RangedBurst(200.0f, -80.0f),
+            RangedBurst(400.0f, -80.0f),
         }),
     };
 }

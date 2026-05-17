@@ -167,6 +167,8 @@
     <ClInclude Include="PauseScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RangeEnemy1.h" />
+    <ClInclude Include="RangeEnemy2.h" />
+    <ClInclude Include="CircleGroundAttack.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ProgressBar.h" />
@@ -216,6 +218,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="RangeEnemy1.cpp" />
+    <ClCompile Include="RangeEnemy2.cpp" />
+    <ClCompile Include="CircleGroundAttack.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="ShieldSkill.cpp" />
