@@ -4,7 +4,10 @@
 #include "MeleeEnemy2.h"
 #include "RangeEnemy1.h"
 #include "RangeEnemy2.h"
+#include "Boss1.h"
 #include "MovementStrategies.h"
+#include "MovementTransition.h"
+#include "GameConfig.h"
 #include "AssetManager.h"
 
 namespace {
@@ -18,6 +21,8 @@ std::unique_ptr<IMovementStrategy> CreateSingleMovementStrategy(const EnemyMovem
         return std::make_unique<SineWaveMovement>(movement.a, movement.b, movement.c);
     case EnemyMovementKind::Circular:
         return std::make_unique<CircularMovement>(movement.a, movement.b, movement.c, movement.d);
+    case EnemyMovementKind::FigureEight:
+        return std::make_unique<FigureEightMovement>(movement.a, movement.b, movement.c, movement.d);
     default:
         return std::make_unique<ChaseMovement>(80.0f);
     }
@@ -29,12 +34,19 @@ public:
         : m_sequence(std::move(sequence)) {
         if (!m_sequence.steps.empty()) {
             m_currentStrategy = CreateSingleMovementStrategy(m_sequence.steps[0].movement);
+            m_syncPhaseOnNextFrame = true;
         }
     }
 
     void CalculateVelocity(float cx, float cy, float dt, GameContext& ctx,
         float& outVx, float& outVy) override {
-        AdvanceStep(dt);
+        if (m_syncPhaseOnNextFrame && m_currentStrategy) {
+            m_currentStrategy->SyncFromPosition(cx, cy);
+            m_syncPhaseOnNextFrame = false;
+        }
+
+        AdvanceStep(dt, cx, cy);
+        FinalizeBlendIfComplete();
 
         if (m_currentStrategy) {
             m_currentStrategy->CalculateVelocity(cx, cy, dt, ctx, outVx, outVy);
@@ -50,8 +62,9 @@ private:
     std::unique_ptr<IMovementStrategy> m_currentStrategy;
     size_t m_currentStepIndex = 0;
     float m_stepElapsed = 0.0f;
+    bool m_syncPhaseOnNextFrame = false;
 
-    void AdvanceStep(float dt) {
+    void AdvanceStep(float dt, float cx, float cy) {
         if (m_sequence.steps.empty()) {
             return;
         }
@@ -71,7 +84,20 @@ private:
 
             m_currentStepIndex = nextIndex;
             m_stepElapsed = 0.0f;
-            m_currentStrategy = CreateSingleMovementStrategy(m_sequence.steps[m_currentStepIndex].movement);
+            auto nextStrategy = CreateSingleMovementStrategy(m_sequence.steps[m_currentStepIndex].movement);
+            if (m_currentStrategy) {
+                m_currentStrategy = std::make_unique<BlendedMovementTransition>(
+                    std::move(m_currentStrategy), std::move(nextStrategy));
+            } else {
+                m_currentStrategy = std::move(nextStrategy);
+            }
+        }
+    }
+
+    void FinalizeBlendIfComplete() {
+        auto* blend = dynamic_cast<BlendedMovementTransition*>(m_currentStrategy.get());
+        if (blend && blend->IsComplete()) {
+            m_currentStrategy = blend->ReleaseTo();
         }
     }
 
@@ -160,6 +186,14 @@ LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
             y,
             { 300.0f, 40.0f, 12.0f, 1.0f, 30.0f, 25 },
             EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(50.0f))
+        };
+    case EnemyType::Boss_Stage1:
+        return {
+            EnemyType::Boss_Stage1,
+            VIRTUAL_WIDTH * 0.5f,
+            0.0f,
+            { 3000.0f, 140.0f, 25.0f, 0.5f, 600.0f, 500 },
+            EnemyMovementSequenceDefinition::BossPatrol(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
         };
     case EnemyType::Melee_Basic:
     default:
@@ -255,6 +289,25 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
             spawn.type
         );
         break;
+
+    case EnemyType::Boss_Stage1: {
+        const float bossX = spawn.x > 0.0f
+            ? spawn.x - visual.displayWidth * 0.5f
+            : (VIRTUAL_WIDTH - visual.displayWidth) * 0.5f;
+        enemy = std::make_unique<Boss1>(
+            bossX,
+            spawn.y,
+            visual.displayWidth,
+            visual.displayHeight,
+            stats.health,
+            stats.moveSpeed,
+            stats.attackPower,
+            stats.attackSpeed,
+            stats.attackRange,
+            spawn.type
+        );
+        break;
+    }
 
     default:
         enemy = std::make_unique<MeleeEnemy1>(

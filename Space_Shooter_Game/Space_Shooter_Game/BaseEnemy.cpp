@@ -138,3 +138,32 @@ void BaseEnemy::FacePoint(float targetX, float targetY) {
 void BaseEnemy::SpawnAttackMarker(GameContext& ctx, const AttackMarkerSpawnData& markerData) {
     ctx.entityManager.AddEntity(std::make_unique<AttackMarker>(markerData));
 }
+
+void BaseEnemy::UpdateRotationToMovement() {
+    const float speedSq = m_vx * m_vx + m_vy * m_vy;
+    if (speedSq > 0.001f) {
+        m_rotation = std::atan2(m_vy, m_vx) - m_spriteForwardAngle;
+    }
+}
+
+void BaseEnemy::SmoothRotationToward(float targetAngle, float dt, float maxAngularSpeed) {
+    float delta = targetAngle - m_rotation;
+    constexpr float TWO_PI = 6.283185307f;
+    constexpr float PI = 3.14159265f;
+
+    while (delta > PI) {
+        delta -= TWO_PI;
+    }
+    while (delta < -PI) {
+        delta += TWO_PI;
+    }
+
+    const float maxStep = maxAngularSpeed * dt;
+    if (delta > maxStep) {
+        delta = maxStep;
+    } else if (delta < -maxStep) {
+        delta = -maxStep;
+    }
+
+    m_rotation += delta;
+}

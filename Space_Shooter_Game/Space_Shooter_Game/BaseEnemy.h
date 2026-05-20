@@ -59,6 +59,8 @@ public:
     void FacePoint(float targetX, float targetY);
     float GetAimAngle() const { return m_rotation + m_spriteForwardAngle; }
     void SpawnAttackMarker(GameContext& ctx, const AttackMarkerSpawnData& markerData);
+    void UpdateRotationToMovement();
+    void SmoothRotationToward(float targetAngle, float dt, float maxAngularSpeed);
 
     // Getter
     float GetHealth() const { return m_health; }

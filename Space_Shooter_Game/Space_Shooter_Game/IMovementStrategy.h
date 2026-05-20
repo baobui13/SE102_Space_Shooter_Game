@@ -14,4 +14,10 @@ public:
         float dt, GameContext& ctx,
         float& outVx, float& outVy
     ) = 0;
+
+    // Đồng bộ phase đường đi từ vị trí hiện tại — tránh giật khi đổi movement
+    virtual void SyncFromPosition(float currentX, float currentY) {}
+
+    // Vị trí lý tưởng trên quỹ đạo (sau khi advance phase trong CalculateVelocity)
+    virtual bool TryGetIdealPosition(float& outX, float& outY) const { return false; }
 };

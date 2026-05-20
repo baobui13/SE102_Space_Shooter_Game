@@ -137,6 +137,9 @@
     <ClInclude Include="CircleGroundAttack.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Boss1.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
     <ClInclude Include="EnemyDefinitions.h">
       <Filter>Entities</Filter>
     </ClInclude>
@@ -257,6 +260,9 @@
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="CircleGroundAttack.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss1.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="EnemyPool.cpp">

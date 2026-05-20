@@ -60,7 +60,8 @@ enum class EnemyMovementKind {
     Chase,
     Linear,
     SineWave,
-    Circular
+    Circular,
+    FigureEight
 };
 
 struct EnemyMovementDefinition {
@@ -84,6 +85,10 @@ struct EnemyMovementDefinition {
 
     static EnemyMovementDefinition Circular(float centerX, float centerY, float radius, float angularSpeed) {
         return { EnemyMovementKind::Circular, centerX, centerY, radius, angularSpeed };
+    }
+
+    static EnemyMovementDefinition FigureEight(float centerX, float centerY, float radiusX, float radiusY) {
+        return { EnemyMovementKind::FigureEight, centerX, centerY, radiusX, radiusY };
     }
 };
 
@@ -132,6 +137,27 @@ struct EnemyMovementSequenceDefinition {
         sequence.fleeTriggerDistance = triggerDistance;
         sequence.fleeSpeed = fleeSpeed;
         return sequence;
+    }
+
+    // Boss: vòng tròn quanh màn hình rồi hình số 8, lặp vô hạn
+    static EnemyMovementSequenceDefinition BossPatrol(float screenWidth, float screenHeight) {
+        const float centerX = screenWidth * 0.5f;
+        const float centerY = screenHeight * 0.5f;
+        const float screenMin = screenWidth < screenHeight ? screenWidth : screenHeight;
+        const float orbitRadius = screenMin * 0.30f;
+
+        return Loop({
+            EnemyMovementStepDefinition::Step(
+                10.0f,
+                EnemyMovementDefinition::Circular(centerX, centerY, orbitRadius, 0.42f)),
+            EnemyMovementStepDefinition::Step(
+                12.0f,
+                EnemyMovementDefinition::FigureEight(
+                    centerX,
+                    centerY,
+                    screenWidth * 0.34f,
+                    screenHeight * 0.22f)),
+        });
     }
 };
 
