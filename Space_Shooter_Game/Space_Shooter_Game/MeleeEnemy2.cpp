@@ -4,24 +4,11 @@
 #include "GameContext.h"
 #include "Player.h"
 
-namespace {
-LevelEnemySpawnDefinition DefaultSpawnEntry() {
-    return {
-        EnemyType::Melee_Fast,
-        0.0f,
-        0.0f,
-        { 50.0f, 150.0f, 5.0f, 1.0f, 20.0f, 15 },
-        EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(150.0f))
-    };
-}
-}
-
 MeleeEnemy2::MeleeEnemy2(float x, float y, float width, float height,
                          float health, float moveSpeed, float attackPower, float attackRange,
                          float attackSpeed, EnemyType type)
     : BaseEnemy(x, y, width, height, health, moveSpeed, attackPower, attackSpeed, attackRange, type)
 {
-    m_spawnEntries.push_back(DefaultSpawnEntry());
 }
 
 void MeleeEnemy2::SetSpawnEntries(std::vector<LevelEnemySpawnDefinition> entries) {

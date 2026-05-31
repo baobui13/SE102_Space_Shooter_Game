@@ -1,0 +1,50 @@
+{
+  "Melee_Basic": {
+    "health": 100,
+    "moveSpeed": 80,
+    "attackPower": 10,
+    "attackSpeed": 1.0,
+    "attackRange": 30,
+    "expReward": 10
+  },
+  "Melee_Fast": {
+    "health": 50,
+    "moveSpeed": 150,
+    "attackPower": 5,
+    "attackSpeed": 1.0,
+    "attackRange": 20,
+    "expReward": 15
+  },
+  "Melee_Spawner": {
+    "health": 300,
+    "moveSpeed": 40,
+    "attackPower": 12,
+    "attackSpeed": 1.0,
+    "attackRange": 30,
+    "expReward": 25
+  },
+  "Ranged_Basic": {
+    "health": 80,
+    "moveSpeed": 100,
+    "attackPower": 15,
+    "attackSpeed": 1.0,
+    "attackRange": 500,
+    "expReward": 20
+  },
+  "Ranged_Burst": {
+    "health": 100,
+    "moveSpeed": 70,
+    "attackPower": 20,
+    "attackSpeed": 1.0,
+    "attackRange": 600,
+    "expReward": 30
+  },
+  "Boss_Stage1": {
+    "health": 3000,
+    "moveSpeed": 140,
+    "attackPower": 25,
+    "attackSpeed": 1.0,
+    "attackRange": 600,
+    "expReward": 500
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "Melee_Basic": {
+    "mode": "Linear",
+    "steps": [
+      {
+        "duration": 0,
+        "kind": "Chase",
+        "speed": 80
+      }
+    ]
+  },
+  "Melee_Fast": {
+    "mode": "Linear",
+    "steps": [
+      {
+        "duration": 0,
+        "kind": "Chase",
+        "speed": 150
+      }
+    ]
+  },
+  "Melee_Spawner": {
+    "mode": "Linear",
+    "steps": [
+      {
+        "duration": 0,
+        "kind": "Chase",
+        "speed": 40
+      }
+    ]
+  },
+  "Ranged_Basic": {
+    "mode": "Linear",
+    "steps": [
+      {
+        "duration": 0,
+        "kind": "Chase",
+        "speed": 70
+      }
+    ],
+    "fleeFromPlayer": {
+      "triggerDistance": 600,
+      "fleeSpeed": 0
+    }
+  },
+  "Ranged_Burst": {
+    "mode": "Linear",
+    "steps": [
+      {
+        "duration": 0,
+        "kind": "Chase",
+        "speed": 70
+      }
+    ],
+    "fleeFromPlayer": {
+      "triggerDistance": 600,
+      "fleeSpeed": 0
+    }
+  },
+  "Boss_Stage1": {
+    "preset": "BossPatrol"
+  }
+}

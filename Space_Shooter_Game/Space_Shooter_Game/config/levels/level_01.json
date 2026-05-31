@@ -1,0 +1,50 @@
+{
+  "level": 1,
+  "background": "Assets/background.png",
+  "waves": [
+    {
+      "time": 3.0,
+      "enemies": [
+        { "type": "Melee_Basic", "x": 100, "y": -50 },
+        { "type": "Melee_Basic", "x": 300, "y": -50 },
+        { "type": "Melee_Basic", "x": 500, "y": -50 },
+        { "type": "Ranged_Basic", "x": 300, "y": -100 },
+        {
+          "type": "Melee_Spawner",
+          "x": 500,
+          "y": -50,
+          "spawnEntries": [
+            { "type": "Melee_Fast", "x": 0, "y": 0 }
+          ]
+        },
+        {
+          "type": "Melee_Spawner",
+          "x": 800,
+          "y": -50,
+          "spawnEntries": [
+            { "type": "Ranged_Basic", "x": 0, "y": 0 }
+          ]
+        }
+      ]
+    },
+    {
+      "time": 10.0,
+      "enemies": [
+        { "type": "Ranged_Basic", "x": 50, "y": -50 },
+        { "type": "Ranged_Basic", "x": 550, "y": -50 },
+        { "type": "Melee_Fast", "x": 150, "y": -50 },
+        { "type": "Melee_Fast", "x": 450, "y": -50 },
+        { "type": "Melee_Basic", "x": 300, "y": -80 },
+        { "type": "Ranged_Burst", "x": 300, "y": -50 },
+        { "type": "Ranged_Burst", "x": 100, "y": -50 },
+        { "type": "Ranged_Burst", "x": 500, "y": -50 }
+      ]
+    },
+    {
+      "time": 20.0,
+      "enemies": [
+        { "type": "Boss_Stage1", "x": "center", "y": 0 }
+      ]
+    }
+  ]
+}

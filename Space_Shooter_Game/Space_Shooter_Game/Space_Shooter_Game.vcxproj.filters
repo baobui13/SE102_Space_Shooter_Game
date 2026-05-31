@@ -158,6 +158,9 @@
     <ClInclude Include="AttackMarkerPool.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleJson.h">
+      <Filter>Foundation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -277,6 +280,12 @@
     <ClCompile Include="AttackMarkerPool.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="GameConfig.cpp">
+      <Filter>Foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleJson.cpp">
+      <Filter>Foundation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Bullets1.png">
@@ -351,5 +360,14 @@
     <None Include="Assets\Arial.spritefont">
       <Filter>Assets</Filter>
     </None>
+    <None Include="config\gameplay.json" />
+    <None Include="config\level_manifest.json" />
+    <None Include="config\enemies\enemy_movement.json" />
+    <None Include="config\enemies\enemy_stats.json" />
+    <None Include="config\enemies\enemy_visuals.json" />
+    <None Include="config\levels\level_01.json" />
+    <None Include="config\levels\level_02.json" />
+    <None Include="config\levels\level_03.json" />
+    <None Include="config\levels\level_04.json" />
   </ItemGroup>
 </Project>

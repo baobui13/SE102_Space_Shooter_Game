@@ -1,281 +1,269 @@
 #include "LevelEnemyPool.h"
 #include "GameConfig.h"
+#include "SimpleJson.h"
+
+#include <filesystem>
+#include <iomanip>
+#include <map>
+#include <sstream>
+#include <string>
 
 namespace {
-EnemyStatsDefinition Stats(
-    float health,
-    float moveSpeed,
-    float attackPower,
-    float attackRange,
-    int expReward,
-    float attackSpeed = 1.0f)
+using StatsMap = std::map<EnemyType, EnemyStatsDefinition>;
+using MovementMap = std::map<EnemyType, EnemyMovementSequenceDefinition>;
+
+std::string ResolveConfigPath(const std::string& filePath) {
+    if (std::filesystem::exists(filePath)) {
+        return filePath;
+    }
+
+    std::filesystem::path current = std::filesystem::current_path();
+    const std::filesystem::path relativePath(filePath);
+    for (int i = 0; i < 6 && !current.empty(); ++i) {
+        const std::filesystem::path candidate = current / relativePath;
+        if (std::filesystem::exists(candidate)) {
+            return candidate.string();
+        }
+        current = current.parent_path();
+    }
+
+    const std::filesystem::path projectPath =
+        std::filesystem::path("Space_Shooter_Game") / "Space_Shooter_Game" / filePath;
+    if (std::filesystem::exists(projectPath)) {
+        return projectPath.string();
+    }
+
+    return filePath;
+}
+
+EnemyType EnemyTypeFromString(const std::string& value) {
+    if (value == "Melee_Fast") return EnemyType::Melee_Fast;
+    if (value == "Melee_Spawner") return EnemyType::Melee_Spawner;
+    if (value == "Ranged_Basic") return EnemyType::Ranged_Basic;
+    if (value == "Ranged_Burst") return EnemyType::Ranged_Burst;
+    if (value == "Boss_Stage1") return EnemyType::Boss_Stage1;
+    return EnemyType::Melee_Basic;
+}
+
+float ReadFloat(const JsonValue& object, const std::string& key, float fallback) {
+    const JsonValue* value = object.Find(key);
+    return value ? static_cast<float>(value->AsNumber(fallback)) : fallback;
+}
+
+int ReadInt(const JsonValue& object, const std::string& key, int fallback) {
+    const JsonValue* value = object.Find(key);
+    return value ? static_cast<int>(value->AsNumber(fallback)) : fallback;
+}
+
+float ReadCoordinate(const JsonValue& value, float fallback, bool isX) {
+    if (value.IsNumber()) {
+        return static_cast<float>(value.AsNumber(fallback));
+    }
+
+    const std::string token = value.AsStringOr("");
+    if (token == "center") {
+        return isX ? VIRTUAL_WIDTH * 0.5f : VIRTUAL_HEIGHT * 0.5f;
+    }
+    if (token == "screenWidth") {
+        return VIRTUAL_WIDTH;
+    }
+    if (token == "screenHeight") {
+        return VIRTUAL_HEIGHT;
+    }
+
+    return fallback;
+}
+
+EnemyStatsDefinition ParseStats(const JsonValue& value, EnemyStatsDefinition fallback) {
+    fallback.health = ReadFloat(value, "health", fallback.health);
+    fallback.moveSpeed = ReadFloat(value, "moveSpeed", fallback.moveSpeed);
+    fallback.attackPower = ReadFloat(value, "attackPower", fallback.attackPower);
+    fallback.attackSpeed = ReadFloat(value, "attackSpeed", fallback.attackSpeed);
+    fallback.attackRange = ReadFloat(value, "attackRange", fallback.attackRange);
+    fallback.expReward = ReadInt(value, "expReward", fallback.expReward);
+    return fallback;
+}
+
+EnemyStatsDefinition DefaultStats() {
+    return { 1.0f, 80.0f, 1.0f, 1.0f, 30.0f, 0 };
+}
+
+EnemyStatsDefinition GetStats(const StatsMap& stats, EnemyType type) {
+    auto it = stats.find(type);
+    return it == stats.end() ? DefaultStats() : it->second;
+}
+
+EnemyMovementDefinition ParseMovementDefinition(const JsonValue& value) {
+    const std::string kind = value.At("kind").AsStringOr("Chase");
+
+    if (kind == "Linear") {
+        return EnemyMovementDefinition::Linear(
+            ReadFloat(value, "speedX", 0.0f),
+            ReadFloat(value, "speedY", 0.0f));
+    }
+    if (kind == "SineWave") {
+        return EnemyMovementDefinition::SineWave(
+            ReadFloat(value, "speedY", 60.0f),
+            ReadFloat(value, "amplitude", 120.0f),
+            ReadFloat(value, "frequency", 1.0f));
+    }
+    if (kind == "Circular") {
+        return EnemyMovementDefinition::Circular(
+            ReadCoordinate(value.At("centerX"), VIRTUAL_WIDTH * 0.5f, true),
+            ReadCoordinate(value.At("centerY"), VIRTUAL_HEIGHT * 0.5f, false),
+            ReadFloat(value, "radius", 240.0f),
+            ReadFloat(value, "angularSpeed", 0.5f));
+    }
+    if (kind == "FigureEight") {
+        return EnemyMovementDefinition::FigureEight(
+            ReadCoordinate(value.At("centerX"), VIRTUAL_WIDTH * 0.5f, true),
+            ReadCoordinate(value.At("centerY"), VIRTUAL_HEIGHT * 0.5f, false),
+            ReadFloat(value, "radiusX", VIRTUAL_WIDTH * 0.25f),
+            ReadFloat(value, "radiusY", VIRTUAL_HEIGHT * 0.2f));
+    }
+
+    return EnemyMovementDefinition::Chase(ReadFloat(value, "speed", 80.0f));
+}
+
+EnemyMovementStepDefinition ParseMovementStep(const JsonValue& value) {
+    const JsonValue& movementValue = value.Contains("movement") ? value.At("movement") : value;
+    return EnemyMovementStepDefinition::Step(
+        ReadFloat(value, "duration", 0.0f),
+        ParseMovementDefinition(movementValue));
+}
+
+EnemyMovementSequenceDefinition ParseMovementSequence(const JsonValue& value) {
+    const std::string preset = value.At("preset").AsStringOr("");
+    if (preset == "BossPatrol") {
+        return EnemyMovementSequenceDefinition::BossPatrol(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+    }
+
+    std::vector<EnemyMovementStepDefinition> steps;
+    for (const auto& step : value.At("steps").AsArray()) {
+        steps.push_back(ParseMovementStep(step));
+    }
+    if (steps.empty()) {
+        steps.push_back(EnemyMovementStepDefinition::Step(
+            0.0f,
+            EnemyMovementDefinition::Chase(ReadFloat(value, "speed", 80.0f))));
+    }
+
+    EnemyMovementSequenceDefinition sequence =
+        value.At("mode").AsStringOr("Linear") == "Loop"
+            ? EnemyMovementSequenceDefinition::Loop(std::move(steps))
+            : EnemyMovementSequenceDefinition::Linear(std::move(steps));
+
+    const JsonValue& flee = value.At("fleeFromPlayer");
+    if (flee.IsObject()) {
+        sequence.fleeTriggerDistance = ReadFloat(flee, "triggerDistance", 0.0f);
+        sequence.fleeSpeed = ReadFloat(flee, "fleeSpeed", 0.0f);
+    }
+    return sequence;
+}
+
+EnemyMovementSequenceDefinition GetMovement(const MovementMap& movements, EnemyType type) {
+    auto it = movements.find(type);
+    if (it != movements.end()) {
+        return it->second;
+    }
+    return EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(80.0f));
+}
+
+StatsMap LoadStats() {
+    StatsMap stats;
+    const JsonValue root = SimpleJson::ParseFile(
+        ResolveConfigPath("config/enemies/enemy_stats.json"));
+    for (const auto& [typeName, value] : root.AsObject()) {
+        stats[EnemyTypeFromString(typeName)] = ParseStats(value, DefaultStats());
+    }
+    return stats;
+}
+
+MovementMap LoadMovements() {
+    MovementMap movements;
+    const JsonValue root = SimpleJson::ParseFile(
+        ResolveConfigPath("config/enemies/enemy_movement.json"));
+    for (const auto& [typeName, value] : root.AsObject()) {
+        movements[EnemyTypeFromString(typeName)] = ParseMovementSequence(value);
+    }
+    return movements;
+}
+
+LevelEnemySpawnDefinition ParseSpawn(
+    const JsonValue& value,
+    const StatsMap& stats,
+    const MovementMap& movements)
 {
-    return { health, moveSpeed, attackPower, attackSpeed, attackRange, expReward };
-}
+    const EnemyType type = EnemyTypeFromString(value.At("type").AsStringOr("Melee_Basic"));
+    const float x = ReadCoordinate(value.At("x"), type == EnemyType::Boss_Stage1 ? VIRTUAL_WIDTH * 0.5f : 0.0f, true);
+    const float y = ReadCoordinate(value.At("y"), 0.0f, false);
 
-LevelEnemySpawnDefinition Enemy(
-    EnemyType type,
-    float x,
-    float y,
-    EnemyStatsDefinition stats,
-    EnemyMovementSequenceDefinition movementSequence)
-{
-    return { type, x, y, stats, std::move(movementSequence) };
-}
-
-const EnemyStatsDefinition MELEE_BASIC = Stats(100.0f, 80.0f, 10.0f, 30.0f, 10);
-const EnemyStatsDefinition MELEE_FAST = Stats(50.0f, 150.0f, 5.0f, 20.0f, 15);
-const EnemyStatsDefinition MELEE_SPAWNER = Stats(300.0f, 40.0f, 12.0f, 30.0f, 25);
-const EnemyStatsDefinition RANGED_BASIC = Stats(80.0f, 100.0f, 15.0f, 500.0f, 20);
-const EnemyStatsDefinition RANGED_BURST = Stats(100.0f, 70.0f, 20.0f, 600.0f, 30);
-const EnemyStatsDefinition BOSS_STAGE1 = Stats(3000.0f, 140.0f, 25.0f, 600.0f, 500);
-
-LevelEnemySpawnDefinition MeleeBasic(float x, float y) {
-    return Enemy(
-        EnemyType::Melee_Basic,
+    LevelEnemySpawnDefinition spawn{
+        type,
         x,
         y,
-        MELEE_BASIC,
-        EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(80.0f))
-    );
+        GetStats(stats, type),
+        GetMovement(movements, type)
+    };
+
+    if (value.At("stats").IsObject()) {
+        spawn.stats = ParseStats(value.At("stats"), spawn.stats);
+    }
+    if (value.At("movement").IsObject()) {
+        spawn.movementSequence = ParseMovementSequence(value.At("movement"));
+    }
+
+    for (const auto& entry : value.At("spawnEntries").AsArray()) {
+        spawn.spawnEntries.push_back(ParseSpawn(entry, stats, movements));
+    }
+
+    spawn.periodicSpawnInterval = ReadFloat(value, "periodicSpawnInterval", spawn.periodicSpawnInterval);
+    spawn.deathSpawnCount = ReadInt(value, "deathSpawnCount", spawn.deathSpawnCount);
+    return spawn;
 }
 
-LevelEnemySpawnDefinition MeleeFast(float x, float y) {
-    return Enemy(
-        EnemyType::Melee_Fast,
-        x,
-        y,
-        MELEE_FAST,
-		EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(150.0f))
-    );
+std::string DefaultLevelPath(int levelIndex) {
+    std::ostringstream path;
+    path << "config/levels/level_" << std::setw(2) << std::setfill('0') << levelIndex << ".json";
+    return path.str();
 }
 
-LevelEnemySpawnDefinition RangedBasic(float x, float y) {
-    return Enemy(
-        EnemyType::Ranged_Basic,
-        x,
-        y,
-        RANGED_BASIC,
-        EnemyMovementSequenceDefinition::WithFleeFromPlayer(
-			EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(70.0f)),
-            600.0f)
-    );
-}
+std::string LevelPathFromManifest(int levelIndex) {
+    try {
+        const JsonValue manifest = SimpleJson::ParseFile(
+            ResolveConfigPath("config/level_manifest.json"));
+        for (const auto& level : manifest.At("levels").AsArray()) {
+            if (ReadInt(level, "id", 0) == levelIndex) {
+                return level.At("config").AsStringOr(DefaultLevelPath(levelIndex));
+            }
+        }
+    }
+    catch (...) {
+    }
 
-LevelEnemySpawnDefinition RangedBurst(float x, float y) {
-    return Enemy(
-        EnemyType::Ranged_Burst,
-        x,
-        y,
-        RANGED_BURST,
-        EnemyMovementSequenceDefinition::WithFleeFromPlayer(
-            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(70.0f)),
-            600.0f)
-    );
-}
-
-LevelEnemySpawnDefinition BossStage1() {
-    return Enemy(
-        EnemyType::Boss_Stage1,
-        VIRTUAL_WIDTH * 0.5f,
-        0.0f,
-        BOSS_STAGE1,
-        EnemyMovementSequenceDefinition::BossPatrol(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-    );
-}
-
-LevelEnemySpawnDefinition MeleeSpawner(
-    float x,
-    float y,
-    std::vector<LevelEnemySpawnDefinition> spawnEntries)
-{
-    LevelEnemySpawnDefinition spawner = Enemy(
-        EnemyType::Melee_Spawner,
-        x,
-        y,
-        MELEE_SPAWNER,
-        EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(40.0f))
-    );
-    spawner.spawnEntries = std::move(spawnEntries);
-    spawner.periodicSpawnInterval = 3.0f;
-    spawner.deathSpawnCount = 3;
-    return spawner;
+    return DefaultLevelPath(levelIndex);
 }
 }
 
 std::vector<EnemyPhaseDefinition> LevelEnemyPool::Create(int levelIndex) {
-    switch (levelIndex) {
-    case 1:
-        return CreateLevel1();
-    case 2:
-        return CreateLevel2();
-    case 3:
-        return CreateLevel3();
-    case 4:
-        return CreateLevel4();
-    default:
-        return CreateLevel1();
+    std::vector<EnemyPhaseDefinition> phases;
+
+    try {
+        const StatsMap stats = LoadStats();
+        const MovementMap movements = LoadMovements();
+        const JsonValue level = SimpleJson::ParseFile(
+            ResolveConfigPath(LevelPathFromManifest(levelIndex)));
+
+        for (const auto& wave : level.At("waves").AsArray()) {
+            std::vector<LevelEnemySpawnDefinition> enemies;
+            for (const auto& enemy : wave.At("enemies").AsArray()) {
+                enemies.push_back(ParseSpawn(enemy, stats, movements));
+            }
+            phases.emplace_back(ReadFloat(wave, "time", 0.0f), std::move(enemies));
+        }
     }
-}
+    catch (...) {
+    }
 
-std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel1() {
-    return {
-        EnemyPhaseDefinition(3.0f, {
-            MeleeBasic(100.0f, -50.0f),
-            MeleeBasic(300.0f, -50.0f),
-            MeleeBasic(500.0f, -50.0f),
-            RangedBasic(300.0f, -100.0f),
-            MeleeSpawner(500.0f, -50.0f, {
-                MeleeFast(0.0f, 0.0f),
-            }),
-            MeleeSpawner(800.0f, -50.0f, {
-                RangedBasic(0.0f, 0.0f),
-            }),
-        }),
-        EnemyPhaseDefinition(10.0f, {
-            RangedBasic(50.0f, -50.0f),
-            RangedBasic(550.0f, -50.0f),
-            MeleeFast(150.0f, -50.0f),
-            MeleeFast(450.0f, -50.0f),
-            MeleeBasic(300.0f, -80.0f),
-			RangedBurst(300.0f, -50.0f),
-			RangedBurst(100.0f, -50.0f),
-			RangedBurst(500.0f, -50.0f),
-        }),
-        EnemyPhaseDefinition(20.0f, {
-			BossStage1(),
-        }),
-    };
-}
-
-std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel2() {
-    return {
-        EnemyPhaseDefinition(1.0f, {
-            MeleeFast(100.0f, -50.0f),
-            MeleeFast(500.0f, -50.0f),
-        }),
-        EnemyPhaseDefinition(8.0f, {
-            MeleeBasic(200.0f, -50.0f),
-            MeleeBasic(400.0f, -50.0f),
-            MeleeFast(300.0f, -80.0f),
-            MeleeFast(100.0f, -80.0f),
-            MeleeFast(500.0f, -80.0f),
-        }),
-        EnemyPhaseDefinition(15.0f, {
-            MeleeBasic(80.0f, -50.0f),
-            MeleeFast(180.0f, -50.0f),
-            MeleeBasic(280.0f, -50.0f),
-            MeleeFast(380.0f, -50.0f),
-            MeleeBasic(480.0f, -50.0f),
-            MeleeFast(580.0f, -50.0f),
-        }),
-        EnemyPhaseDefinition(25.0f, {
-            MeleeFast(100.0f, -50.0f),
-            MeleeFast(200.0f, -80.0f),
-            MeleeFast(300.0f, -50.0f),
-            MeleeFast(400.0f, -80.0f),
-            MeleeFast(500.0f, -50.0f),
-            MeleeBasic(300.0f, -120.0f),
-            MeleeBasic(150.0f, -120.0f),
-            MeleeBasic(450.0f, -120.0f),
-        }),
-    };
-}
-
-std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel3() {
-    return {
-        EnemyPhaseDefinition(2.0f, {
-            MeleeFast(50.0f, -50.0f),
-            MeleeFast(550.0f, -50.0f),
-            MeleeBasic(300.0f, -50.0f),
-        }),
-        EnemyPhaseDefinition(7.0f, {
-            MeleeBasic(100.0f, -50.0f),
-            MeleeBasic(200.0f, -80.0f),
-            MeleeFast(300.0f, -50.0f),
-            MeleeBasic(400.0f, -80.0f),
-            MeleeBasic(500.0f, -50.0f),
-        }),
-        EnemyPhaseDefinition(14.0f, {
-            MeleeFast(80.0f, -50.0f),
-            MeleeFast(180.0f, -50.0f),
-            MeleeBasic(280.0f, -80.0f),
-            MeleeFast(380.0f, -50.0f),
-            MeleeFast(480.0f, -50.0f),
-            MeleeBasic(580.0f, -80.0f),
-        }),
-        EnemyPhaseDefinition(22.0f, {
-            MeleeBasic(50.0f, -50.0f),
-            MeleeFast(130.0f, -80.0f),
-            MeleeBasic(210.0f, -50.0f),
-            MeleeFast(290.0f, -80.0f),
-            MeleeBasic(370.0f, -50.0f),
-            MeleeFast(450.0f, -80.0f),
-            MeleeBasic(530.0f, -50.0f),
-            MeleeFast(300.0f, -120.0f),
-        }),
-    };
-}
-
-std::vector<EnemyPhaseDefinition> LevelEnemyPool::CreateLevel4() {
-    return {
-        EnemyPhaseDefinition(1.0f, {
-            MeleeFast(100.0f, -50.0f),
-            MeleeFast(300.0f, -50.0f),
-            MeleeFast(500.0f, -50.0f),
-        }),
-        EnemyPhaseDefinition(6.0f, {
-            MeleeBasic(100.0f, -50.0f),
-            MeleeBasic(200.0f, -80.0f),
-            MeleeFast(300.0f, -50.0f),
-            MeleeBasic(400.0f, -80.0f),
-            MeleeBasic(500.0f, -50.0f),
-            MeleeFast(150.0f, -110.0f),
-            MeleeFast(450.0f, -110.0f),
-        }),
-        EnemyPhaseDefinition(12.0f, {
-            MeleeFast(50.0f, -50.0f),
-            MeleeBasic(130.0f, -50.0f),
-            MeleeFast(210.0f, -80.0f),
-            MeleeBasic(290.0f, -50.0f),
-            MeleeFast(370.0f, -80.0f),
-            MeleeBasic(450.0f, -50.0f),
-            MeleeFast(530.0f, -50.0f),
-        }),
-        EnemyPhaseDefinition(20.0f, {
-            MeleeFast(60.0f, -50.0f),
-            MeleeFast(140.0f, -80.0f),
-            MeleeFast(220.0f, -50.0f),
-            MeleeBasic(300.0f, -120.0f),
-            MeleeFast(380.0f, -50.0f),
-            MeleeFast(460.0f, -80.0f),
-            MeleeFast(540.0f, -50.0f),
-            MeleeBasic(200.0f, -150.0f),
-            MeleeBasic(400.0f, -150.0f),
-        }),
-        EnemyPhaseDefinition(28.0f, {
-            MeleeBasic(100.0f, -50.0f),
-            MeleeBasic(200.0f, -50.0f),
-            MeleeBasic(300.0f, -50.0f),
-            MeleeBasic(400.0f, -50.0f),
-            MeleeBasic(500.0f, -50.0f),
-            MeleeFast(150.0f, -100.0f),
-            MeleeFast(250.0f, -100.0f),
-            MeleeFast(350.0f, -100.0f),
-            MeleeFast(450.0f, -100.0f),
-        }),
-        EnemyPhaseDefinition(35.0f, {
-            MeleeSpawner(300.0f, -80.0f, {
-                MeleeFast(0.0f, 0.0f),
-                MeleeBasic(0.0f, 0.0f),
-            }),
-        }),
-        EnemyPhaseDefinition(40.0f, {
-            RangedBurst(200.0f, -80.0f),
-            RangedBurst(400.0f, -80.0f),
-        }),
-        EnemyPhaseDefinition(50.0f, {
-            BossStage1(),
-        }),
-    };
+    return phases;
 }

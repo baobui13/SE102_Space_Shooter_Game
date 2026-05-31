@@ -149,69 +149,6 @@ std::unique_ptr<IMovementStrategy> CreateMovementStrategy(
     return CreateMovementStrategy(std::move(sequence));
 }
 
-LevelEnemySpawnDefinition DefaultSpawn(EnemyType type, float x, float y) {
-    switch (type) {
-    case EnemyType::Melee_Fast:
-        return {
-            type,
-            x,
-            y,
-            { 50.0f, 150.0f, 5.0f, 1.0f, 20.0f, 15 },
-            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(120.0f))
-        };
-    case EnemyType::Ranged_Basic:
-        return {
-            type,
-            x,
-            y,
-            { 80.0f, 100.0f, 15.0f, 1.0f, 500.0f, 20 },
-            EnemyMovementSequenceDefinition::WithFleeFromPlayer(
-                EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 50.0f)),
-                220.0f)
-        };
-    case EnemyType::Ranged_Burst:
-        return {
-            type,
-            x,
-            y,
-            { 100.0f, 70.0f, 20.0f, 1.0f, 600.0f, 30 },
-            EnemyMovementSequenceDefinition::WithFleeFromPlayer(
-                EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Linear(0.0f, 40.0f)),
-                280.0f)
-        };
-    case EnemyType::Melee_Spawner:
-        return {
-            EnemyType::Melee_Spawner,
-            x,
-            y,
-            { 300.0f, 40.0f, 12.0f, 1.0f, 30.0f, 25 },
-            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(50.0f))
-        };
-    case EnemyType::Boss_Stage1:
-        return {
-            EnemyType::Boss_Stage1,
-            VIRTUAL_WIDTH * 0.5f,
-            0.0f,
-            { 3000.0f, 140.0f, 25.0f, 0.5f, 600.0f, 500 },
-            EnemyMovementSequenceDefinition::BossPatrol(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-        };
-    case EnemyType::Melee_Basic:
-    default:
-        return {
-            EnemyType::Melee_Basic,
-            x,
-            y,
-            { 100.0f, 80.0f, 10.0f, 1.0f, 30.0f, 10 },
-            EnemyMovementSequenceDefinition::Single(EnemyMovementDefinition::Chase(80.0f))
-        };
-    }
-}
-}
-
-std::unique_ptr<BaseEnemy> EnemyFactory::Create(
-    EnemyType type, Graphics& gfx, float x, float y)
-{
-    return Create(DefaultSpawn(type, x, y), gfx);
 }
 
 std::unique_ptr<BaseEnemy> EnemyFactory::Create(

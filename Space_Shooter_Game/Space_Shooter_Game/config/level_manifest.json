@@ -1,0 +1,24 @@
+{
+  "levels": [
+    {
+      "id": 1,
+      "name": "Level 1",
+      "config": "config/levels/level_01.json"
+    },
+    {
+      "id": 2,
+      "name": "Level 2",
+      "config": "config/levels/level_02.json"
+    },
+    {
+      "id": 3,
+      "name": "Level 3",
+      "config": "config/levels/level_03.json"
+    },
+    {
+      "id": 4,
+      "name": "Level 4",
+      "config": "config/levels/level_04.json"
+    }
+  ]
+}

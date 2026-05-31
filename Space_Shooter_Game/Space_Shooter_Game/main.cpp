@@ -11,6 +11,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
     CoInitializeEx(nullptr, COINIT_MULTITHREADED);    // Khởi tạo COM (Component Object Model) để sử dụng DirectXTK
+    LoadGameConfig();
 
 	// Khởi tạo cửa sổ game với kích thước chuẩn từ GameConfig
     Window gameWindow(L"Space Roguelike Game", (int)VIRTUAL_WIDTH, (int)VIRTUAL_HEIGHT);

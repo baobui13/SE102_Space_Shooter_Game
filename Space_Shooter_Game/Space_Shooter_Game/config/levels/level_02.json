@@ -1,0 +1,47 @@
+{
+  "level": 2,
+  "background": "Assets/background_lv2.png",
+  "waves": [
+    {
+      "time": 1.0,
+      "enemies": [
+        { "type": "Melee_Fast", "x": 100, "y": -50 },
+        { "type": "Melee_Fast", "x": 500, "y": -50 }
+      ]
+    },
+    {
+      "time": 8.0,
+      "enemies": [
+        { "type": "Melee_Basic", "x": 200, "y": -50 },
+        { "type": "Melee_Basic", "x": 400, "y": -50 },
+        { "type": "Melee_Fast", "x": 300, "y": -80 },
+        { "type": "Melee_Fast", "x": 100, "y": -80 },
+        { "type": "Melee_Fast", "x": 500, "y": -80 }
+      ]
+    },
+    {
+      "time": 15.0,
+      "enemies": [
+        { "type": "Melee_Basic", "x": 80, "y": -50 },
+        { "type": "Melee_Fast", "x": 180, "y": -50 },
+        { "type": "Melee_Basic", "x": 280, "y": -50 },
+        { "type": "Melee_Fast", "x": 380, "y": -50 },
+        { "type": "Melee_Basic", "x": 480, "y": -50 },
+        { "type": "Melee_Fast", "x": 580, "y": -50 }
+      ]
+    },
+    {
+      "time": 25.0,
+      "enemies": [
+        { "type": "Melee_Fast", "x": 100, "y": -50 },
+        { "type": "Melee_Fast", "x": 200, "y": -80 },
+        { "type": "Melee_Fast", "x": 300, "y": -50 },
+        { "type": "Melee_Fast", "x": 400, "y": -80 },
+        { "type": "Melee_Fast", "x": 500, "y": -50 },
+        { "type": "Melee_Basic", "x": 300, "y": -120 },
+        { "type": "Melee_Basic", "x": 150, "y": -120 },
+        { "type": "Melee_Basic", "x": 450, "y": -120 }
+      ]
+    }
+  ]
+}

@@ -176,6 +176,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shield.h" />
     <ClInclude Include="ShieldSkill.h" />
+    <ClInclude Include="SimpleJson.h" />
     <ClInclude Include="Skill.h" />
     <ClInclude Include="SkillManager.h" />
     <ClInclude Include="SpriteAnimation.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="EnemyPool.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
+    <ClCompile Include="GameConfig.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -226,6 +228,7 @@
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="ShieldSkill.cpp" />
     <ClCompile Include="SkillManager.cpp" />
+    <ClCompile Include="SimpleJson.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="UpgradeManager.cpp" />
     <ClCompile Include="EnemyFactory.cpp" />
@@ -258,6 +261,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Arial.spritefont" />
+    <None Include="config\enemies\enemy_movement.json" />
+    <None Include="config\enemies\enemy_stats.json" />
+    <None Include="config\enemies\enemy_visuals.json" />
+    <None Include="config\gameplay.json" />
+    <None Include="config\level_manifest.json" />
+    <None Include="config\levels\level_01.json" />
+    <None Include="config\levels\level_02.json" />
+    <None Include="config\levels\level_03.json" />
+    <None Include="config\levels\level_04.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
