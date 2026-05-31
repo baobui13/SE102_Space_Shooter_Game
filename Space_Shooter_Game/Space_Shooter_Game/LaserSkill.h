@@ -5,6 +5,9 @@ class LaserSkill : public Skill {
 private:
     float m_baseDuration;
     int m_baseDamage;
+    char m_activationKey;
+    int m_damageLevelBonus;
+    float m_playerDamageScale;
 
 public:
     LaserSkill();

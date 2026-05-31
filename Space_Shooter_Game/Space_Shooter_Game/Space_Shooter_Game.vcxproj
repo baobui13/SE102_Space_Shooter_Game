@@ -141,6 +141,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="ConfigUtils.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="EnemyDefinitions.h" />
     <ClInclude Include="EnemyPool.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Laser.h" />
     <ClInclude Include="LaserSkill.h" />
+    <ClInclude Include="LevelConfig.h" />
     <ClInclude Include="LevelUpScene.h" />
     <ClInclude Include="LevelSelectScene.h" />
     <ClInclude Include="LevelEnemyPool.h" />
@@ -166,6 +168,7 @@
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="PauseScene.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerConfig.h" />
     <ClInclude Include="RangeEnemy1.h" />
     <ClInclude Include="RangeEnemy2.h" />
     <ClInclude Include="CircleGroundAttack.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shield.h" />
     <ClInclude Include="ShieldSkill.h" />
+    <ClInclude Include="SkillConfig.h" />
     <ClInclude Include="SimpleJson.h" />
     <ClInclude Include="Skill.h" />
     <ClInclude Include="SkillManager.h" />
@@ -198,6 +202,7 @@
     <ClCompile Include="ExplodingBullet.cpp" />
     <ClCompile Include="ExplodingBulletSkill.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ConfigUtils.cpp" />
     <ClCompile Include="EnemyPool.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
     <ClCompile Include="GameConfig.cpp" />
@@ -206,6 +211,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Laser.cpp" />
     <ClCompile Include="LaserSkill.cpp" />
+    <ClCompile Include="LevelConfig.cpp" />
     <ClCompile Include="LevelUpScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuScene.cpp" />
@@ -219,6 +225,7 @@
     <ClCompile Include="MeleeEnemy1.cpp" />
     <ClCompile Include="MeleeEnemy2.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerConfig.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="RangeEnemy1.cpp" />
     <ClCompile Include="RangeEnemy2.cpp" />
@@ -227,6 +234,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="ShieldSkill.cpp" />
+    <ClCompile Include="SkillConfig.cpp" />
     <ClCompile Include="SkillManager.cpp" />
     <ClCompile Include="SimpleJson.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
@@ -261,6 +269,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Arial.spritefont" />
+    <None Include="config\assets\assets.json" />
+    <None Include="config\audio\audio_clips.json" />
     <None Include="config\enemies\enemy_movement.json" />
     <None Include="config\enemies\enemy_stats.json" />
     <None Include="config\enemies\enemy_visuals.json" />
@@ -270,6 +280,10 @@
     <None Include="config\levels\level_02.json" />
     <None Include="config\levels\level_03.json" />
     <None Include="config\levels\level_04.json" />
+    <None Include="config\player\player_stats.json" />
+    <None Include="config\skills\skills.json" />
+    <None Include="config\ui\menu.json" />
+    <None Include="config\upgrades\upgrades.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

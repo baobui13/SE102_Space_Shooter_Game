@@ -4,26 +4,22 @@
 #include "Player.h"
 #include "Shield.h"
 #include "AudioManager.h"
+#include "SkillConfig.h"
 #include <memory>
 
-namespace {
-constexpr char SHIELD_KEY = '3';
-constexpr float SHIELD_COOLDOWN = 12.0f;
-constexpr int SHIELD_MAX_LEVEL = 5;
-constexpr float SHIELD_LEVEL_DURATION_BONUS = 0.75f;
-}
-
 ShieldSkill::ShieldSkill()
-    : Skill("Shield",
-            "Creates a shield around your ship and blocks incoming damage.",
+    : Skill(GetSkillConfig("shield").name,
+            GetSkillConfig("shield").description,
             SkillType::ACTIVE,
-            SHIELD_COOLDOWN,
-            SHIELD_MAX_LEVEL)
-    , m_baseDuration(3.0f) {
+            GetSkillConfig("shield").cooldown,
+            GetSkillConfig("shield").maxLevel)
+    , m_baseDuration(GetSkillConfig("shield").baseDuration)
+    , m_activationKey(GetSkillConfig("shield").activationKey)
+    , m_durationLevelBonus(GetSkillConfig("shield").durationLevelBonus) {
 }
 
 bool ShieldSkill::CanActivate(GameContext& ctx) {
-    return ctx.input.IsKeyPressed(SHIELD_KEY) && !ctx.player.IsShielded();
+    return ctx.input.IsKeyPressed(m_activationKey) && !ctx.player.IsShielded();
 }
 
 void ShieldSkill::Activate(GameContext& ctx) {
@@ -34,5 +30,5 @@ void ShieldSkill::Activate(GameContext& ctx) {
 }
 
 void ShieldSkill::OnLevelUp() {
-    m_baseDuration += SHIELD_LEVEL_DURATION_BONUS;
+    m_baseDuration += m_durationLevelBonus;
 }

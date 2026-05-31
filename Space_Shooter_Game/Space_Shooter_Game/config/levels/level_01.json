@@ -1,6 +1,14 @@
 {
   "level": 1,
   "background": "Assets/background.png",
+  "objects": {
+    "expOrbs": [
+      { "x": 952, "y": 532, "value": 50 },
+      { "x": "12.5%", "y": "10%", "value": 10 },
+      { "x": "87.5%", "y": "10%", "value": 10 },
+      { "x": "50%", "y": "10%", "value": 50 }
+    ]
+  },
   "waves": [
     {
       "time": 3.0,

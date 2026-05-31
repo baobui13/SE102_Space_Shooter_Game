@@ -1,0 +1,24 @@
+{
+  "masterVolume": 1.0,
+  "categoryVolumes": {
+    "BackgroundMusic": 0.55,
+    "SoundEffect": 0.9,
+    "UiEffect": 1.0
+  },
+  "clips": [
+    { "id": "bgm.menu", "path": "Assets/Audio/BGM/menu_theme.wav", "category": "BackgroundMusic", "volume": 0.5 },
+    { "id": "bgm.gameplay", "path": "Assets/Audio/BGM/gameplay_theme.wav", "category": "BackgroundMusic", "volume": 0.8 },
+    { "id": "sfx.player.shoot", "path": "Assets/Audio/SFX/player_shoot.wav", "category": "SoundEffect", "volume": 0.7 },
+    { "id": "sfx.player.dash", "path": "Assets/Audio/SFX/player_dash.wav", "category": "SoundEffect", "volume": 0.85 },
+    { "id": "sfx.player.hit", "path": "Assets/Audio/SFX/player_hit.wav", "category": "SoundEffect", "volume": 0.9 },
+    { "id": "sfx.player.death", "path": "Assets/Audio/SFX/player_death.wav", "category": "SoundEffect", "volume": 1.0 },
+    { "id": "sfx.player.levelup", "path": "Assets/Audio/SFX/player_levelup.wav", "category": "SoundEffect", "volume": 0.95 },
+    { "id": "sfx.player.laser", "path": "Assets/Audio/SFX/laser.wav", "category": "SoundEffect", "volume": 1.0 },
+    { "id": "sfx.player.shield", "path": "Assets/Audio/SFX/shield1.wav", "category": "SoundEffect", "volume": 1.0 },
+    { "id": "ui.hover", "path": "Assets/Audio/UI/ui_hover.wav", "category": "UiEffect", "volume": 1.0 },
+    { "id": "ui.click", "path": "Assets/Audio/UI/ui_click.wav", "category": "UiEffect", "volume": 0.75 },
+    { "id": "ui.hoverlevel", "path": "Assets/Audio/UI/ui_hover_level.wav", "category": "UiEffect", "volume": 0.5 },
+    { "id": "ui.levelup.open", "path": "Assets/Audio/UI/ui_select_upgrade.wav", "category": "UiEffect", "volume": 0.85 },
+    { "id": "ui.levelup.select", "path": "Assets/Audio/UI/ui_select_upgrade.wav", "category": "UiEffect", "volume": 0.85 }
+  ]
+}

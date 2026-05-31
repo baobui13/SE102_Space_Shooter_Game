@@ -161,6 +161,18 @@
     <ClInclude Include="SimpleJson.h">
       <Filter>Foundation</Filter>
     </ClInclude>
+    <ClInclude Include="ConfigUtils.h">
+      <Filter>Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelConfig.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerConfig.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillConfig.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -286,6 +298,18 @@
     <ClCompile Include="SimpleJson.cpp">
       <Filter>Foundation</Filter>
     </ClCompile>
+    <ClCompile Include="ConfigUtils.cpp">
+      <Filter>Foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelConfig.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerConfig.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SkillConfig.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Bullets1.png">
@@ -369,5 +393,11 @@
     <None Include="config\levels\level_02.json" />
     <None Include="config\levels\level_03.json" />
     <None Include="config\levels\level_04.json" />
+    <None Include="config\assets\assets.json" />
+    <None Include="config\audio\audio_clips.json" />
+    <None Include="config\player\player_stats.json" />
+    <None Include="config\skills\skills.json" />
+    <None Include="config\ui\menu.json" />
+    <None Include="config\upgrades\upgrades.json" />
   </ItemGroup>
 </Project>

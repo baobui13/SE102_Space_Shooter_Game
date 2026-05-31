@@ -1,0 +1,14 @@
+{
+  "textures": {
+    "player": "Assets/Spaceship.png",
+    "playerDeath": "Assets/Explosion Animation.png",
+    "backgroundLevel1": "Assets/background.png",
+    "backgroundLevel2": "Assets/background_lv2.png",
+    "backgroundLevel3": "Assets/background_lv3.png",
+    "backgroundLevel4": "Assets/background_lv4.png"
+  },
+  "fonts": {
+    "default": "Assets/Arial.spritefont",
+    "goodTiming": "Assets/GoodTimingRg.spritefont"
+  }
+}

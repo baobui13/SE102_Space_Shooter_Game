@@ -3,60 +3,44 @@
 #include "AssetManager.h"
 #include "BulletPool.h"
 #include "GameContext.h"
+#include "PlayerConfig.h"
 #include <cmath>
 
-namespace {
-constexpr float PLAYER_SIZE = 64.0f;
-constexpr float PLAYER_BASE_SPEED = 300.0f;
-constexpr int PLAYER_BASE_HP = 100;
-constexpr int PLAYER_BASE_DAMAGE = 10;
-constexpr float PLAYER_BASE_ATTACK_SPEED = 3.0f;
-constexpr float PLAYER_BASE_ATTACK_RANGE = 250.0f;
-constexpr int PLAYER_START_LEVEL = 1;
-constexpr int PLAYER_START_EXP = 0;
-constexpr int PLAYER_BASE_EXP_TO_NEXT_LEVEL = 100;
-constexpr float PLAYER_BASE_MAGNET_RANGE = 100.0f;
-constexpr float PLAYER_BASE_COOLDOWN_MULTIPLIER = 1.0f;
-constexpr float PLAYER_BASE_SKILL_SIZE_MULTIPLIER = 1.0f;
-
-constexpr float PLAYER_DASH_SPEED = 900.0f;
-constexpr float PLAYER_DASH_DURATION = 0.18f;
-constexpr int PLAYER_MAX_DASH_CHARGES = 2;
-constexpr float PLAYER_DASH_RECHARGE_TIME = 1.5f;
-
-constexpr float PLAYER_BULLET_OFFSET = 8.0f;
-constexpr float PLAYER_BULLET_SPEED = 500.0f;
-}
-
 Player::Player(Graphics& gfx, float startX, float startY)
-    : GameObject(startX, startY, PLAYER_SIZE, PLAYER_SIZE)
-    , m_speed(PLAYER_BASE_SPEED)
-    , m_hp(PLAYER_BASE_HP)
-    , m_maxHp(PLAYER_BASE_HP)
-    , m_attackDamage(PLAYER_BASE_DAMAGE)
-    , m_attackSpeed(PLAYER_BASE_ATTACK_SPEED)
+    : GameObject(startX, startY, GetPlayerConfig().size, GetPlayerConfig().size)
+    , m_speed(GetPlayerConfig().speed)
+    , m_hp(GetPlayerConfig().hp)
+    , m_maxHp(GetPlayerConfig().hp)
+    , m_attackDamage(GetPlayerConfig().attackDamage)
+    , m_attackSpeed(GetPlayerConfig().attackSpeed)
     , m_attackTimer(0.0f)
-    , m_attackRange(PLAYER_BASE_ATTACK_RANGE)
-    , m_level(PLAYER_START_LEVEL)
-    , m_currentExp(PLAYER_START_EXP)
-    , m_expToNextLevel(PLAYER_BASE_EXP_TO_NEXT_LEVEL)
-    , m_magnetRange(PLAYER_BASE_MAGNET_RANGE)
-    , m_cooldownMultiplier(PLAYER_BASE_COOLDOWN_MULTIPLIER)
-    , m_skillSizeMultiplier(PLAYER_BASE_SKILL_SIZE_MULTIPLIER)
+    , m_attackRange(GetPlayerConfig().attackRange)
+    , m_level(GetPlayerConfig().startLevel)
+    , m_currentExp(GetPlayerConfig().startExp)
+    , m_expToNextLevel(GetPlayerConfig().expToNextLevel)
+    , m_magnetRange(GetPlayerConfig().magnetRange)
+    , m_cooldownMultiplier(GetPlayerConfig().cooldownMultiplier)
+    , m_skillSizeMultiplier(GetPlayerConfig().skillSizeMultiplier)
     , m_isShielded(false)
     , m_isDashing(false)
     , m_dashTimer(0.0f)
-    , m_dashSpeed(PLAYER_DASH_SPEED)
-    , m_dashDuration(PLAYER_DASH_DURATION)
-    , m_dashCharges(PLAYER_MAX_DASH_CHARGES)
-    , m_maxDashCharges(PLAYER_MAX_DASH_CHARGES)
-    , m_dashRechargeTime(PLAYER_DASH_RECHARGE_TIME)
+    , m_dashSpeed(GetPlayerConfig().dashSpeed)
+    , m_dashDuration(GetPlayerConfig().dashDuration)
+    , m_dashCharges(GetPlayerConfig().dashCharges)
+    , m_maxDashCharges(GetPlayerConfig().dashCharges)
+    , m_dashRechargeTime(GetPlayerConfig().dashRechargeTime)
     , m_dashRechargeTimer(0.0f)
     , m_lastMoveDirX(0.0f)
     , m_lastMoveDirY(-1.0f)
     , m_dashDirX(0.0f)
     , m_dashDirY(0.0f)
     , m_skillManager() {
+    m_invulDuration = GetPlayerConfig().invulDuration;
+    m_shootRecoilRecoverSpeed = GetPlayerConfig().shootRecoilRecoverSpeed;
+    m_bulletOffset = GetPlayerConfig().bulletOffset;
+    m_bulletSpeed = GetPlayerConfig().bulletSpeed;
+    m_expGrowthMultiplier = GetPlayerConfig().expGrowthMultiplier;
+
     m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Spaceship.png"));
     m_anim.AddClip("Idle", 0, 0, 500, 500, 1, 1, 1.0f, true);
     m_anim.Play("Idle");
@@ -171,7 +155,7 @@ void Player::GainExp(int amount) {
 
 void Player::LevelUp() {
     m_level++;
-    m_expToNextLevel = static_cast<int>(m_expToNextLevel * 1.3f);
+    m_expToNextLevel = static_cast<int>(m_expToNextLevel * m_expGrowthMultiplier);
     m_upgradePoints++;
     AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerLevelUp);
 }
@@ -262,21 +246,21 @@ void Player::UpdateAttack(GameContext& ctx) {
     const float mouseX = static_cast<float>(ctx.input.GetMouseX());
     const float mouseY = static_cast<float>(ctx.input.GetMouseY());
 
-    const float spawnX = m_x + (m_width * 0.5f) - PLAYER_BULLET_OFFSET;
-    const float spawnY = m_y + (m_height * 0.5f) - PLAYER_BULLET_OFFSET;
+    const float spawnX = m_x + (m_width * 0.5f) - m_bulletOffset;
+    const float spawnY = m_y + (m_height * 0.5f) - m_bulletOffset;
 
     ctx.bulletPool.GetBullet(
         spawnX,
         spawnY,
         mouseX,
         mouseY,
-        PLAYER_BULLET_SPEED,
+        m_bulletSpeed,
         m_attackDamage,
         m_attackRange
     );
 
     AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerShoot, 0.8f);
-    m_shootRecoilOffset = 10.0f;
+    m_shootRecoilOffset = GetPlayerConfig().shootRecoilOffset;
     m_attackTimer = 1.0f / m_attackSpeed;
 }
 

@@ -1,0 +1,86 @@
+{
+  "upgrades": [
+    {
+      "type": "ATTACK",
+      "name": "Tang sat thuong",
+      "description": "Tang 10 sat thuong dan",
+      "iconTag": "sword",
+      "effects": [
+        { "target": "attackDamage", "operation": "add", "value": 10 }
+      ]
+    },
+    {
+      "type": "SPEED",
+      "name": "Tang toc do ban",
+      "description": "Tang 1 vien/s",
+      "iconTag": "sword",
+      "effects": [
+        { "target": "attackSpeed", "operation": "add", "value": 1.0 }
+      ]
+    },
+    {
+      "type": "ATTACK",
+      "name": "Tang tam ban dan",
+      "description": "Tang tam ban",
+      "iconTag": "sword",
+      "effects": [
+        { "target": "attackRange", "operation": "add", "value": 50 }
+      ]
+    },
+    {
+      "type": "ATTACK",
+      "name": "Giam hoi chieu",
+      "description": "Hoi chieu nhanh hon 10%",
+      "iconTag": "sword",
+      "effects": [
+        { "target": "cooldownMultiplier", "operation": "multiply", "value": 0.9 }
+      ]
+    },
+    {
+      "type": "ATTACK",
+      "name": "Tang kich thuoc",
+      "description": "Ky nang to hon 20%",
+      "iconTag": "sword",
+      "effects": [
+        { "target": "skillSizeMultiplier", "operation": "add", "value": 0.2 }
+      ]
+    },
+    {
+      "type": "DEFENSE",
+      "name": "Hoi mau",
+      "description": "Hoi 50 Mau",
+      "iconTag": "heart",
+      "effects": [
+        { "target": "heal", "operation": "add", "value": 50 }
+      ]
+    },
+    {
+      "type": "DEFENSE",
+      "name": "Tang mau toi da",
+      "description": "Tang 50 mau goc",
+      "iconTag": "heart",
+      "effects": [
+        { "target": "maxHp", "operation": "add", "value": 50 },
+        { "target": "heal", "operation": "add", "value": 50 }
+      ]
+    },
+    {
+      "type": "SPEED",
+      "name": "Toc do di chuyen",
+      "description": "Tau luot nhanh hon",
+      "iconTag": "boot",
+      "effects": [
+        { "target": "speed", "operation": "add", "value": 50 }
+      ]
+    },
+    {
+      "type": "UTILITY",
+      "name": "Tang tam hut EXP",
+      "description": "Hut nam cham xa hon",
+      "iconTag": "shield",
+      "effects": [
+        { "target": "magnetRange", "operation": "add", "value": 50 }
+      ]
+    }
+  ]
+}

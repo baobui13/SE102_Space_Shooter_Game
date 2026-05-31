@@ -1,0 +1,38 @@
+{
+  "skills": {
+    "laser": {
+      "name": "Laser Beam",
+      "description": "Fires a massive laser beam from your ship.",
+      "activationKey": "1",
+      "cooldown": 10.0,
+      "maxLevel": 5,
+      "baseDuration": 5.0,
+      "baseDamage": 50,
+      "damageLevelBonus": 20,
+      "levelUpDamageBonus": 20,
+      "playerDamageScale": 1.5
+    },
+    "exploding_bullet": {
+      "name": "Explosive Bullet",
+      "description": "Fires a slow bullet toward your cursor. Explodes on impact!",
+      "activationKey": "2",
+      "cooldown": 3.0,
+      "maxLevel": 5,
+      "baseSpeed": 160,
+      "speedLevelBonus": 20,
+      "baseDamage": 50,
+      "damageLevelBonus": 20,
+      "levelUpDamageBonus": 25,
+      "playerDamageScale": 1.2
+    },
+    "shield": {
+      "name": "Shield",
+      "description": "Creates a shield around your ship and blocks incoming damage.",
+      "activationKey": "3",
+      "cooldown": 12.0,
+      "maxLevel": 5,
+      "baseDuration": 3.0,
+      "durationLevelBonus": 0.75
+    }
+  }
+}

@@ -4,6 +4,8 @@
 class ShieldSkill : public Skill {
 private:
     float m_baseDuration;
+    char m_activationKey;
+    float m_durationLevelBonus;
 
 public:
     ShieldSkill();

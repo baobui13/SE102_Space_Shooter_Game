@@ -4,32 +4,29 @@
 #include "Laser.h"
 #include "Player.h"
 #include "AudioManager.h"
-
-namespace {
-constexpr char LASER_KEY = '1';
-constexpr float LASER_COOLDOWN = 10.0f;
-constexpr int LASER_MAX_LEVEL = 5;
-constexpr int LASER_LEVEL_DAMAGE_BONUS = 20;
-}
+#include "SkillConfig.h"
 
 LaserSkill::LaserSkill()
-    : Skill("Laser Beam",
-            "Fires a massive laser beam from your ship.",
+    : Skill(GetSkillConfig("laser").name,
+            GetSkillConfig("laser").description,
             SkillType::ACTIVE,
-            LASER_COOLDOWN,
-            LASER_MAX_LEVEL)
-    , m_baseDuration(5.0f)
-    , m_baseDamage(50) {
+            GetSkillConfig("laser").cooldown,
+            GetSkillConfig("laser").maxLevel)
+    , m_baseDuration(GetSkillConfig("laser").baseDuration)
+    , m_baseDamage(GetSkillConfig("laser").baseDamage)
+    , m_activationKey(GetSkillConfig("laser").activationKey)
+    , m_damageLevelBonus(GetSkillConfig("laser").damageLevelBonus)
+    , m_playerDamageScale(GetSkillConfig("laser").playerDamageScale) {
 }
 
 bool LaserSkill::CanActivate(GameContext& ctx) {
-    return ctx.input.IsKeyPressed(LASER_KEY);
+    return ctx.input.IsKeyPressed(m_activationKey);
 }
 
 void LaserSkill::Activate(GameContext& ctx) {
     int damage = m_baseDamage
-        + ((m_level - 1) * LASER_LEVEL_DAMAGE_BONUS)
-        + static_cast<int>(ctx.player.GetAttackDamage() * 1.5f);
+        + ((m_level - 1) * m_damageLevelBonus)
+        + static_cast<int>(ctx.player.GetAttackDamage() * m_playerDamageScale);
 
     float sizeMultiplier = ctx.player.GetSkillSizeMultiplier();
 
@@ -41,5 +38,5 @@ void LaserSkill::Activate(GameContext& ctx) {
 }
 
 void LaserSkill::OnLevelUp() {
-    m_baseDamage += LASER_LEVEL_DAMAGE_BONUS;
+    m_baseDamage += GetSkillConfig("laser").levelUpDamageBonus;
 }

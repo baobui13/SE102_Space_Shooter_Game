@@ -1,4 +1,6 @@
 #include "AudioManager.h"
+#include "ConfigUtils.h"
+#include "SimpleJson.h"
 
 #include <Windows.h>
 
@@ -14,6 +16,17 @@ std::wstring ToWide(const std::string& value) {
 void DebugLog(const std::wstring& message) {
     std::wstring finalMessage = message + L"\n";
     OutputDebugStringW(finalMessage.c_str());
+}
+
+AudioCategory AudioCategoryFromString(const std::string& value) {
+    if (value == "BackgroundMusic") return AudioCategory::BackgroundMusic;
+    if (value == "UiEffect") return AudioCategory::UiEffect;
+    return AudioCategory::SoundEffect;
+}
+
+float ReadFloat(const JsonValue& object, const std::string& key, float fallback) {
+    const JsonValue* value = object.Find(key);
+    return value ? static_cast<float>(value->AsNumber(fallback)) : fallback;
 }
 }
 
@@ -183,21 +196,29 @@ void AudioManager::RegisterDefaultClips() {
         return;
     }
 
-    RegisterClip(AudioIds::MenuMusic, L"Assets/Audio/BGM/menu_theme.wav", AudioCategory::BackgroundMusic, 0.5f);
-    RegisterClip(AudioIds::GameplayMusic, L"Assets/Audio/BGM/gameplay_theme.wav", AudioCategory::BackgroundMusic, 0.8f);
+    try {
+        const JsonValue root = SimpleJson::ParseFile(
+            ResolveConfigPath("config/audio/audio_clips.json"));
 
-    RegisterClip(AudioIds::PlayerShoot, L"Assets/Audio/SFX/player_shoot.wav", AudioCategory::SoundEffect, 0.7f);
-    RegisterClip(AudioIds::PlayerDash, L"Assets/Audio/SFX/player_dash.wav", AudioCategory::SoundEffect, 0.85f);
-    RegisterClip(AudioIds::PlayerHit, L"Assets/Audio/SFX/player_hit.wav", AudioCategory::SoundEffect, 0.9f);
-    RegisterClip(AudioIds::PlayerDeath, L"Assets/Audio/SFX/player_death.wav", AudioCategory::SoundEffect, 1.0f);
-    RegisterClip(AudioIds::PlayerLevelUp, L"Assets/Audio/SFX/player_levelup.wav", AudioCategory::SoundEffect, 0.95f);
-    RegisterClip(AudioIds::PlayerLaser, L"Assets/Audio/SFX/laser.wav", AudioCategory::SoundEffect, 1.0f);
-    RegisterClip(AudioIds::PlayerShield, L"Assets/Audio/SFX/shield1.wav", AudioCategory::SoundEffect, 1.0f);
+        m_masterVolume = ReadFloat(root, "masterVolume", m_masterVolume);
+        const JsonValue& volumes = root.At("categoryVolumes");
+        m_categoryVolumes[CategoryToIndex(AudioCategory::BackgroundMusic)] =
+            Clamp01(ReadFloat(volumes, "BackgroundMusic", GetCategoryVolume(AudioCategory::BackgroundMusic)));
+        m_categoryVolumes[CategoryToIndex(AudioCategory::SoundEffect)] =
+            Clamp01(ReadFloat(volumes, "SoundEffect", GetCategoryVolume(AudioCategory::SoundEffect)));
+        m_categoryVolumes[CategoryToIndex(AudioCategory::UiEffect)] =
+            Clamp01(ReadFloat(volumes, "UiEffect", GetCategoryVolume(AudioCategory::UiEffect)));
 
-    RegisterClip(AudioIds::UiHover, L"Assets/Audio/UI/ui_hover.wav", AudioCategory::UiEffect, 1.0f);
-    RegisterClip(AudioIds::UiClick, L"Assets/Audio/UI/ui_click.wav", AudioCategory::UiEffect, 0.75f);
-    RegisterClip(AudioIds::UiHoverLevel, L"Assets/Audio/UI/ui_hover_level.wav", AudioCategory::UiEffect, 0.5f);
-    RegisterClip(AudioIds::UiSelectUpgrade, L"Assets/Audio/UI/ui_select_upgrade.wav", AudioCategory::UiEffect, 0.85f);
+        for (const auto& clip : root.At("clips").AsArray()) {
+            RegisterClip(
+                clip.At("id").AsStringOr(""),
+                ToWide(ResolveConfigPath(clip.At("path").AsStringOr(""))),
+                AudioCategoryFromString(clip.At("category").AsStringOr("SoundEffect")),
+                ReadFloat(clip, "volume", 1.0f));
+        }
+    }
+    catch (...) {
+    }
 
     m_defaultClipsRegistered = true;
 }
