@@ -47,10 +47,15 @@ void Laser::Update(float dt, GameContext& ctx) {
     m_x = ctx.player.GetCenterX();
     m_y = ctx.player.GetY() - LASER_PLAYER_Y_OFFSET;
 
-    const Collider laserCollider = ColliderRegistry::GetInstance().CreateColliderAt(
+    const float bodyWidth = static_cast<float>(m_bodyRect.right - m_bodyRect.left);
+    const float visibleWidth = bodyWidth * LASER_BASE_THICKNESS * m_sizeMultiplier;
+    const float beamHeight = m_y > 0.0f ? m_y : 0.0f;
+    const Collider laserCollider = Collider::Rectangle(
         GetColliderName(),
-        m_x,
-        m_y);
+        m_x - visibleWidth * 0.5f,
+        0.0f,
+        visibleWidth,
+        beamHeight);
 
     auto& allEntities = ctx.entityManager.GetEntities();
     for (auto& entity : allEntities) {

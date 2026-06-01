@@ -4,7 +4,13 @@
 #include "GameContext.h"
 #include "EntityManager.h" 
 #include "Player.h"
+#include <DirectXMath.h>
 #include <cmath>
+
+namespace {
+constexpr float DAMAGE_FLASH_DURATION = 0.18f;
+constexpr float DAMAGE_FLASH_INTERVAL = 0.06f;
+}
 
 BaseEnemy::BaseEnemy(float x, float y, float width, float height,
     float health, float moveSpeed, float attackPower,
@@ -46,7 +52,16 @@ void BaseEnemy::Update(float dt, GameContext& ctx) {
 }
 
 void BaseEnemy::Render(Graphics& gfx) {
-    m_anim.Render(gfx, m_x, m_y, m_width, m_height, DirectX::Colors::White, m_rotation);
+    DirectX::XMVECTOR color = DirectX::Colors::White;
+    if (m_damageFlashTimer > 0.0f) {
+        const float flashElapsed = DAMAGE_FLASH_DURATION - m_damageFlashTimer;
+        const int flashStep = static_cast<int>(flashElapsed / DAMAGE_FLASH_INTERVAL);
+        if (flashStep % 2 == 0) {
+            color = DirectX::XMVectorSet(1.0f, 0.25f, 0.25f, 1.0f);
+        }
+    }
+
+    m_anim.Render(gfx, m_x, m_y, m_width, m_height, color, m_rotation);
 }
 
 void BaseEnemy::Move(float dt, GameContext& ctx) {
@@ -108,6 +123,10 @@ void BaseEnemy::Attack(GameObject* target) {
 }
 
 void BaseEnemy::TakeDamage(float damage) {
+    if (damage > 0.0f && m_damageFlashTimer <= 0.0f) {
+        m_damageFlashTimer = DAMAGE_FLASH_DURATION;
+    }
+
     m_health -= damage;
     if (m_health <= 0) {
         m_health = 0;
@@ -121,6 +140,12 @@ void BaseEnemy::OnDeath() {
 
 void BaseEnemy::UpdateAnimation(float dt) {
     m_anim.Update(dt);
+    if (m_damageFlashTimer > 0.0f) {
+        m_damageFlashTimer -= dt;
+        if (m_damageFlashTimer < 0.0f) {
+            m_damageFlashTimer = 0.0f;
+        }
+    }
 }
 
 void BaseEnemy::SetMovementStrategy(std::unique_ptr<IMovementStrategy> strategy) {

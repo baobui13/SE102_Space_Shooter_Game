@@ -11,7 +11,7 @@
 namespace {
 constexpr float BOSS_BULLET_SPEED = 260.0f;
 constexpr float BOSS_BULLET_MAX_DISTANCE = 900.0f;
-constexpr float BOSS_BULLET_DISPLAY_SIZE = 32.0f;
+constexpr float BOSS_BULLET_DISPLAY_SIZE = 40.0f;
 constexpr int BOSS_BULLET_RING_COUNT = 16;
 constexpr float TWO_PI = 6.283185307f;
 constexpr const char* BOSS_BULLET_ANIMATION = "bullet_boss_green";

@@ -312,7 +312,7 @@ void ColliderRegistry::EnsureLoaded() const {
 
 void ColliderRegistry::RegisterDefaults() {
     RegisterDefinition({ "default", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
-    RegisterDefinition({ "player", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "player", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 0.0f, 0.0f, -5.0f, -5.0f });
     RegisterDefinition({ "enemy", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 0.0f, 0.0f, -6.0f, -6.0f });
     RegisterDefinition({ "enemy_melee_basic", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 96.0f, 96.0f });
     RegisterDefinition({ "enemy_melee_fast", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 28.0f, 28.0f });
@@ -321,7 +321,7 @@ void ColliderRegistry::RegisterDefaults() {
     RegisterDefinition({ "enemy_ranged_burst", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 60.0f, 60.0f });
     RegisterDefinition({ "boss", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 420.0f, 640.0f });
     RegisterDefinition({ "player_bullet", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
-    RegisterDefinition({ "enemy_bullet", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "enemy_bullet", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 0.0f, 0.0f, -4.0f, -4.0f });
     RegisterDefinition({ "exploding_bullet", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
     RegisterDefinition({ "exploding_explosion", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
     RegisterDefinition({ "laser", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });

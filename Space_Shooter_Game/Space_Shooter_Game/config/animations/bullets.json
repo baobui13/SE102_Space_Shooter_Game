@@ -13,7 +13,7 @@
     "x": 256, "y": 128, "w": 16, "h": 16,
     "count": 4, "cols": 4,
     "duration": 0.08, "loop": true,
-    "displayWidth": 32, "displayHeight": 32
+    "displayWidth": 40, "displayHeight": 40
   },
   "bullet_boss_green": {
     "texture": "Assets/Bullets/Green Effect Bullet Impact Explosion 32x32.png",
@@ -22,6 +22,6 @@
     "count": 4, "cols": 4,
     "duration": 0.08, "loop": true,
     "spacingX": 0, "spacingY": 0,
-    "displayWidth": 32, "displayHeight": 32
+    "displayWidth": 40, "displayHeight": 40
   }
 }

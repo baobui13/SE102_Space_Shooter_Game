@@ -18,7 +18,7 @@ private:
     const float TIME_WAIT_ATTACK = 1.0f;
     const float BULLET_SPEED = 900.0f;
     const float BULLET_MAX_DISTANCE = 2000.0f;
-    const float BULLET_DISPLAY_SIZE = 32.0f;
+    const float BULLET_DISPLAY_SIZE = 40.0f;
 
 public:
     RangeEnemy1(float x, float y, float width, float height,

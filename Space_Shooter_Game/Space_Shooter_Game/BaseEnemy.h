@@ -26,6 +26,7 @@ protected:
     float m_attackCooldown;
     float m_rotation = 0.0f;
     float m_spriteForwardAngle = 0.0f;
+    float m_damageFlashTimer = 0.0f;
 
     EnemyType m_type;
     int m_expReward;
