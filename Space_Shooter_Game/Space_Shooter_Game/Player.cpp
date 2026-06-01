@@ -1,6 +1,6 @@
 #include "AudioManager.h"
 #include "Player.h"
-#include "AssetManager.h"
+#include "AnimationManager.h"
 #include "BulletPool.h"
 #include "GameContext.h"
 #include "PlayerConfig.h"
@@ -43,12 +43,12 @@ Player::Player(Graphics& gfx, float startX, float startY)
     m_bulletSpeed = GetPlayerConfig().bulletSpeed;
     m_expGrowthMultiplier = GetPlayerConfig().expGrowthMultiplier;
 
-    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Spaceship.png"));
-    m_anim.AddClip("Idle", 0, 0, 500, 500, 1, 1, 1.0f, true);
-    m_anim.Play("Idle");
+    // Object chỉ gọi tên animation — mọi thông số được AnimationManager quản lý từ JSON.
+    auto& animMgr = AnimationManager::GetInstance();
+    animMgr.Configure("player_idle", m_anim);
+    m_anim.Play(animMgr.GetClipName("player_idle"));
 
-    m_deathAnim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Explosion Animation.png"));
-    m_deathAnim.AddClip("Die", 0, 0, 64, 64, 11, 6, 0.1f, false);
+    animMgr.Configure("player_death", m_deathAnim);
 }
 
 void Player::Update(float dt, GameContext& ctx) {
@@ -134,7 +134,8 @@ void Player::TakeDamage(int damage) {
     if (m_hp <= 0) {
         m_hp = 0;
         m_isDead = true;          // Đánh dấu trạng thái chết
-        m_deathAnim.Play("Die");   // Chạy hiệu ứng nổ
+        // Gọi tên animation chết — không có thông số cấu hình nào bên trong Player.
+        m_deathAnim.Play(AnimationManager::GetInstance().GetClipName("player_death"));
         AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerDeath);
         OutputDebugStringA("[Player] Bat dau hieu ung no!\n");
     }

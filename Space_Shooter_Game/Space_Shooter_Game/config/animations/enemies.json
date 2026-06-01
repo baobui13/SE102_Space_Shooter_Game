@@ -1,0 +1,50 @@
+{
+  "melee_basic_idle": {
+    "texture": "Assets/Enemy/Enemy3.png",
+    "clip": "idle",
+    "x": 0, "y": 0, "w": 256, "h": 256,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true,
+    "spacingX": 0, "spacingY": 0
+  },
+  "melee_fast_idle": {
+    "texture": "Assets/Enemy/Enemy1.png",
+    "clip": "idle",
+    "x": 0, "y": 0, "w": 128, "h": 128,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true,
+    "spacingX": 0, "spacingY": 0
+  },
+  "melee_spawner_idle": {
+    "texture": "Assets/Enemy/Enemy4.png",
+    "clip": "idle",
+    "x": 0, "y": 0, "w": 1024, "h": 1024,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true,
+    "spacingX": 0, "spacingY": 0
+  },
+  "ranged_basic_idle": {
+    "texture": "Assets/Enemy/Enemy2.png",
+    "clip": "idle",
+    "x": 0, "y": 0, "w": 128, "h": 128,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true,
+    "spacingX": 0, "spacingY": 0
+  },
+  "ranged_burst_idle": {
+    "texture": "Assets/Enemy/Enemy5.png",
+    "clip": "idle",
+    "x": 0, "y": 0, "w": 512, "h": 512,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true,
+    "spacingX": 0, "spacingY": 0
+  },
+  "boss_stage1_idle": {
+    "texture": "Assets/Enemy/Boss1.png",
+    "clip": "idle",
+    "x": 0, "y": 0, "w": 1024, "h": 1536,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true,
+    "spacingX": 0, "spacingY": 0
+  }
+}

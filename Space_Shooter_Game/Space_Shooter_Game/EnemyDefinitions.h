@@ -32,18 +32,9 @@ struct EnemyVisualDefinition {
     EnemyType type;
     float displayWidth;
     float displayHeight;
-    std::wstring texturePath;
-    std::string clipName;
-    int frameX;
-    int frameY;
-    int frameWidth;
-    int frameHeight;
-    int frameCount;
-    int columns;
-    float frameDuration;
-    bool loop;
-    int spacingX;
-    int spacingY;
+    // ID animation trong AnimationManager (ví dụ: "melee_basic_idle")
+    // Object chỉ lưu tên, không chứa thông số frame/texture.
+    std::string animationId;
     float spriteForwardAngle;
 };
 

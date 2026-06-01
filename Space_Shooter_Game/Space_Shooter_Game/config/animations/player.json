@@ -1,0 +1,16 @@
+{
+  "player_idle": {
+    "texture": "Assets/Spaceship.png",
+    "clip": "Idle",
+    "x": 0, "y": 0, "w": 500, "h": 500,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true
+  },
+  "player_death": {
+    "texture": "Assets/Explosion Animation.png",
+    "clip": "Die",
+    "x": 0, "y": 0, "w": 64, "h": 64,
+    "count": 11, "cols": 6,
+    "duration": 0.1, "loop": false
+  }
+}

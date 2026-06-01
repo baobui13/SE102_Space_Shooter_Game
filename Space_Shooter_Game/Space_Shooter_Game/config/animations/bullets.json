@@ -1,0 +1,16 @@
+{
+  "bullet_default": {
+    "texture": "Assets/Bullets1.png",
+    "clip": "Fly",
+    "x": 15, "y": 15, "w": 17, "h": 17,
+    "count": 1, "cols": 1,
+    "duration": 1.0, "loop": true
+  },
+  "bullet_enemy_fire": {
+    "texture": "Assets/Bullets/All_Fire_Bullet_Pixel_16x16_03.png",
+    "clip": "EnemyFire",
+    "x": 256, "y": 128, "w": 16, "h": 16,
+    "count": 4, "cols": 4,
+    "duration": 0.08, "loop": true
+  }
+}

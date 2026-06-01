@@ -6,9 +6,6 @@
 #include <vector>
 
 namespace {
-std::wstring ToWide(const std::string& value) {
-    return std::wstring(value.begin(), value.end());
-}
 
 std::string ResolveConfigPath(const std::string& filePath) {
     if (std::filesystem::exists(filePath)) {
@@ -62,21 +59,11 @@ int ReadInt(const JsonValue& object, const std::string& key, int fallback) {
 
 EnemyVisualDefinition ParseVisual(const std::string& typeName, const JsonValue& value) {
     EnemyVisualDefinition visual{};
-    visual.type = EnemyTypeFromString(typeName);
-    visual.displayWidth = ReadFloat(value, "displayWidth", 64.0f);
+    visual.type          = EnemyTypeFromString(typeName);
+    visual.displayWidth  = ReadFloat(value, "displayWidth", 64.0f);
     visual.displayHeight = ReadFloat(value, "displayHeight", 64.0f);
-    visual.texturePath = ToWide(value.At("texture").AsStringOr("Assets/Enemy/Enemy1.png"));
-    visual.clipName = value.At("clipName").AsStringOr("idle");
-    visual.frameX = ReadInt(value, "frameX", 0);
-    visual.frameY = ReadInt(value, "frameY", 0);
-    visual.frameWidth = ReadInt(value, "frameWidth", 64);
-    visual.frameHeight = ReadInt(value, "frameHeight", 64);
-    visual.frameCount = ReadInt(value, "frameCount", 1);
-    visual.columns = ReadInt(value, "columns", 1);
-    visual.frameDuration = ReadFloat(value, "frameDuration", 1.0f);
-    visual.loop = value.At("loop").AsBool(true);
-    visual.spacingX = ReadInt(value, "spacingX", 0);
-    visual.spacingY = ReadInt(value, "spacingY", 0);
+    // animationId trỏ đến animation trong AnimationManager (config/animations/enemies.json)
+    visual.animationId   = value.At("animationId").AsStringOr("melee_basic_idle");
     visual.spriteForwardAngle = SpriteHeadDirectionToRadians(
         SpriteHeadDirectionFromString(value.At("spriteHeadDirection").AsStringOr("Down")));
     return visual;

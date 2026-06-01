@@ -8,7 +8,7 @@
 #include "MovementStrategies.h"
 #include "MovementTransition.h"
 #include "GameConfig.h"
-#include "AssetManager.h"
+#include "AnimationManager.h"
 
 namespace {
 std::unique_ptr<IMovementStrategy> CreateSingleMovementStrategy(const EnemyMovementDefinition& movement) {
@@ -266,22 +266,10 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
     enemy->SetSpriteForwardAngle(visual.spriteForwardAngle);
     enemy->SetExpReward(stats.expReward);
 
-    auto tex = AssetManager::GetInstance().GetTexture(gfx, visual.texturePath);
-    enemy->GetAnim().Initialize(tex);
-    enemy->GetAnim().AddClip(
-        visual.clipName,
-        visual.frameX,
-        visual.frameY,
-        visual.frameWidth,
-        visual.frameHeight,
-        visual.frameCount,
-        visual.columns,
-        visual.frameDuration,
-        visual.loop,
-        visual.spacingX,
-        visual.spacingY
-    );
-    enemy->GetAnim().Play(visual.clipName);
+    // Object chỉ gọi tên animation — mọi thông số được AnimationManager quản lý từ JSON.
+    auto& animMgr = AnimationManager::GetInstance();
+    animMgr.Configure(visual.animationId, enemy->GetAnim());
+    enemy->GetAnim().Play(animMgr.GetClipName(visual.animationId));
 
     return enemy;
 }
