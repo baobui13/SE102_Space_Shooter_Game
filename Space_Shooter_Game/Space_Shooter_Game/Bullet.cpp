@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include "AnimationManager.h"
 #include "AssetManager.h"
 #include "BaseEnemy.h"
 #include "EntityManager.h"
@@ -15,8 +16,9 @@ Bullet::Bullet(Graphics& gfx)
     , m_rotation(0.0f)
     , m_spriteForwardAngle(0.0f)
 {
+    (void)gfx;
     SetColliderName("player_bullet");
-    SetDefaultAnimation(gfx);
+    SetDefaultAnimation();
 }
 
 Bullet::Bullet(Graphics& gfx, float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance)
@@ -55,16 +57,29 @@ void Bullet::ReInitialize(float startX, float startY, float targetX, float targe
     m_vx = dx * speed;
     m_vy = dy * speed;
 
-    // Tính toán góc xoay ban đầu
     m_rotation = std::atan2(m_vy, m_vx) - m_spriteForwardAngle;
 }
 
-void Bullet::SetDefaultAnimation(Graphics& gfx) {
-    m_width = 16.0f;
-    m_height = 16.0f;
-    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, L"Assets/Bullets1.png"));
-    m_anim.AddClip("Fly", 15, 15, 17, 17, 1, 1, 1.0f, true);
-    m_anim.Play("Fly");
+void Bullet::SetDefaultAnimation() {
+    SetAnimationById("bullet_default");
+}
+
+void Bullet::SetAnimationById(const std::string& animId, float displayWidth, float displayHeight) {
+    auto& animMgr = AnimationManager::GetInstance();
+    if (!animMgr.PlayAnimation(animId, m_anim)) {
+        if (animId != "bullet_default") {
+            SetDefaultAnimation();
+        }
+        return;
+    }
+
+    if (displayWidth > 0.0f && displayHeight > 0.0f) {
+        m_width = displayWidth;
+        m_height = displayHeight;
+    }
+    else {
+        animMgr.GetDisplaySize(animId, m_width, m_height);
+    }
 }
 
 void Bullet::SetAnimation(Graphics& gfx, const wchar_t* texturePath, const std::string& clipName,
@@ -86,7 +101,7 @@ void Bullet::SetAnimation(Graphics& gfx, const wchar_t* texturePath, const std::
     m_height = displayHeight;
     auto texture = AssetManager::GetInstance().GetTexture(gfx, texturePath);
     if (!texture) {
-        SetDefaultAnimation(gfx);
+        SetDefaultAnimation();
         m_width = displayWidth;
         m_height = displayHeight;
         return;

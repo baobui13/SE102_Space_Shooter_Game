@@ -17,6 +17,9 @@ struct AnimationDef {
     float duration = 1.0f;
     bool loop = true;
     int spacingX = 0, spacingY = 0;
+    // Kích thước hiển thị trên màn hình (0 = dùng w/h của frame)
+    float displayWidth = 0.0f;
+    float displayHeight = 0.0f;
 };
 
 // AnimationManager — Singleton quản lý toàn bộ animation của game.
@@ -47,6 +50,12 @@ public:
     // - AddClip tương ứng vào outAnim.
     // Trả về false nếu animId không tồn tại.
     bool Configure(const std::string& animId, SpriteAnimation& outAnim) const;
+
+    // Configure + Play clip — dùng khi gán animation lần đầu cho object.
+    bool PlayAnimation(const std::string& animId, SpriteAnimation& outAnim) const;
+
+    // Kích thước hiển thị từ JSON (fallback: kích thước frame w/h).
+    void GetDisplaySize(const std::string& animId, float& outW, float& outH) const;
 
     // Lấy tên clip của một animation (để gọi SpriteAnimation::Play()).
     // Trả về animId nếu không tìm thấy.

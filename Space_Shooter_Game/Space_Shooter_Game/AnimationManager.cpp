@@ -82,6 +82,8 @@ void AnimationManager::LoadFromFile(const std::string& filePath) {
             def.loop        = value.At("loop").AsBool(true);
             def.spacingX    = ReadInt(value, "spacingX", 0);
             def.spacingY    = ReadInt(value, "spacingY", 0);
+            def.displayWidth  = ReadFloat(value, "displayWidth", 0.0f);
+            def.displayHeight = ReadFloat(value, "displayHeight", 0.0f);
 
             m_defs[animId] = std::move(def);
         }
@@ -114,6 +116,27 @@ bool AnimationManager::Configure(const std::string& animId, SpriteAnimation& out
         def.spacingX, def.spacingY
     );
     return true;
+}
+
+bool AnimationManager::PlayAnimation(const std::string& animId, SpriteAnimation& outAnim) const {
+    if (!Configure(animId, outAnim)) {
+        return false;
+    }
+    outAnim.Play(GetClipName(animId));
+    return true;
+}
+
+void AnimationManager::GetDisplaySize(const std::string& animId, float& outW, float& outH) const {
+    const auto it = m_defs.find(animId);
+    if (it == m_defs.end()) {
+        outW = 16.0f;
+        outH = 16.0f;
+        return;
+    }
+
+    const AnimationDef& def = it->second;
+    outW = def.displayWidth > 0.0f ? def.displayWidth : static_cast<float>(def.w);
+    outH = def.displayHeight > 0.0f ? def.displayHeight : static_cast<float>(def.h);
 }
 
 const std::string& AnimationManager::GetClipName(const std::string& animId) const {

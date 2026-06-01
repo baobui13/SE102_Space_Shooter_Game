@@ -1,3 +1,4 @@
+#include "AnimationManager.h"
 #include "AudioManager.h"
 #include "Window.h"
 #include "Graphics.h"
@@ -18,6 +19,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // Khởi tạo DirectX gắn vào handle (HWND) của cửa sổ vừa tạo
     Graphics gfx(gameWindow.GetHWND());
+
+    AnimationManager::GetInstance().LoadAll(gfx);
 
     AudioManager& audio = AudioManager::GetInstance();
     audio.Initialize();

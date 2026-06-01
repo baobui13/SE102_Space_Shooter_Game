@@ -50,6 +50,9 @@
     <ClInclude Include="InputManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
     <ClInclude Include="AssetManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -207,6 +210,9 @@
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationManager.cpp">
+      <Filter>Managers</Filter>
     </ClCompile>
     <ClCompile Include="AssetManager.cpp">
       <Filter>Managers</Filter>

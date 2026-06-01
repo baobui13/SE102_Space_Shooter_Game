@@ -109,20 +109,6 @@ void RangeEnemy1::FireLockedShot(GameContext& ctx) {
     );
 
     if (bullet) {
-        bullet->SetAnimation(
-            ctx.gfx,
-            L"Assets/Bullets/All_Fire_Bullet_Pixel_16x16_03.png",
-            "EnemyFire",
-            256,
-            128,
-            16,
-            16,
-            4,
-            4,
-            0.08f,
-            true,
-            BULLET_DISPLAY_SIZE,
-            BULLET_DISPLAY_SIZE
-        );
+        bullet->SetAnimationById("bullet_enemy_fire");
     }
 }

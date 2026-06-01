@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="AttackMarker.h" />
     <ClInclude Include="AttackMarkerDefinitions.h" />
@@ -193,6 +194,7 @@
     <ResourceCompile Include="Space_Shooter_Game.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="AttackMarker.cpp" />
     <ClCompile Include="AttackMarkerPool.cpp" />

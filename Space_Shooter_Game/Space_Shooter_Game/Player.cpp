@@ -45,9 +45,7 @@ Player::Player(Graphics& gfx, float startX, float startY)
 
     // Object chỉ gọi tên animation — mọi thông số được AnimationManager quản lý từ JSON.
     auto& animMgr = AnimationManager::GetInstance();
-    animMgr.Configure("player_idle", m_anim);
-    m_anim.Play(animMgr.GetClipName("player_idle"));
-
+    animMgr.PlayAnimation("player_idle", m_anim);
     animMgr.Configure("player_death", m_deathAnim);
 }
 

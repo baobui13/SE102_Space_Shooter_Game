@@ -27,14 +27,13 @@ public:
     void ReInitialize(float startX, float startY, float targetX, float targetY,
                       float speed, int damage, float maxDistance, BulletOwner owner);
 
-    // Thiết lập animation bằng tên — object không chứa bất kỳ thông số frame nào.
-    // animId phải tồn tại trong AnimationManager (config/animations/bullets.json).
+    // Thiết lập animation bằng tên — object không chứa thông số frame/texture.
+    // Kích thước hiển thị lấy từ JSON; chỉ override khi truyền displayWidth/Height > 0.
     void SetAnimationById(const std::string& animId,
                           float displayWidth  = 0.0f,
                           float displayHeight = 0.0f);
 
-    // Legacy: dùng khi cần animation chưa có trong JSON (tránh dùng cho code mới).
-    void SetDefaultAnimation(Graphics& gfx);
+    void SetDefaultAnimation();
     void SetAnimation(Graphics& gfx, const wchar_t* texturePath, const std::string& clipName,
         int frameX, int frameY, int frameWidth, int frameHeight,
         int frameCount, int columns, float frameDuration, bool loop,

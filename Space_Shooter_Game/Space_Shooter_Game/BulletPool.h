@@ -32,14 +32,14 @@ public:
         for (auto& bullet : m_pool) {
             if (!bullet->IsActive()) {
                 bullet->ReInitialize(startX, startY, targetX, targetY, speed, damage, maxDistance, owner);
-                bullet->SetDefaultAnimation(m_gfx);
+                bullet->SetDefaultAnimation();
                 return bullet.get();
             }
         }
 
         auto newBullet = std::make_unique<Bullet>(m_gfx);
         newBullet->ReInitialize(startX, startY, targetX, targetY, speed, damage, maxDistance, owner);
-        newBullet->SetDefaultAnimation(m_gfx);
+        newBullet->SetDefaultAnimation();
         Bullet* ptr = newBullet.get();
         m_pool.push_back(std::move(newBullet));
         return ptr;

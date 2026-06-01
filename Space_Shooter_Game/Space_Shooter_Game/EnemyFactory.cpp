@@ -267,9 +267,7 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
     enemy->SetExpReward(stats.expReward);
 
     // Object chỉ gọi tên animation — mọi thông số được AnimationManager quản lý từ JSON.
-    auto& animMgr = AnimationManager::GetInstance();
-    animMgr.Configure(visual.animationId, enemy->GetAnim());
-    enemy->GetAnim().Play(animMgr.GetClipName(visual.animationId));
+    AnimationManager::GetInstance().PlayAnimation(visual.animationId, enemy->GetAnim());
 
     return enemy;
 }
