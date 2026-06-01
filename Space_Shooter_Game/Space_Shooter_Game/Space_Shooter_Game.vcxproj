@@ -141,6 +141,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="ConfigUtils.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="EnemyDefinitions.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="ExplodingBullet.cpp" />
     <ClCompile Include="ExplodingBulletSkill.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ConfigUtils.cpp" />
     <ClCompile Include="EnemyPool.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
@@ -271,6 +273,7 @@
     <None Include="Assets\Arial.spritefont" />
     <None Include="config\assets\assets.json" />
     <None Include="config\audio\audio_clips.json" />
+    <None Include="config\colliders\colliders.json" />
     <None Include="config\enemies\enemy_movement.json" />
     <None Include="config\enemies\enemy_stats.json" />
     <None Include="config\enemies\enemy_visuals.json" />

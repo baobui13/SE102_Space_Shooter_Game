@@ -35,6 +35,8 @@ CircleGroundAttack::CircleGroundAttack(Graphics& gfx,
     m_damage(damage),
     m_warningDuration(warningDuration)
 {
+    SetColliderName("circle_ground_attack");
+
     const float drawSize = EXPLOSION_FRAME_W * EXPLOSION_DISPLAY_SCALE;
     m_width = drawSize;
     m_height = drawSize;
@@ -88,11 +90,13 @@ void CircleGroundAttack::Render(Graphics& gfx) {
 }
 
 bool CircleGroundAttack::IsPlayerInsideCircle(GameContext& ctx) const {
-    float playerCX = ctx.player.GetX() + ctx.player.GetWidth() * 0.5f;
-    float playerCY = ctx.player.GetY() + ctx.player.GetHeight() * 0.5f;
-    float dx = playerCX - m_centerX;
-    float dy = playerCY - m_centerY;
-    return (dx * dx + dy * dy) <= (m_radius * m_radius);
+    const Collider attackCollider = ColliderRegistry::GetInstance().CreateCircleCollider(
+        GetColliderName(),
+        m_centerX,
+        m_centerY,
+        m_radius);
+    const Collider playerCenter = Collider::Circle("player_center", ctx.player.GetCenterX(), ctx.player.GetCenterY(), 0.0f);
+    return attackCollider.Intersects(playerCenter);
 }
 
 void CircleGroundAttack::ApplyDamage(GameContext& ctx) {

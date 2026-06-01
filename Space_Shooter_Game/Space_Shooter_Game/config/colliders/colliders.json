@@ -1,0 +1,69 @@
+{
+  "colliders": [
+    {
+      "name": "default",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "player",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "enemy",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "boss",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "player_bullet",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "enemy_bullet",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "exploding_bullet",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "exploding_explosion",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "laser",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "exp_orb",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    },
+    {
+      "name": "exp_orb_collect",
+      "shape": "circle",
+      "radius": 30
+    },
+    {
+      "name": "circle_ground_attack",
+      "shape": "circle",
+      "radius": 0
+    },
+    {
+      "name": "melee_contact",
+      "shape": "rectangle",
+      "useOwnerSize": true
+    }
+  ]
+}

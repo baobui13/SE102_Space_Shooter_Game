@@ -164,6 +164,9 @@
     <ClInclude Include="ConfigUtils.h">
       <Filter>Foundation</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Foundation</Filter>
+    </ClInclude>
     <ClInclude Include="LevelConfig.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -301,6 +304,9 @@
     <ClCompile Include="ConfigUtils.cpp">
       <Filter>Foundation</Filter>
     </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Foundation</Filter>
+    </ClCompile>
     <ClCompile Include="LevelConfig.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
@@ -395,6 +401,7 @@
     <None Include="config\levels\level_04.json" />
     <None Include="config\assets\assets.json" />
     <None Include="config\audio\audio_clips.json" />
+    <None Include="config\colliders\colliders.json" />
     <None Include="config\player\player_stats.json" />
     <None Include="config\skills\skills.json" />
     <None Include="config\ui\menu.json" />

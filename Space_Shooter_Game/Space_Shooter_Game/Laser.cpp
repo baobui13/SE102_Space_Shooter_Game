@@ -1,11 +1,11 @@
 #include "Laser.h"
 #include "AssetManager.h"
+#include "BaseEnemy.h"
+#include "EntityManager.h"
 #include "GameContext.h"
 #include "Player.h"
 #include <DirectXColors.h>
 #include <DirectXMath.h>
-#include "EntityManager.h"
-#include "BaseEnemy.h"
 
 namespace {
 constexpr wchar_t LASER_TEXTURE_PATH[] = L"Assets/lazer_1.png";
@@ -32,6 +32,7 @@ Laser::Laser(Graphics& gfx, float duration, int damage, float sizeMultiplier)
     , m_texture(AssetManager::GetInstance().GetTexture(gfx, LASER_TEXTURE_PATH))
     , m_bodyRect{ LASER_BODY_LEFT, LASER_BODY_TOP, LASER_BODY_RIGHT, LASER_BODY_BOTTOM }
     , m_impactRect{ LASER_IMPACT_LEFT, LASER_IMPACT_TOP, LASER_IMPACT_RIGHT, LASER_IMPACT_BOTTOM } {
+    SetColliderName("laser");
 }
 
 void Laser::Update(float dt, GameContext& ctx) {
@@ -43,35 +44,27 @@ void Laser::Update(float dt, GameContext& ctx) {
         return;
     }
 
-    // Cập nhật vị trí Laser bám theo Player
-    m_x = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
-    m_y = ctx.player.GetY() - 10.0f; // LASER_PLAYER_Y_OFFSET
+    m_x = ctx.player.GetCenterX();
+    m_y = ctx.player.GetY() - LASER_PLAYER_Y_OFFSET;
 
-    // Tính toán vùng AABB của tia Laser (Tia bắn thẳng lên trên)
-    float thickness = 5.0f * m_sizeMultiplier; // 5.0f là LASER_BASE_THICKNESS
-    float laserLeft = m_x - thickness / 2.0f;
-    float laserRight = m_x + thickness / 2.0f;
-    float laserTop = 0.0f;
-    float laserBottom = m_y;
+    const float thickness = LASER_BASE_THICKNESS * m_sizeMultiplier;
+    const float laserLeft = m_x - thickness * 0.5f;
+    const float laserTop = 0.0f;
+    const float laserBottom = m_y;
+    const Collider laserCollider = ColliderRegistry::GetInstance().CreateRectangleCollider(
+        GetColliderName(),
+        laserLeft,
+        laserTop,
+        thickness,
+        laserBottom - laserTop);
 
     auto& allEntities = ctx.entityManager.GetEntities();
     for (auto& entity : allEntities) {
         if (!entity->IsActive()) continue;
 
         BaseEnemy* enemy = dynamic_cast<BaseEnemy*>(entity.get());
-        if (enemy) {
-            float eLeft = enemy->GetX();
-            float eRight = enemy->GetX() + enemy->GetWidth();
-            float eTop = enemy->GetY();
-            float eBottom = enemy->GetY() + enemy->GetHeight();
-
-            // Kiểm tra va chạm giữa HCN của Laser và HCN của Enemy
-            if (laserLeft < eRight && laserRight > eLeft &&
-                laserTop < eBottom && laserBottom > eTop)
-            {
-                // Sát thương theo thời gian: (Damage * dt * Hệ số)
-                enemy->TakeDamage(m_damage * dt * 10.0f);
-            }
+        if (enemy && enemy->CheckCollision(laserCollider)) {
+            enemy->TakeDamage(m_damage * dt * 10.0f);
         }
     }
 }

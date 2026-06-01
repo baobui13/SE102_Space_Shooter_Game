@@ -128,10 +128,12 @@ void MeleeEnemy2::Attack(GameObject* target) {
 bool MeleeEnemy2::IsPlayerInRange(GameObject* player) const {
     if (!player) return false;
 
-    float margin = 4.0f;
-    bool overlapX = (m_x - margin) < (player->GetX() + player->GetWidth()) &&
-                    (m_x + m_width + margin) > player->GetX();
-    bool overlapY = (m_y - margin) < (player->GetY() + player->GetHeight()) &&
-                    (m_y + m_height + margin) > player->GetY();
-    return overlapX && overlapY;
+    const float margin = 4.0f;
+    const Collider contactCollider = ColliderRegistry::GetInstance().CreateRectangleCollider(
+        "melee_contact",
+        m_x - margin,
+        m_y - margin,
+        m_width + margin * 2.0f,
+        m_height + margin * 2.0f);
+    return player->CheckCollision(contactCollider);
 }

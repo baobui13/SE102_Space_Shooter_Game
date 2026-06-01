@@ -10,6 +10,7 @@ Boss1::Boss1(float x, float y, float width, float height,
              float attackSpeed, float attackRange, EnemyType type)
     : BaseEnemy(x, y, width, height, health, moveSpeed, attackPower, attackSpeed, attackRange, type)
 {
+    SetColliderName("boss");
     m_x = x;
     m_y = -height + 40.0f;
     m_entryTargetY = 30.0f;
@@ -64,11 +65,13 @@ bool Boss1::IsPlayerInContact(const GameObject* player) const {
     if (!player) return false;
 
     constexpr float margin = 4.0f;
-    const bool overlapX = (m_x - margin) < (player->GetX() + player->GetWidth()) &&
-        (m_x + m_width + margin) > player->GetX();
-    const bool overlapY = (m_y - margin) < (player->GetY() + player->GetHeight()) &&
-        (m_y + m_height + margin) > player->GetY();
-    return overlapX && overlapY;
+    const Collider contactCollider = ColliderRegistry::GetInstance().CreateRectangleCollider(
+        "melee_contact",
+        m_x - margin,
+        m_y - margin,
+        m_width + margin * 2.0f,
+        m_height + margin * 2.0f);
+    return player->CheckCollision(contactCollider);
 }
 
 void Boss1::Attack(GameObject* target) {

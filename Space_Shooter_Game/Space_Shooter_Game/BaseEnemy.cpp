@@ -22,6 +22,7 @@ BaseEnemy::BaseEnemy(float x, float y, float width, float height,
     m_rotation(0.0f),
     m_spriteForwardAngle(0.0f)
 {
+    SetColliderName("enemy");
 }
 
 void BaseEnemy::Update(float dt, GameContext& ctx) {

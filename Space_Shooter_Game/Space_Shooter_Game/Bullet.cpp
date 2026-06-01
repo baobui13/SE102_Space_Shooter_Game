@@ -15,6 +15,7 @@ Bullet::Bullet(Graphics& gfx)
     , m_rotation(0.0f)
     , m_spriteForwardAngle(0.0f)
 {
+    SetColliderName("player_bullet");
     SetDefaultAnimation(gfx);
 }
 
@@ -35,6 +36,7 @@ void Bullet::ReInitialize(float startX, float startY, float targetX, float targe
     m_maxDistance = maxDistance;
     m_distanceTraveled = 0.0f;
     m_owner = owner;
+    SetColliderName(owner == BulletOwner::Enemy ? "enemy_bullet" : "player_bullet");
     m_isActive = true;
 
     float dx = targetX - startX;

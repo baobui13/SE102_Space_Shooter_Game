@@ -8,6 +8,7 @@ ExpOrb::ExpOrb(Graphics& gfx, float x, float y, int expValue)
     : GameObject(x, y, 16.0f, 16.0f), m_expAmount(expValue),
     m_magnetSpeed(450.0f)
 {
+    SetColliderName("exp_orb");
     m_vx = 0.0f;
     m_vy = 50.0f;
 
@@ -42,7 +43,14 @@ void ExpOrb::Update(float dt, ::GameContext& ctx) {
     GameObject::Update(dt, ctx);
 
     // 4. Va chạm (Ăn ngọc) và Dọn rác
-    if (distance < 30.0f) {
+    const Collider collectCollider = ColliderRegistry::GetInstance().CreateCircleCollider(
+        "exp_orb_collect",
+        GetCenterX(),
+        GetCenterY(),
+        0.0f);
+    const Collider playerCenter = Collider::Circle("player_center", ctx.player.GetCenterX(), ctx.player.GetCenterY(), 0.0f);
+
+    if (collectCollider.Intersects(playerCenter)) {
         ctx.player.GainExp(m_expAmount);
         Destroy();
     }

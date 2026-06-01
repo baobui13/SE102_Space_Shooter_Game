@@ -35,6 +35,8 @@ Player::Player(Graphics& gfx, float startX, float startY)
     , m_dashDirX(0.0f)
     , m_dashDirY(0.0f)
     , m_skillManager() {
+    SetColliderName("player");
+
     m_invulDuration = GetPlayerConfig().invulDuration;
     m_shootRecoilRecoverSpeed = GetPlayerConfig().shootRecoilRecoverSpeed;
     m_bulletOffset = GetPlayerConfig().bulletOffset;

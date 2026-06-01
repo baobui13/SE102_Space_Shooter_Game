@@ -45,6 +45,8 @@ ExplodingBullet::ExplodingBullet(Graphics& gfx,
     , m_damage(damage)
     , m_directionX(0.0f)
     , m_directionY(-1.0f) {
+    SetColliderName("exploding_bullet");
+
     m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, EXPLODING_BULLET_TEXTURE_PATH));
     m_anim.AddClip(
         "Bullet",
@@ -148,6 +150,7 @@ void ExplodingBullet::StartExplosion() {
     float centerY = m_y + (m_height * 0.5f);
 
     m_state = ExplodingBulletState::Exploding;
+    SetColliderName("exploding_explosion");
     m_vx = 0.0f;
     m_vy = 0.0f;
     m_width = EXPLOSION_DRAW_W;
