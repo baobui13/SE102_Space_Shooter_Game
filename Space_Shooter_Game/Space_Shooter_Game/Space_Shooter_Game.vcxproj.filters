@@ -327,6 +327,9 @@
     <Image Include="Assets\Bullets1.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Bullets\Green Effect Bullet Impact Explosion 32x32.png">
+      <Filter>Assets</Filter>
+    </Image>
     <Image Include="Assets\Spaceship.png">
       <Filter>Assets</Filter>
     </Image>

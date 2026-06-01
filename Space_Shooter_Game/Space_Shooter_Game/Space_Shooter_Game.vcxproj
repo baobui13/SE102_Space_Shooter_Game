@@ -253,6 +253,7 @@
     <Image Include="Assets\background_lv4.png" />
     <Image Include="Assets\Back_BTN.png" />
     <Image Include="Assets\background.png" />
+    <Image Include="Assets\Bullets\Green Effect Bullet Impact Explosion 32x32.png" />
     <Image Include="Assets\Bullets1.png" />
     <Image Include="Assets\Choose_Level_BTN.png" />
     <Image Include="Assets\Continue_BTN.png" />

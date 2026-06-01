@@ -90,13 +90,13 @@ void CircleGroundAttack::Render(Graphics& gfx) {
 }
 
 bool CircleGroundAttack::IsPlayerInsideCircle(GameContext& ctx) const {
-    const Collider attackCollider = ColliderRegistry::GetInstance().CreateCircleCollider(
+    const Collider attackCollider = ColliderRegistry::GetInstance().CreateCollider(
         GetColliderName(),
-        m_centerX,
-        m_centerY,
-        m_radius);
-    const Collider playerCenter = Collider::Circle("player_center", ctx.player.GetCenterX(), ctx.player.GetCenterY(), 0.0f);
-    return attackCollider.Intersects(playerCenter);
+        m_centerX - m_radius,
+        m_centerY - m_radius,
+        m_radius * 2.0f,
+        m_radius * 2.0f);
+    return attackCollider.Intersects(ctx.player.GetCollider());
 }
 
 void CircleGroundAttack::ApplyDamage(GameContext& ctx) {

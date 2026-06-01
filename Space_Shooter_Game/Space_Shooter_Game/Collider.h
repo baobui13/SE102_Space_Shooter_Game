@@ -3,18 +3,28 @@
 #include <map>
 #include <string>
 
+enum class EnemyType;
+
 enum class ColliderShape {
     Rectangle,
-    Circle
+    Oval
+};
+
+enum class ColliderPositionMode {
+    Absolute,
+    OwnerBounds
 };
 
 struct ColliderDefinition {
     std::string name;
     ColliderShape shape = ColliderShape::Rectangle;
-    bool useOwnerSize = true;
+    ColliderPositionMode positionMode = ColliderPositionMode::OwnerBounds;
+    float x = 0.0f;
+    float y = 0.0f;
     float width = 0.0f;
     float height = 0.0f;
-    float radius = 0.0f;
+    float expandX = 0.0f;
+    float expandY = 0.0f;
     float offsetX = 0.0f;
     float offsetY = 0.0f;
 };
@@ -26,10 +36,9 @@ struct Collider {
     float y = 0.0f;
     float width = 0.0f;
     float height = 0.0f;
-    float radius = 0.0f;
 
     static Collider Rectangle(const std::string& name, float x, float y, float width, float height);
-    static Collider Circle(const std::string& name, float centerX, float centerY, float radius);
+    static Collider Oval(const std::string& name, float x, float y, float width, float height);
 
     float Left() const;
     float Right() const;
@@ -46,7 +55,10 @@ public:
     static ColliderRegistry& GetInstance();
 
     bool LoadFromFile(const std::string& filePath);
+    void LoadAll();
     const ColliderDefinition& GetDefinition(const std::string& name) const;
+    bool HasCollider(const std::string& name) const;
+    static const char* GetColliderNameForEnemyType(EnemyType type);
 
     Collider CreateCollider(const std::string& name,
                             float ownerX,
@@ -54,16 +66,7 @@ public:
                             float ownerWidth,
                             float ownerHeight) const;
 
-    Collider CreateRectangleCollider(const std::string& name,
-                                     float x,
-                                     float y,
-                                     float width,
-                                     float height) const;
-
-    Collider CreateCircleCollider(const std::string& name,
-                                  float centerX,
-                                  float centerY,
-                                  float radius) const;
+    Collider CreateColliderAt(const std::string& name, float anchorX, float anchorY) const;
 
 private:
     ColliderRegistry();

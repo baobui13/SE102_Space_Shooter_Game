@@ -1,9 +1,21 @@
 #include "Boss1.h"
+#include "Bullet.h"
+#include "BulletPool.h"
 #include "EntityManager.h"
 #include "ExpOrb.h"
 #include "GameConfig.h"
 #include "GameContext.h"
 #include "Player.h"
+#include <cmath>
+
+namespace {
+constexpr float BOSS_BULLET_SPEED = 260.0f;
+constexpr float BOSS_BULLET_MAX_DISTANCE = 900.0f;
+constexpr float BOSS_BULLET_DISPLAY_SIZE = 32.0f;
+constexpr int BOSS_BULLET_RING_COUNT = 16;
+constexpr float TWO_PI = 6.283185307f;
+constexpr const char* BOSS_BULLET_ANIMATION = "bullet_boss_green";
+}
 
 Boss1::Boss1(float x, float y, float width, float height,
              float health, float moveSpeed, float attackPower,
@@ -56,7 +68,7 @@ void Boss1::HandlePlayerCombat(GameContext& ctx, float prevX, float prevY) {
         m_vy = 0.0f;
     }
 
-    if (IsPlayerInContact(&ctx.player)) {
+    if (IsPlayerInAttackRange(&ctx.player)) {
         Attack(&ctx.player);
     }
 }
@@ -64,23 +76,61 @@ void Boss1::HandlePlayerCombat(GameContext& ctx, float prevX, float prevY) {
 bool Boss1::IsPlayerInContact(const GameObject* player) const {
     if (!player) return false;
 
-    constexpr float margin = 4.0f;
-    const Collider contactCollider = ColliderRegistry::GetInstance().CreateRectangleCollider(
+    const Collider contactCollider = ColliderRegistry::GetInstance().CreateCollider(
         "melee_contact",
-        m_x - margin,
-        m_y - margin,
-        m_width + margin * 2.0f,
-        m_height + margin * 2.0f);
+        m_x,
+        m_y,
+        m_width,
+        m_height);
     return player->CheckCollision(contactCollider);
+}
+
+bool Boss1::IsPlayerInAttackRange(const GameObject* player) const {
+    if (!player) return false;
+
+    const float bossCenterX = m_x + m_width * 0.5f;
+    const float bossCenterY = m_y + m_height * 0.5f;
+    const float playerCenterX = player->GetX() + player->GetWidth() * 0.5f;
+    const float playerCenterY = player->GetY() + player->GetHeight() * 0.5f;
+    const float dx = playerCenterX - bossCenterX;
+    const float dy = playerCenterY - bossCenterY;
+    return dx * dx + dy * dy <= m_attackRange * m_attackRange;
 }
 
 void Boss1::Attack(GameObject* target) {
     if (m_attackCooldown <= 0 && target) {
-        Player* player = dynamic_cast<Player*>(target);
-        if (player) {
-            player->TakeDamage(static_cast<int>(m_attackPower));
+        if (m_lastCtx) {
+            FireBossBulletRing(*m_lastCtx);
             m_isAttacking = true;
             m_attackCooldown = 1.0f / m_attackSpeed;
+        }
+    }
+}
+
+void Boss1::FireBossBulletRing(GameContext& ctx) {
+    const float bossCenterX = m_x + m_width * 0.5f;
+    const float bossCenterY = m_y + m_height * 0.5f;
+
+    for (int i = 0; i < BOSS_BULLET_RING_COUNT; ++i) {
+        const float angle = static_cast<float>(i) * TWO_PI / static_cast<float>(BOSS_BULLET_RING_COUNT);
+        const float dirX = std::cos(angle);
+        const float dirY = std::sin(angle);
+        const float spawnX = bossCenterX - BOSS_BULLET_DISPLAY_SIZE * 0.5f;
+        const float spawnY = bossCenterY - BOSS_BULLET_DISPLAY_SIZE * 0.5f;
+        const float targetX = spawnX + dirX * 100.0f;
+        const float targetY = spawnY + dirY * 100.0f;
+
+        Bullet* bullet = ctx.bulletPool.GetEnemyBullet(
+            spawnX,
+            spawnY,
+            targetX,
+            targetY,
+            BOSS_BULLET_SPEED,
+            static_cast<int>(m_attackPower),
+            BOSS_BULLET_MAX_DISTANCE);
+
+        if (bullet) {
+            bullet->SetAnimationById(BOSS_BULLET_ANIMATION);
         }
     }
 }

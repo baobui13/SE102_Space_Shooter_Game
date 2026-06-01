@@ -128,12 +128,11 @@ void MeleeEnemy2::Attack(GameObject* target) {
 bool MeleeEnemy2::IsPlayerInRange(GameObject* player) const {
     if (!player) return false;
 
-    const float margin = 4.0f;
-    const Collider contactCollider = ColliderRegistry::GetInstance().CreateRectangleCollider(
+    const Collider contactCollider = ColliderRegistry::GetInstance().CreateCollider(
         "melee_contact",
-        m_x - margin,
-        m_y - margin,
-        m_width + margin * 2.0f,
-        m_height + margin * 2.0f);
+        m_x,
+        m_y,
+        m_width,
+        m_height);
     return player->CheckCollision(contactCollider);
 }

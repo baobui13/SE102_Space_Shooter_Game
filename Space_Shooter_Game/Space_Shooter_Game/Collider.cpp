@@ -1,8 +1,8 @@
 #include "Collider.h"
+#include "BaseEnemy.h"
 #include "ConfigUtils.h"
 #include "SimpleJson.h"
 
-#include <algorithm>
 #include <cmath>
 
 namespace {
@@ -13,35 +13,42 @@ float ReadFloat(const JsonValue& object, const std::string& key, float fallback)
     return value ? static_cast<float>(value->AsNumber(fallback)) : fallback;
 }
 
-bool ReadBool(const JsonValue& object, const std::string& key, bool fallback) {
-    const JsonValue* value = object.Find(key);
-    return value ? value->AsBool(fallback) : fallback;
+float MaxFloat(float a, float b) {
+    return a > b ? a : b;
+}
+
+float MinFloat(float a, float b) {
+    return a < b ? a : b;
 }
 
 ColliderShape ShapeFromString(const std::string& value) {
-    if (value == "circle" || value == "Circle") {
-        return ColliderShape::Circle;
+    if (value == "oval" || value == "Oval" || value == "circle" || value == "Circle") {
+        return ColliderShape::Oval;
     }
     return ColliderShape::Rectangle;
+}
+
+ColliderPositionMode PositionModeFromString(const std::string& value) {
+    if (value == "absolute" || value == "Absolute") {
+        return ColliderPositionMode::Absolute;
+    }
+    return ColliderPositionMode::OwnerBounds;
 }
 
 ColliderDefinition ParseDefinition(const JsonValue& value) {
     ColliderDefinition definition;
     definition.name = value.At("name").AsStringOr("default");
     definition.shape = ShapeFromString(value.At("shape").AsStringOr("rectangle"));
-    definition.useOwnerSize = ReadBool(value, "useOwnerSize", true);
+    definition.positionMode = PositionModeFromString(value.At("positionMode").AsStringOr("ownerBounds"));
+    definition.x = ReadFloat(value, "x", 0.0f);
+    definition.y = ReadFloat(value, "y", 0.0f);
     definition.width = ReadFloat(value, "width", 0.0f);
     definition.height = ReadFloat(value, "height", 0.0f);
-    definition.radius = ReadFloat(value, "radius", 0.0f);
+    definition.expandX = ReadFloat(value, "expandX", 0.0f);
+    definition.expandY = ReadFloat(value, "expandY", 0.0f);
     definition.offsetX = ReadFloat(value, "offsetX", 0.0f);
     definition.offsetY = ReadFloat(value, "offsetY", 0.0f);
     return definition;
-}
-
-float DistanceSquared(float ax, float ay, float bx, float by) {
-    const float dx = ax - bx;
-    const float dy = ay - by;
-    return dx * dx + dy * dy;
 }
 
 bool RectIntersectsRect(const Collider& a, const Collider& b) {
@@ -51,15 +58,76 @@ bool RectIntersectsRect(const Collider& a, const Collider& b) {
         a.Bottom() > b.Top();
 }
 
-bool CircleIntersectsCircle(const Collider& a, const Collider& b) {
-    const float radius = a.radius + b.radius;
-    return DistanceSquared(a.CenterX(), a.CenterY(), b.CenterX(), b.CenterY()) <= radius * radius;
+bool PointInOval(float px, float py, const Collider& oval) {
+    const float rx = oval.width * 0.5f;
+    const float ry = oval.height * 0.5f;
+    if (rx <= 0.0f || ry <= 0.0f) {
+        return false;
+    }
+
+    const float dx = (px - oval.CenterX()) / rx;
+    const float dy = (py - oval.CenterY()) / ry;
+    return dx * dx + dy * dy <= 1.0f;
 }
 
-bool RectIntersectsCircle(const Collider& rect, const Collider& circle) {
-    const float nearestX = std::clamp(circle.CenterX(), rect.Left(), rect.Right());
-    const float nearestY = std::clamp(circle.CenterY(), rect.Top(), rect.Bottom());
-    return DistanceSquared(circle.CenterX(), circle.CenterY(), nearestX, nearestY) <= circle.radius * circle.radius;
+bool PointInRect(float px, float py, const Collider& rect) {
+    return px >= rect.Left() && px <= rect.Right() && py >= rect.Top() && py <= rect.Bottom();
+}
+
+bool RectIntersectsOval(const Collider& rect, const Collider& oval) {
+    if (!RectIntersectsRect(rect, oval)) {
+        return false;
+    }
+
+    const float rx = oval.width * 0.5f;
+    const float ry = oval.height * 0.5f;
+    if (rx <= 0.0f || ry <= 0.0f) {
+        return false;
+    }
+
+    const float normalizedLeft = (rect.Left() - oval.CenterX()) / rx;
+    const float normalizedRight = (rect.Right() - oval.CenterX()) / rx;
+    const float normalizedTop = (rect.Top() - oval.CenterY()) / ry;
+    const float normalizedBottom = (rect.Bottom() - oval.CenterY()) / ry;
+    const float closestX = MaxFloat(normalizedLeft, MinFloat(0.0f, normalizedRight));
+    const float closestY = MaxFloat(normalizedTop, MinFloat(0.0f, normalizedBottom));
+
+    return closestX * closestX + closestY * closestY <= 1.0f;
+}
+
+bool OvalIntersectsOval(const Collider& a, const Collider& b) {
+    if (!RectIntersectsRect(a, b)) {
+        return false;
+    }
+
+    if (PointInOval(a.CenterX(), a.CenterY(), b) || PointInOval(b.CenterX(), b.CenterY(), a)) {
+        return true;
+    }
+
+    constexpr int SAMPLE_COUNT = 24;
+    const float aCx = a.CenterX();
+    const float aCy = a.CenterY();
+    const float aRx = a.width * 0.5f;
+    const float aRy = a.height * 0.5f;
+    for (int i = 0; i < SAMPLE_COUNT; ++i) {
+        const float angle = static_cast<float>(i) * 2.0f * 3.1415926535f / static_cast<float>(SAMPLE_COUNT);
+        if (PointInOval(aCx + std::cos(angle) * aRx, aCy + std::sin(angle) * aRy, b)) {
+            return true;
+        }
+    }
+
+    const float bCx = b.CenterX();
+    const float bCy = b.CenterY();
+    const float bRx = b.width * 0.5f;
+    const float bRy = b.height * 0.5f;
+    for (int i = 0; i < SAMPLE_COUNT; ++i) {
+        const float angle = static_cast<float>(i) * 2.0f * 3.1415926535f / static_cast<float>(SAMPLE_COUNT);
+        if (PointInOval(bCx + std::cos(angle) * bRx, bCy + std::sin(angle) * bRy, a)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 }
 
@@ -71,44 +139,42 @@ Collider Collider::Rectangle(const std::string& name, float x, float y, float wi
     collider.y = y;
     collider.width = width;
     collider.height = height;
-    collider.radius = 0.0f;
     return collider;
 }
 
-Collider Collider::Circle(const std::string& name, float centerX, float centerY, float radius) {
+Collider Collider::Oval(const std::string& name, float x, float y, float width, float height) {
     Collider collider;
     collider.name = name;
-    collider.shape = ColliderShape::Circle;
-    collider.x = centerX;
-    collider.y = centerY;
-    collider.width = radius * 2.0f;
-    collider.height = radius * 2.0f;
-    collider.radius = radius;
+    collider.shape = ColliderShape::Oval;
+    collider.x = x;
+    collider.y = y;
+    collider.width = width;
+    collider.height = height;
     return collider;
 }
 
 float Collider::Left() const {
-    return shape == ColliderShape::Circle ? x - radius : x;
+    return x;
 }
 
 float Collider::Right() const {
-    return shape == ColliderShape::Circle ? x + radius : x + width;
+    return x + width;
 }
 
 float Collider::Top() const {
-    return shape == ColliderShape::Circle ? y - radius : y;
+    return y;
 }
 
 float Collider::Bottom() const {
-    return shape == ColliderShape::Circle ? y + radius : y + height;
+    return y + height;
 }
 
 float Collider::CenterX() const {
-    return shape == ColliderShape::Circle ? x : x + width * 0.5f;
+    return x + width * 0.5f;
 }
 
 float Collider::CenterY() const {
-    return shape == ColliderShape::Circle ? y : y + height * 0.5f;
+    return y + height * 0.5f;
 }
 
 bool Collider::Intersects(const Collider& other) const {
@@ -116,15 +182,15 @@ bool Collider::Intersects(const Collider& other) const {
         return RectIntersectsRect(*this, other);
     }
 
-    if (shape == ColliderShape::Circle && other.shape == ColliderShape::Circle) {
-        return CircleIntersectsCircle(*this, other);
+    if (shape == ColliderShape::Oval && other.shape == ColliderShape::Oval) {
+        return OvalIntersectsOval(*this, other);
     }
 
     if (shape == ColliderShape::Rectangle) {
-        return RectIntersectsCircle(*this, other);
+        return RectIntersectsOval(*this, other);
     }
 
-    return RectIntersectsCircle(other, *this);
+    return RectIntersectsOval(other, *this);
 }
 
 ColliderRegistry& ColliderRegistry::GetInstance() {
@@ -163,49 +229,79 @@ const ColliderDefinition& ColliderRegistry::GetDefinition(const std::string& nam
     return m_definitions.at("default");
 }
 
+bool ColliderRegistry::HasCollider(const std::string& name) const {
+    EnsureLoaded();
+    return m_definitions.find(name) != m_definitions.end();
+}
+
+void ColliderRegistry::LoadAll() {
+    LoadFromFile(DEFAULT_COLLIDER_CONFIG);
+}
+
+const char* ColliderRegistry::GetColliderNameForEnemyType(EnemyType type) {
+    switch (type) {
+    case EnemyType::Melee_Basic:
+        return "enemy_melee_basic";
+    case EnemyType::Melee_Fast:
+        return "enemy_melee_fast";
+    case EnemyType::Melee_Spawner:
+        return "enemy_melee_spawner";
+    case EnemyType::Ranged_Basic:
+        return "enemy_ranged_basic";
+    case EnemyType::Ranged_Burst:
+        return "enemy_ranged_burst";
+    case EnemyType::Boss_Stage1:
+        return "boss";
+    default:
+        return "enemy";
+    }
+}
+
 Collider ColliderRegistry::CreateCollider(const std::string& name,
                                           float ownerX,
                                           float ownerY,
                                           float ownerWidth,
                                           float ownerHeight) const {
     const ColliderDefinition& definition = GetDefinition(name);
+    const bool ownerBounds = definition.positionMode == ColliderPositionMode::OwnerBounds;
 
-    if (definition.shape == ColliderShape::Circle) {
-        const float radius = definition.radius > 0.0f
-            ? definition.radius
-            : std::min(ownerWidth, ownerHeight) * 0.5f;
-        const float centerX = ownerX + ownerWidth * 0.5f + definition.offsetX;
-        const float centerY = ownerY + ownerHeight * 0.5f + definition.offsetY;
-        return Collider::Circle(definition.name, centerX, centerY, radius);
+    float width = definition.width;
+    float height = definition.height;
+    float x = definition.x + definition.offsetX;
+    float y = definition.y + definition.offsetY;
+
+    if (ownerBounds) {
+        const bool useOwnerWidth = width <= 0.0f;
+        const bool useOwnerHeight = height <= 0.0f;
+        width = useOwnerWidth
+            ? MaxFloat(0.0f, ownerWidth + definition.expandX * 2.0f)
+            : width;
+        height = useOwnerHeight
+            ? MaxFloat(0.0f, ownerHeight + definition.expandY * 2.0f)
+            : height;
+        x = useOwnerWidth
+            ? ownerX - definition.expandX + definition.offsetX
+            : ownerX + (ownerWidth - width) * 0.5f + definition.offsetX;
+        y = useOwnerHeight
+            ? ownerY - definition.expandY + definition.offsetY
+            : ownerY + (ownerHeight - height) * 0.5f + definition.offsetY;
     }
 
-    const float width = (definition.useOwnerSize || definition.width <= 0.0f)
-        ? ownerWidth
-        : definition.width;
-    const float height = (definition.useOwnerSize || definition.height <= 0.0f)
-        ? ownerHeight
-        : definition.height;
-    const float x = ownerX + (ownerWidth - width) * 0.5f + definition.offsetX;
-    const float y = ownerY + (ownerHeight - height) * 0.5f + definition.offsetY;
+    if (definition.shape == ColliderShape::Oval) {
+        return Collider::Oval(definition.name, x, y, width, height);
+    }
     return Collider::Rectangle(definition.name, x, y, width, height);
 }
 
-Collider ColliderRegistry::CreateRectangleCollider(const std::string& name,
-                                                   float x,
-                                                   float y,
-                                                   float width,
-                                                   float height) const {
+Collider ColliderRegistry::CreateColliderAt(const std::string& name, float anchorX, float anchorY) const {
     const ColliderDefinition& definition = GetDefinition(name);
-    return Collider::Rectangle(definition.name, x + definition.offsetX, y + definition.offsetY, width, height);
-}
+    const float x = anchorX + definition.x + definition.offsetX;
+    const float y = anchorY + definition.y + definition.offsetY;
 
-Collider ColliderRegistry::CreateCircleCollider(const std::string& name,
-                                                float centerX,
-                                                float centerY,
-                                                float radius) const {
-    const ColliderDefinition& definition = GetDefinition(name);
-    const float finalRadius = radius > 0.0f ? radius : definition.radius;
-    return Collider::Circle(definition.name, centerX + definition.offsetX, centerY + definition.offsetY, finalRadius);
+    if (definition.shape == ColliderShape::Oval) {
+        return Collider::Oval(definition.name, x, y, definition.width, definition.height);
+    }
+    return Collider::Rectangle(definition.name, x, y, definition.width, definition.height);
 }
 
 void ColliderRegistry::EnsureLoaded() const {
@@ -215,19 +311,25 @@ void ColliderRegistry::EnsureLoaded() const {
 }
 
 void ColliderRegistry::RegisterDefaults() {
-    RegisterDefinition({ "default", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "player", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "enemy", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "boss", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "player_bullet", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "enemy_bullet", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "exploding_bullet", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "exploding_explosion", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "laser", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "exp_orb", ColliderShape::Rectangle, true });
-    RegisterDefinition({ "exp_orb_collect", ColliderShape::Circle, false, 0.0f, 0.0f, 30.0f });
-    RegisterDefinition({ "circle_ground_attack", ColliderShape::Circle, false });
-    RegisterDefinition({ "melee_contact", ColliderShape::Rectangle, true });
+    RegisterDefinition({ "default", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "player", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "enemy", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 0.0f, 0.0f, -6.0f, -6.0f });
+    RegisterDefinition({ "enemy_melee_basic", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 96.0f, 96.0f });
+    RegisterDefinition({ "enemy_melee_fast", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 28.0f, 28.0f });
+    RegisterDefinition({ "enemy_melee_spawner", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 120.0f, 120.0f });
+    RegisterDefinition({ "enemy_ranged_basic", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 52.0f, 52.0f });
+    RegisterDefinition({ "enemy_ranged_burst", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 60.0f, 60.0f });
+    RegisterDefinition({ "boss", ColliderShape::Oval, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 420.0f, 640.0f });
+    RegisterDefinition({ "player_bullet", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "enemy_bullet", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "exploding_bullet", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "exploding_explosion", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "laser", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "laser_hitbox", ColliderShape::Rectangle, ColliderPositionMode::Absolute, -3.0f, -300.0f, 6.0f, 300.0f });
+    RegisterDefinition({ "exp_orb", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "exp_orb_collect", ColliderShape::Oval, ColliderPositionMode::Absolute, -15.0f, -15.0f, 30.0f, 30.0f });
+    RegisterDefinition({ "circle_ground_attack", ColliderShape::Oval, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "melee_contact", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 0.0f, 0.0f, 4.0f, 4.0f });
 }
 
 void ColliderRegistry::RegisterDefinition(const ColliderDefinition& definition) {

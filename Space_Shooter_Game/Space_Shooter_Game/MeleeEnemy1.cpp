@@ -56,13 +56,11 @@ void MeleeEnemy1::Attack(GameObject* target) {
 
 bool MeleeEnemy1::IsPlayerInRange(GameObject* player) const {
     if (!player) return false;
-    // Kiểm tra chạm bằng AABB overlap với margin nhỏ (contact damage)
-    const float margin = 4.0f;
-    const Collider contactCollider = ColliderRegistry::GetInstance().CreateRectangleCollider(
+    const Collider contactCollider = ColliderRegistry::GetInstance().CreateCollider(
         "melee_contact",
-        m_x - margin,
-        m_y - margin,
-        m_width + margin * 2.0f,
-        m_height + margin * 2.0f);
+        m_x,
+        m_y,
+        m_width,
+        m_height);
     return player->CheckCollision(contactCollider);
 }

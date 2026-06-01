@@ -3,67 +3,121 @@
     {
       "name": "default",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
     },
     {
       "name": "player",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
     },
     {
       "name": "enemy",
-      "shape": "rectangle",
-      "useOwnerSize": true
+      "shape": "oval",
+      "positionMode": "ownerBounds",
+      "expandX": -6,
+      "expandY": -6
+    },
+    {
+      "name": "enemy_melee_basic",
+      "shape": "oval",
+      "positionMode": "ownerBounds",
+      "width": 96,
+      "height": 96
+    },
+    {
+      "name": "enemy_melee_fast",
+      "shape": "oval",
+      "positionMode": "ownerBounds",
+      "width": 28,
+      "height": 28
+    },
+    {
+      "name": "enemy_melee_spawner",
+      "shape": "oval",
+      "positionMode": "ownerBounds",
+      "width": 120,
+      "height": 120
+    },
+    {
+      "name": "enemy_ranged_basic",
+      "shape": "oval",
+      "positionMode": "ownerBounds",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "name": "enemy_ranged_burst",
+      "shape": "oval",
+      "positionMode": "ownerBounds",
+      "width": 60,
+      "height": 60
     },
     {
       "name": "boss",
-      "shape": "rectangle",
-      "useOwnerSize": true
+      "shape": "oval",
+      "positionMode": "ownerBounds",
+      "width": 420,
+      "height": 640
     },
     {
       "name": "player_bullet",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
     },
     {
       "name": "enemy_bullet",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
     },
     {
       "name": "exploding_bullet",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
     },
     {
       "name": "exploding_explosion",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
     },
     {
       "name": "laser",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
+    },
+    {
+      "name": "laser_hitbox",
+      "shape": "rectangle",
+      "positionMode": "absolute",
+      "x": -3,
+      "y": -300,
+      "width": 6,
+      "height": 300
     },
     {
       "name": "exp_orb",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds"
     },
     {
       "name": "exp_orb_collect",
-      "shape": "circle",
-      "radius": 30
+      "shape": "oval",
+      "positionMode": "absolute",
+      "x": -15,
+      "y": -15,
+      "width": 30,
+      "height": 30
     },
     {
       "name": "circle_ground_attack",
-      "shape": "circle",
-      "radius": 0
+      "shape": "oval",
+      "positionMode": "ownerBounds"
     },
     {
       "name": "melee_contact",
       "shape": "rectangle",
-      "useOwnerSize": true
+      "positionMode": "ownerBounds",
+      "expandX": 4,
+      "expandY": 4
     }
   ]
 }

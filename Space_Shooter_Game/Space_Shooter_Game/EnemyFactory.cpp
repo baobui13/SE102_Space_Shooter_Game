@@ -9,6 +9,7 @@
 #include "MovementTransition.h"
 #include "GameConfig.h"
 #include "AnimationManager.h"
+#include "Collider.h"
 
 namespace {
 std::unique_ptr<IMovementStrategy> CreateSingleMovementStrategy(const EnemyMovementDefinition& movement) {
@@ -265,6 +266,7 @@ std::unique_ptr<BaseEnemy> EnemyFactory::Create(
     enemy->SetMovementStrategy(CreateMovementStrategy(spawn.movementSequence, stats.moveSpeed));
     enemy->SetSpriteForwardAngle(visual.spriteForwardAngle);
     enemy->SetExpReward(stats.expReward);
+    enemy->SetColliderName(ColliderRegistry::GetColliderNameForEnemyType(spawn.type));
 
     // Object chỉ gọi tên animation — mọi thông số được AnimationManager quản lý từ JSON.
     AnimationManager::GetInstance().PlayAnimation(visual.animationId, enemy->GetAnim());

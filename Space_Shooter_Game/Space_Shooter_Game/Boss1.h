@@ -22,6 +22,8 @@ private:
     void UpdateBossRotation(float dt);
     void HandlePlayerCombat(GameContext& ctx, float prevX, float prevY);
     bool IsPlayerInContact(const GameObject* player) const;
+    bool IsPlayerInAttackRange(const GameObject* player) const;
+    void FireBossBulletRing(GameContext& ctx);
 
     BossState m_state = BossState::Entering;
     float m_entryTargetY = 0.0f;

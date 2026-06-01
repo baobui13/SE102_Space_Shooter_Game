@@ -1,4 +1,5 @@
 #include "AnimationManager.h"
+#include "Collider.h"
 #include "AudioManager.h"
 #include "Window.h"
 #include "Graphics.h"
@@ -21,6 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     Graphics gfx(gameWindow.GetHWND());
 
     AnimationManager::GetInstance().LoadAll(gfx);
+    ColliderRegistry::GetInstance().LoadAll();
 
     AudioManager& audio = AudioManager::GetInstance();
     audio.Initialize();

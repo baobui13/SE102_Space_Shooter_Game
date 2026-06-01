@@ -1,5 +1,6 @@
 #include "BaseEnemy.h"
 #include "AttackMarker.h"
+#include "Collider.h"
 #include "GameContext.h"
 #include "EntityManager.h" 
 #include "Player.h"
@@ -22,7 +23,7 @@ BaseEnemy::BaseEnemy(float x, float y, float width, float height,
     m_rotation(0.0f),
     m_spriteForwardAngle(0.0f)
 {
-    SetColliderName("enemy");
+    SetColliderName(ColliderRegistry::GetColliderNameForEnemyType(type));
 }
 
 void BaseEnemy::Update(float dt, GameContext& ctx) {

@@ -32,7 +32,7 @@ Laser::Laser(Graphics& gfx, float duration, int damage, float sizeMultiplier)
     , m_texture(AssetManager::GetInstance().GetTexture(gfx, LASER_TEXTURE_PATH))
     , m_bodyRect{ LASER_BODY_LEFT, LASER_BODY_TOP, LASER_BODY_RIGHT, LASER_BODY_BOTTOM }
     , m_impactRect{ LASER_IMPACT_LEFT, LASER_IMPACT_TOP, LASER_IMPACT_RIGHT, LASER_IMPACT_BOTTOM } {
-    SetColliderName("laser");
+    SetColliderName("laser_hitbox");
 }
 
 void Laser::Update(float dt, GameContext& ctx) {
@@ -47,16 +47,10 @@ void Laser::Update(float dt, GameContext& ctx) {
     m_x = ctx.player.GetCenterX();
     m_y = ctx.player.GetY() - LASER_PLAYER_Y_OFFSET;
 
-    const float thickness = LASER_BASE_THICKNESS * m_sizeMultiplier;
-    const float laserLeft = m_x - thickness * 0.5f;
-    const float laserTop = 0.0f;
-    const float laserBottom = m_y;
-    const Collider laserCollider = ColliderRegistry::GetInstance().CreateRectangleCollider(
+    const Collider laserCollider = ColliderRegistry::GetInstance().CreateColliderAt(
         GetColliderName(),
-        laserLeft,
-        laserTop,
-        thickness,
-        laserBottom - laserTop);
+        m_x,
+        m_y);
 
     auto& allEntities = ctx.entityManager.GetEntities();
     for (auto& entity : allEntities) {

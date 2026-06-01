@@ -43,14 +43,12 @@ void ExpOrb::Update(float dt, ::GameContext& ctx) {
     GameObject::Update(dt, ctx);
 
     // 4. Va chạm (Ăn ngọc) và Dọn rác
-    const Collider collectCollider = ColliderRegistry::GetInstance().CreateCircleCollider(
+    const Collider collectCollider = ColliderRegistry::GetInstance().CreateColliderAt(
         "exp_orb_collect",
         GetCenterX(),
-        GetCenterY(),
-        0.0f);
-    const Collider playerCenter = Collider::Circle("player_center", ctx.player.GetCenterX(), ctx.player.GetCenterY(), 0.0f);
+        GetCenterY());
 
-    if (collectCollider.Intersects(playerCenter)) {
+    if (collectCollider.Intersects(ctx.player.GetCollider())) {
         ctx.player.GainExp(m_expAmount);
         Destroy();
     }
