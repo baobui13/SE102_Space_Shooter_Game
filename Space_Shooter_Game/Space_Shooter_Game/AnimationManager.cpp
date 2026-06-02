@@ -50,6 +50,7 @@ void AnimationManager::LoadAll(Graphics& gfx) {
         "config/animations/player.json",
         "config/animations/enemies.json",
         "config/animations/bullets.json",
+        "config/animations/skills.json",
     };
 
     for (const auto& f : files) {

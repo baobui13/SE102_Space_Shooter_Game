@@ -1,32 +1,9 @@
 #include "ExplodingBullet.h"
-#include "AssetManager.h"
+#include "AnimationManager.h"
 #include "GameContext.h"
 #include <cmath>
 #include "EntityManager.h"
 #include "BaseEnemy.h"
-
-namespace {
-constexpr wchar_t EXPLODING_BULLET_TEXTURE_PATH[] = L"Assets/ExplodingBullet_1.png";
-
-constexpr int BULLET_FRAME_X = 10;
-constexpr int BULLET_FRAME_Y = 10;
-constexpr int BULLET_FRAME_W = 20;
-constexpr int BULLET_FRAME_H = 20;
-constexpr int BULLET_FRAME_COUNT = 2;
-constexpr int BULLET_FRAME_SPACING_X = 20;
-constexpr float BULLET_DRAW_W = 50.0f;
-constexpr float BULLET_DRAW_H = 50.0f;
-constexpr float BULLET_FRAME_DURATION = 0.1f;
-
-constexpr int EXPLOSION_FRAME_X = 80;
-constexpr int EXPLOSION_FRAME_Y = 0;
-constexpr int EXPLOSION_FRAME_W = 58;
-constexpr int EXPLOSION_FRAME_H = 58;
-constexpr int EXPLOSION_FRAME_COUNT = 5;
-constexpr float EXPLOSION_DRAW_W = 700.0f;
-constexpr float EXPLOSION_DRAW_H = 700.0f;
-constexpr float EXPLOSION_FRAME_DURATION = 0.1f;
-}
 
 ExplodingBullet::ExplodingBullet(Graphics& gfx,
                                  float startX,
@@ -36,42 +13,28 @@ ExplodingBullet::ExplodingBullet(Graphics& gfx,
                                  float speed,
                                  float sizeMultiplier,
                                  int damage)
-    : GameObject(startX - (BULLET_DRAW_W * sizeMultiplier * 0.5f),
-                 startY - (BULLET_DRAW_H * sizeMultiplier * 0.5f),
-                 BULLET_DRAW_W * sizeMultiplier,
-                 BULLET_DRAW_H * sizeMultiplier)
+    : GameObject(0.0f, 0.0f, 0.0f, 0.0f)
     , m_state(ExplodingBulletState::Flying)
     , m_speed(speed)
     , m_damage(damage)
+    , m_sizeMultiplier(sizeMultiplier)
     , m_directionX(0.0f)
-    , m_directionY(-1.0f) {
+    , m_directionY(-1.0f)
+    , m_flyDrawWidth(50.0f)
+    , m_flyDrawHeight(50.0f)
+    , m_explosionDrawWidth(700.0f)
+    , m_explosionDrawHeight(700.0f) {
+    (void)gfx;
     SetColliderName("exploding_bullet");
 
-    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, EXPLODING_BULLET_TEXTURE_PATH));
-    m_anim.AddClip(
-        "Bullet",
-        BULLET_FRAME_X,
-        BULLET_FRAME_Y,
-        BULLET_FRAME_W,
-        BULLET_FRAME_H,
-        BULLET_FRAME_COUNT,
-        BULLET_FRAME_COUNT,
-        BULLET_FRAME_DURATION,
-        true,
-        BULLET_FRAME_SPACING_X
-    );
-    m_anim.AddClip(
-        "Explosion",
-        EXPLOSION_FRAME_X,
-        EXPLOSION_FRAME_Y,
-        EXPLOSION_FRAME_W,
-        EXPLOSION_FRAME_H,
-        EXPLOSION_FRAME_COUNT,
-        EXPLOSION_FRAME_COUNT,
-        EXPLOSION_FRAME_DURATION,
-        false
-    );
-    m_anim.Play("Bullet");
+    AnimationManager::GetInstance().GetDisplaySize("exploding_bullet_fly", m_flyDrawWidth, m_flyDrawHeight);
+    AnimationManager::GetInstance().GetDisplaySize("exploding_bullet_explosion", m_explosionDrawWidth, m_explosionDrawHeight);
+    AnimationManager::GetInstance().PlayAnimation("exploding_bullet_fly", m_anim);
+
+    m_width = m_flyDrawWidth * m_sizeMultiplier;
+    m_height = m_flyDrawHeight * m_sizeMultiplier;
+    m_x = startX - (m_width * 0.5f);
+    m_y = startY - (m_height * 0.5f);
 
     float dx = targetX - (m_x + (m_width * 0.5f));
     float dy = targetY - (m_y + (m_height * 0.5f));
@@ -153,11 +116,11 @@ void ExplodingBullet::StartExplosion() {
     SetColliderName("exploding_explosion");
     m_vx = 0.0f;
     m_vy = 0.0f;
-    m_width = EXPLOSION_DRAW_W;
-    m_height = EXPLOSION_DRAW_H;
+    m_width = m_explosionDrawWidth * m_sizeMultiplier;
+    m_height = m_explosionDrawHeight * m_sizeMultiplier;
     m_x = centerX - (m_width * 0.5f);
     m_y = centerY - (m_height * 0.5f);
-    m_anim.Play("Explosion");
+    AnimationManager::GetInstance().PlayAnimation("exploding_bullet_explosion", m_anim);
 }
 
 bool ExplodingBullet::IsOutOfBounds(float screenW, float screenH) const {

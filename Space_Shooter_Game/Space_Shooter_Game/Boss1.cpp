@@ -1,4 +1,6 @@
 #include "Boss1.h"
+#include "AnimationManager.h"
+#include "AudioManager.h"
 #include "Bullet.h"
 #include "BulletPool.h"
 #include "EntityManager.h"
@@ -15,6 +17,7 @@ constexpr float BOSS_BULLET_DISPLAY_SIZE = 40.0f;
 constexpr int BOSS_BULLET_RING_COUNT = 16;
 constexpr float TWO_PI = 6.283185307f;
 constexpr const char* BOSS_BULLET_ANIMATION = "bullet_boss_green";
+constexpr const char* BOSS_DEATH_ANIMATION = "boss_stage1_dead";
 }
 
 Boss1::Boss1(float x, float y, float width, float height,
@@ -33,6 +36,14 @@ void Boss1::Update(float dt, GameContext& ctx) {
     if (!m_isActive) return;
 
     m_lastCtx = &ctx;
+
+    if (m_isDying) {
+        UpdateAnimation(dt);
+        if (m_anim.IsFinished()) {
+            Destroy();
+        }
+        return;
+    }
 
     UpdateAnimation(dt);
     if (m_attackCooldown > 0) m_attackCooldown -= dt;
@@ -135,14 +146,37 @@ void Boss1::FireBossBulletRing(GameContext& ctx) {
     }
 }
 
+void Boss1::TakeDamage(float damage) {
+    if (m_isDying) {
+        return;
+    }
+
+    BaseEnemy::TakeDamage(damage);
+}
+
 void Boss1::OnDeath() {
+    if (m_isDying) {
+        return;
+    }
+
+    m_isDying = true;
+    m_vx = 0.0f;
+    m_vy = 0.0f;
+    m_attackCooldown = 0.0f;
+    m_isAttacking = false;
+    m_damageFlashTimer = 0.0f;
+    if (!AnimationManager::GetInstance().PlayAnimation(BOSS_DEATH_ANIMATION, m_anim)) {
+        Destroy();
+        return;
+    }
+    AudioManager::GetInstance().PlaySoundEffect(AudioIds::BossDeath);
+
     if (m_lastCtx && m_expReward > 0) {
         const float orbX = m_x + m_width * 0.5f;
         const float orbY = m_y + m_height * 0.5f;
         m_lastCtx->entityManager.AddEntity(
             std::make_unique<ExpOrb>(m_lastCtx->gfx, orbX, orbY, m_expReward));
     }
-    BaseEnemy::OnDeath();
 }
 
 void Boss1::UpdateBossRotation(float dt) {

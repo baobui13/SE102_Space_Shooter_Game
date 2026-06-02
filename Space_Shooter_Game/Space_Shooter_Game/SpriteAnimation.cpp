@@ -85,15 +85,37 @@ void SpriteAnimation::Render(Graphics& gfx, float drawX, float drawY, float draw
     );
 }
 
+void SpriteAnimation::RenderFrameTopLeft(Graphics& gfx, float drawX, float drawY, float uniformScale, DirectX::XMVECTOR color) {
+    if (!m_texture || !m_currentClip) {
+        return;
+    }
+
+    const RECT sourceRect = GetCurrentFrameRect();
+    const float drawW = m_currentClip->frameWidth * uniformScale;
+    const float drawH = m_currentClip->frameHeight * uniformScale;
+
+    const RECT destRect = {
+        static_cast<LONG>(drawX),
+        static_cast<LONG>(drawY),
+        static_cast<LONG>(drawX + drawW),
+        static_cast<LONG>(drawY + drawH)
+    };
+
+    gfx.GetSpriteBatch()->Draw(m_texture.Get(), destRect, &sourceRect, color);
+}
+
 bool SpriteAnimation::IsFinished() const {
     return m_isFinished;
 }
 
-RECT SpriteAnimation::GetCurrentFrameRect() const {
-    if (!m_currentClip) return { 0, 0, 0, 0 };
+RECT SpriteAnimation::GetFrameRect(int frameIndex) const {
+    if (!m_currentClip) {
+        return { 0, 0, 0, 0 };
+    }
 
-    int col = m_localFrameIndex % m_currentClip->columns;
-    int row = m_localFrameIndex / m_currentClip->columns;
+    const int safeIndex = frameIndex % m_currentClip->frameCount;
+    const int col = safeIndex % m_currentClip->columns;
+    const int row = safeIndex / m_currentClip->columns;
 
     RECT rect;
     rect.left = m_currentClip->startX + (col * (m_currentClip->frameWidth + m_currentClip->spacingX));
@@ -102,4 +124,27 @@ RECT SpriteAnimation::GetCurrentFrameRect() const {
     rect.bottom = rect.top + m_currentClip->frameHeight;
 
     return rect;
+}
+
+RECT SpriteAnimation::GetCurrentFrameRect() const {
+    return GetFrameRect(m_localFrameIndex);
+}
+
+void SpriteAnimation::RenderFrameAtIndex(Graphics& gfx, int frameIndex, float drawX, float drawY, float uniformScale, DirectX::XMVECTOR color) {
+    if (!m_texture || !m_currentClip) {
+        return;
+    }
+
+    const RECT sourceRect = GetFrameRect(frameIndex);
+    const float drawW = m_currentClip->frameWidth * uniformScale;
+    const float drawH = m_currentClip->frameHeight * uniformScale;
+
+    const RECT destRect = {
+        static_cast<LONG>(drawX),
+        static_cast<LONG>(drawY),
+        static_cast<LONG>(drawX + drawW),
+        static_cast<LONG>(drawY + drawH)
+    };
+
+    gfx.GetSpriteBatch()->Draw(m_texture.Get(), destRect, &sourceRect, color);
 }

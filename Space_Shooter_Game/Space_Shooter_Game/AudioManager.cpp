@@ -35,7 +35,17 @@ AudioManager& AudioManager::GetInstance() {
     return instance;
 }
 
+AudioManager::~AudioManager() {
+    Shutdown();
+}
+
+bool AudioManager::IsReady() const {
+    return m_ready && !m_shuttingDown && !m_shutdownComplete && m_audioEngine != nullptr;
+}
+
 void AudioManager::Initialize() {
+    m_shuttingDown = false;
+    m_shutdownComplete = false;
     RegisterDefaultClips();
 
     if (m_audioEngine) {
@@ -59,17 +69,45 @@ void AudioManager::Initialize() {
 }
 
 void AudioManager::Shutdown() {
-    StopMusic();
-    m_clips.clear();
-    m_audioEngine.reset();
-    m_currentMusicId.clear();
+    if (m_shutdownComplete) {
+        return;
+    }
+
+    m_shuttingDown = true;
     m_ready = false;
+
+    if (m_audioEngine) {
+        try {
+            m_audioEngine->Suspend();
+        }
+        catch (...) {
+        }
+    }
+
+    StopMusic(true);
+
+    for (auto& entry : m_clips) {
+        entry.second.soundEffect.reset();
+    }
+    m_musicInstance.reset();
+
+    m_clips.clear();
+    m_currentMusicId.clear();
+
+    try {
+        m_audioEngine.reset();
+    }
+    catch (...) {
+        m_audioEngine.release();
+    }
+
     m_defaultClipsRegistered = false;
     m_loggedMissingDevice = false;
+    m_shutdownComplete = true;
 }
 
 void AudioManager::Update() {
-    if (!m_audioEngine) {
+    if (!m_audioEngine || m_shuttingDown || m_shutdownComplete) {
         return;
     }
 
@@ -155,11 +193,18 @@ void AudioManager::PlayMusic(const std::string& id, bool loop) {
 }
 
 void AudioManager::StopMusic(bool immediate) {
-    if (m_musicInstance) {
-        m_musicInstance->Stop(immediate);
-        m_musicInstance.reset();
+    if (!m_musicInstance) {
+        m_currentMusicId.clear();
+        return;
     }
 
+    try {
+        m_musicInstance->Stop(immediate);
+    }
+    catch (...) {
+    }
+
+    m_musicInstance.reset();
     m_currentMusicId.clear();
 }
 
@@ -310,13 +355,10 @@ float AudioManager::ComputeFinalVolume(const ClipRecord& clip, float volumeMulti
 {
     float categoryVolume;
 
-    if (clip.category == AudioCategory::UiEffect)
-    {
-        // 🔥 UI dùng chung volume với SFX
+    if (clip.category == AudioCategory::UiEffect) {
         categoryVolume = m_categoryVolumes[CategoryToIndex(AudioCategory::SoundEffect)];
     }
-    else
-    {
+    else {
         categoryVolume = m_categoryVolumes[CategoryToIndex(clip.category)];
     }
 

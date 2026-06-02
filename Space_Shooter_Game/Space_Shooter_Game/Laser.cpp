@@ -1,26 +1,11 @@
 #include "Laser.h"
-#include "AssetManager.h"
+#include "AnimationManager.h"
 #include "BaseEnemy.h"
 #include "EntityManager.h"
 #include "GameContext.h"
 #include "Player.h"
-#include <DirectXColors.h>
-#include <DirectXMath.h>
 
 namespace {
-constexpr wchar_t LASER_TEXTURE_PATH[] = L"Assets/lazer_1.png";
-
-constexpr LONG LASER_BODY_LEFT = 37;
-constexpr LONG LASER_BODY_TOP = 2;
-constexpr LONG LASER_BODY_RIGHT = 48;
-constexpr LONG LASER_BODY_BOTTOM = 17;
-
-constexpr LONG LASER_IMPACT_LEFT = 2;
-constexpr LONG LASER_IMPACT_TOP = 1;
-constexpr LONG LASER_IMPACT_RIGHT = 33;
-constexpr LONG LASER_IMPACT_BOTTOM = 18;
-
-constexpr float LASER_BASE_THICKNESS = 5.0f;
 constexpr float LASER_PLAYER_Y_OFFSET = 10.0f;
 }
 
@@ -28,10 +13,29 @@ Laser::Laser(Graphics& gfx, float duration, int damage, float sizeMultiplier)
     : GameObject(0.0f, 0.0f, 0.0f, 0.0f)
     , m_remainingDuration(duration)
     , m_damage(damage)
-    , m_sizeMultiplier(sizeMultiplier)
-    , m_texture(AssetManager::GetInstance().GetTexture(gfx, LASER_TEXTURE_PATH))
-    , m_bodyRect{ LASER_BODY_LEFT, LASER_BODY_TOP, LASER_BODY_RIGHT, LASER_BODY_BOTTOM }
-    , m_impactRect{ LASER_IMPACT_LEFT, LASER_IMPACT_TOP, LASER_IMPACT_RIGHT, LASER_IMPACT_BOTTOM } {
+    , m_sizeMultiplier(sizeMultiplier) {
+    (void)gfx;
+    AnimationManager::GetInstance().PlayAnimation("laser_body", m_bodyAnim);
+
+    float bodyDisplayWidth = 0.0f;
+    float bodyDisplayHeight = 0.0f;
+    AnimationManager::GetInstance().GetDisplaySize("laser_body", bodyDisplayWidth, bodyDisplayHeight);
+
+    const AnimClip* bodyClip = m_bodyAnim.GetClip(
+        AnimationManager::GetInstance().GetClipName("laser_body"));
+    const float frameW = bodyClip ? static_cast<float>(bodyClip->frameWidth) : 16.0f;
+    const float frameH = bodyClip ? static_cast<float>(bodyClip->frameHeight) : 16.0f;
+
+    // Chiều rộng laser: displayWidth trong skills.json × sizeMultiplier (upgrade skill size).
+    m_bodyDrawWidth = (bodyDisplayWidth > 0.0f ? bodyDisplayWidth : frameW) * m_sizeMultiplier;
+
+    m_bodyUniformScale = m_bodyDrawWidth / frameW;
+    m_bodySegmentHeight = (bodyDisplayHeight > 0.0f)
+        ? bodyDisplayHeight * m_sizeMultiplier
+        : frameH * m_bodyUniformScale;
+
+    m_bodyFrameCount = bodyClip ? bodyClip->frameCount : 1;
+
     SetColliderName("laser_hitbox");
 }
 
@@ -47,14 +51,14 @@ void Laser::Update(float dt, GameContext& ctx) {
     m_x = ctx.player.GetCenterX();
     m_y = ctx.player.GetY() - LASER_PLAYER_Y_OFFSET;
 
-    const float bodyWidth = static_cast<float>(m_bodyRect.right - m_bodyRect.left);
-    const float visibleWidth = bodyWidth * LASER_BASE_THICKNESS * m_sizeMultiplier;
+    m_bodyAnim.Update(dt);
+
     const float beamHeight = m_y > 0.0f ? m_y : 0.0f;
     const Collider laserCollider = Collider::Rectangle(
         GetColliderName(),
-        m_x - visibleWidth * 0.5f,
+        m_x - m_bodyDrawWidth * 0.5f,
         0.0f,
-        visibleWidth,
+        m_bodyDrawWidth,
         beamHeight);
 
     auto& allEntities = ctx.entityManager.GetEntities();
@@ -69,49 +73,33 @@ void Laser::Update(float dt, GameContext& ctx) {
 }
 
 void Laser::Render(Graphics& gfx) {
-    if (!m_isActive || !m_texture) {
+    if (!m_isActive) {
         return;
     }
 
-    auto spriteBatch = gfx.GetSpriteBatch();
+    const float beamBottom = m_y > 0.0f ? m_y : 0.0f;
+    if (beamBottom <= 0.0f) {
+        return;
+    }
 
-    float distance = m_y;
-    float bodyWidth = static_cast<float>(m_bodyRect.right - m_bodyRect.left);
-    float bodyHeight = static_cast<float>(m_bodyRect.bottom - m_bodyRect.top);
-    float thickness = LASER_BASE_THICKNESS * m_sizeMultiplier;
-    float stretchY = distance / bodyHeight;
+    const float drawX = m_x - (m_bodyDrawWidth * 0.5f);
+    const float segmentH = m_bodySegmentHeight > 0.0f ? m_bodySegmentHeight : 16.0f;
+    const int frameCount = m_bodyFrameCount > 0 ? m_bodyFrameCount : 1;
+    const int currentFrame = m_bodyAnim.GetCurrentFrameIndex();
 
-    DirectX::XMFLOAT2 bodyScale(thickness, stretchY);
-    DirectX::XMFLOAT2 bodyOrigin(bodyWidth * 0.5f, bodyHeight);
-    DirectX::XMFLOAT2 bodyPosition(m_x, m_y);
-
-    spriteBatch->Draw(
-        m_texture.Get(),
-        bodyPosition,
-        &m_bodyRect,
-        DirectX::Colors::White,
-        0.0f,
-        bodyOrigin,
-        bodyScale,
-        DirectX::SpriteEffects_None,
-        0.0f
-    );
-
-    float impactWidth = static_cast<float>(m_impactRect.right - m_impactRect.left);
-    float impactHeight = static_cast<float>(m_impactRect.bottom - m_impactRect.top);
-    DirectX::XMFLOAT2 impactOrigin(impactWidth * 0.5f, impactHeight * 0.5f);
-    DirectX::XMFLOAT2 impactPosition(m_x, 0.0f);
-    DirectX::XMFLOAT2 impactScale(thickness, thickness);
-
-    spriteBatch->Draw(
-        m_texture.Get(),
-        impactPosition,
-        &m_impactRect,
-        DirectX::Colors::White,
-        0.0f,
-        impactOrigin,
-        impactScale,
-        DirectX::SpriteEffects_None,
-        0.0f
-    );
+    // Ghép các mảnh từ player lên đỉnh; mỗi mảnh dùng frame animation lệch pha để tạo hiệu ứng chạy dọc.
+    int segmentIndex = 0;
+    float segmentY = beamBottom - segmentH;
+    if (segmentY < 0.0f) {
+        segmentY = 0.0f;
+    }
+    while (segmentY < beamBottom) {
+        const int frameIndex = (currentFrame + segmentIndex) % frameCount;
+        m_bodyAnim.RenderFrameAtIndex(gfx, frameIndex, drawX, segmentY, m_bodyUniformScale);
+        if (segmentY <= 0.0f) {
+            break;
+        }
+        segmentY -= segmentH;
+        ++segmentIndex;
+    }
 }

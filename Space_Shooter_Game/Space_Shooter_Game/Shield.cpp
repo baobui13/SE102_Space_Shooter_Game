@@ -1,33 +1,18 @@
 #include "Shield.h"
-#include "AssetManager.h"
+#include "AnimationManager.h"
 #include "GameContext.h"
 #include "Player.h"
 
-namespace {
-constexpr wchar_t SHIELD_TEXTURE_PATH[] = L"Assets/Shield_1.png";
-constexpr int SHIELD_FRAME_W = 64;
-constexpr int SHIELD_FRAME_H = 64;
-constexpr int SHIELD_FRAME_COUNT = 12;
-constexpr float SHIELD_FRAME_DURATION = 0.06f;
-constexpr float SHIELD_DRAW_SIZE = 140.0f;
-}
-
 Shield::Shield(Graphics& gfx, float duration, float sizeMultiplier)
-    : GameObject(0.0f, 0.0f, SHIELD_DRAW_SIZE * sizeMultiplier, SHIELD_DRAW_SIZE * sizeMultiplier)
+    : GameObject(0.0f, 0.0f, 140.0f * sizeMultiplier, 140.0f * sizeMultiplier)
     , m_remainingDuration(duration) {
-    m_anim.Initialize(AssetManager::GetInstance().GetTexture(gfx, SHIELD_TEXTURE_PATH));
-    m_anim.AddClip(
-        "Active",
-        0,
-        0,
-        SHIELD_FRAME_W,
-        SHIELD_FRAME_H,
-        SHIELD_FRAME_COUNT,
-        SHIELD_FRAME_COUNT,
-        SHIELD_FRAME_DURATION,
-        true
-    );
-    m_anim.Play("Active");
+    (void)gfx;
+    float baseW = 140.0f;
+    float baseH = 140.0f;
+    AnimationManager::GetInstance().GetDisplaySize("shield_active", baseW, baseH);
+    m_width = baseW * sizeMultiplier;
+    m_height = baseH * sizeMultiplier;
+    AnimationManager::GetInstance().PlayAnimation("shield_active", m_anim);
 }
 
 void Shield::Update(float dt, GameContext& ctx) {

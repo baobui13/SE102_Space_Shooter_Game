@@ -1,0 +1,59 @@
+{
+  "laser_body": {
+    "texture": "Assets/Skills/Sprite-0007.png",
+    "clip": "LaserBody",
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16,
+    "count": 8,
+    "cols": 8,
+    "duration": 0.08,
+    "loop": true,
+    "displayWidth": 48,
+    "displayHeight": 16
+  },
+  "exploding_bullet_fly": {
+    "texture": "Assets/Skills/ExplodingBullet_1.png",
+    "clip": "Bullet",
+    "x": 10,
+    "y": 10,
+    "w": 20,
+    "h": 20,
+    "count": 2,
+    "cols": 2,
+    "duration": 0.1,
+    "loop": true,
+    "spacingX": 20,
+    "displayWidth": 50,
+    "displayHeight": 50
+  },
+  "exploding_bullet_explosion": {
+    "texture": "Assets/Skills/ExplodingBullet_1.png",
+    "clip": "Explosion",
+    "x": 80,
+    "y": 0,
+    "w": 58,
+    "h": 58,
+    "count": 5,
+    "cols": 5,
+    "duration": 0.1,
+    "loop": false,
+    "displayWidth": 700,
+    "displayHeight": 700
+  },
+  "shield_active": {
+    "texture": "Assets/Skills/Shield_1.png",
+    "clip": "Active",
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64,
+    "count": 12,
+    "cols": 12,
+    "duration": 0.06,
+    "loop": true,
+    "displayWidth": 140,
+    "displayHeight": 140
+  }
+}

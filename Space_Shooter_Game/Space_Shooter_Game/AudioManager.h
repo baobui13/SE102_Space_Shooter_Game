@@ -25,13 +25,14 @@ inline constexpr const char* PlayerDeath = "sfx.player.death";
 inline constexpr const char* PlayerLevelUp = "sfx.player.levelup";
 inline constexpr const char* PlayerLaser = "sfx.player.laser";
 inline constexpr const char* PlayerShield = "sfx.player.shield";
+inline constexpr const char* BossDeath = "sfx.boss.death";
 
 inline constexpr const char* UiHover = "ui.hover";
 inline constexpr const char* UiClick = "ui.click";
 inline constexpr const char* UiHoverLevel = "ui.hoverlevel";
 inline constexpr const char* UiOpenLevelUp = "ui.levelup.open";
 inline constexpr const char* UiSelectUpgrade = "ui.levelup.select";
-}
+} // namespace AudioIds
 
 class AudioManager {
 public:
@@ -39,6 +40,7 @@ public:
 
     AudioManager(const AudioManager&) = delete;
     AudioManager& operator=(const AudioManager&) = delete;
+    ~AudioManager();
 
     void Initialize();
     void Shutdown();
@@ -60,13 +62,11 @@ public:
 
     void SetBackgroundMusicVolume(float volume) { SetCategoryVolume(AudioCategory::BackgroundMusic, volume); }
     void SetSoundEffectVolume(float volume) { SetCategoryVolume(AudioCategory::SoundEffect, volume); }
-   
 
     float GetBackgroundMusicVolume() const { return GetCategoryVolume(AudioCategory::BackgroundMusic); }
     float GetSoundEffectVolume() const { return GetCategoryVolume(AudioCategory::SoundEffect); }
 
-
-    bool IsReady() const { return m_ready && m_audioEngine != nullptr; }
+    bool IsReady() const;
 
 private:
     struct ClipRecord {
@@ -98,6 +98,8 @@ private:
     std::array<float, static_cast<size_t>(AudioCategory::Count)> m_categoryVolumes{ 0.55f, 0.9f, 1.0f };
     float m_masterVolume = 1.0f;
     bool m_ready = false;
+    bool m_shuttingDown = false;
+    bool m_shutdownComplete = false;
     bool m_defaultClipsRegistered = false;
     bool m_loggedMissingDevice = false;
 };

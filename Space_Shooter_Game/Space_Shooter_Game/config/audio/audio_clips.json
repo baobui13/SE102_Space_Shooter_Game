@@ -15,6 +15,7 @@
     { "id": "sfx.player.levelup", "path": "Assets/Audio/SFX/player_levelup.wav", "category": "SoundEffect", "volume": 0.95 },
     { "id": "sfx.player.laser", "path": "Assets/Audio/SFX/laser.wav", "category": "SoundEffect", "volume": 1.0 },
     { "id": "sfx.player.shield", "path": "Assets/Audio/SFX/shield1.wav", "category": "SoundEffect", "volume": 1.0 },
+    { "id": "sfx.boss.death", "path": "Assets/Audio/SFX/boss_death.wav", "category": "SoundEffect", "volume": 0.7 },
     { "id": "ui.hover", "path": "Assets/Audio/UI/ui_hover.wav", "category": "UiEffect", "volume": 1.0 },
     { "id": "ui.click", "path": "Assets/Audio/UI/ui_click.wav", "category": "UiEffect", "volume": 0.75 },
     { "id": "ui.hoverlevel", "path": "Assets/Audio/UI/ui_hover_level.wav", "category": "UiEffect", "volume": 0.5 },

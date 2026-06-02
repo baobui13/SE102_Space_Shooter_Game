@@ -16,6 +16,7 @@ public:
     void Update(float dt, GameContext& ctx) override;
     void Move(float dt, GameContext& ctx) override;
     void Attack(GameObject* target) override;
+    void TakeDamage(float damage) override;
     void OnDeath() override;
 
 private:
@@ -29,4 +30,5 @@ private:
     float m_entryTargetY = 0.0f;
     float m_enterSpeed = 140.0f;
     GameContext* m_lastCtx = nullptr;
+    bool m_isDying = false;
 };

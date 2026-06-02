@@ -25,6 +25,8 @@ public:
     void Play(const std::string& name);
     void Update(float dt);
     void Render(Graphics& gfx, float drawX, float drawY, float drawW, float drawH, DirectX::XMVECTOR color = DirectX::Colors::White, float rotation = 0.0f);
+    // Vẽ frame hiện tại tại góc trên-trái, scale đều (không kéo méo theo trục).
+    void RenderFrameTopLeft(Graphics& gfx, float drawX, float drawY, float uniformScale, DirectX::XMVECTOR color = DirectX::Colors::White);
     bool IsFinished() const;
 
     // Lấy Texture đang sử dụng
@@ -41,6 +43,12 @@ public:
 
     // Lấy Rect của Frame hiện tại (dùng nếu bạn muốn chính xác khung hình đang chạy)
     RECT GetCurrentFrameRect() const;
+    RECT GetFrameRect(int frameIndex) const;
+
+    // Vẽ một frame cụ thể trong clip đang play (dùng để ghép laser theo chiều dọc).
+    void RenderFrameAtIndex(Graphics& gfx, int frameIndex, float drawX, float drawY, float uniformScale, DirectX::XMVECTOR color = DirectX::Colors::White);
+
+    int GetCurrentFrameIndex() const { return m_localFrameIndex; }
 
     void SetAlpha(float alpha) { m_alpha = alpha; }
 

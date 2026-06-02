@@ -11,8 +11,13 @@ private:
     ExplodingBulletState m_state;
     float m_speed;
     int m_damage;
+    float m_sizeMultiplier;
     float m_directionX;
     float m_directionY;
+    float m_flyDrawWidth;
+    float m_flyDrawHeight;
+    float m_explosionDrawWidth;
+    float m_explosionDrawHeight;
 
 public:
     ExplodingBullet(Graphics& gfx,
