@@ -10,6 +10,7 @@
 #include "PauseScene.h"
 #include "SceneManager.h"
 #include "ShieldSkill.h"
+#include "TalentTreeScene.h"
 #include <DirectXColors.h>
 #include <string>
 
@@ -60,6 +61,15 @@ void BaseGameplayScene::InitializePlayer() {
     m_player->AddSkill(std::make_unique<LaserSkill>());
     m_player->AddSkill(std::make_unique<ExplodingBulletSkill>());
     m_player->AddSkill(std::make_unique<ShieldSkill>());
+
+    // Khoi tao TalentTree: doc config node + phuc hoi trang thai tu save file
+    m_player->GetTalentTree().Initialize(m_gfx);
+
+    // Neu co save data: phuc hoi upgradePoints va ap dung lai buff cac node da mo
+    if (m_player->GetTalentTree().HasSaveData()) {
+        m_player->SetUpgradePoints(m_player->GetTalentTree().GetSavedUpgradePoints());
+        m_player->GetTalentTree().ApplyAllUnlockedBuffs(*m_player);
+    }
 }
 
 void BaseGameplayScene::InitializeLevel() {
@@ -121,6 +131,11 @@ void BaseGameplayScene::Update(float dt, InputManager& input, SceneManager& mana
     if (m_player->GetUpgradePoints() > 0 && input.IsKeyPressed('U')) {
         AudioManager::GetInstance().PlayUiEffect(AudioIds::UiOpenLevelUp);
         manager.PushScene(std::make_unique<LevelUpScene>(m_gfx, *m_player));
+    }
+
+    if (input.IsKeyPressed('T')) {
+        AudioManager::GetInstance().PlayUiEffect(AudioIds::UiOpenLevelUp);
+        manager.PushScene(std::make_unique<TalentTreeScene>(m_gfx, m_player.get()));
     }
     m_backgroundOffsetY += m_backgroundScrollSpeed * dt;
 
@@ -230,7 +245,7 @@ void BaseGameplayScene::Render(Graphics& gfx) {
 
     if (m_player->GetUpgradePoints() > 0) {
         std::wstring notify =
-            L"Ban co " + std::to_wstring(m_player->GetUpgradePoints()) + L" luot nang cap! Bam 'U' de dung.";
+            L"Ban co " + std::to_wstring(m_player->GetUpgradePoints()) + L" luot nang cap! Bam 'U' (Ky nang) hoac 'T' (Talent Tree).";
         m_font->DrawString(spriteBatch, notify.c_str(), DirectX::XMFLOAT2(10.0f, 200.0f), DirectX::Colors::Cyan);
     }
 

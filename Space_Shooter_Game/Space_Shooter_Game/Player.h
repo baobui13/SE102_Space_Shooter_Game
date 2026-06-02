@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "SkillManager.h"
+#include "TalentTree.h"
 #include <memory>
 #include <vector>
 
@@ -41,6 +42,7 @@ private:
 
     int m_upgradePoints = 0;
     SkillManager m_skillManager;
+    TalentTree m_talentTree;
 
     float m_invulTimer = 0.0f;          // Thời gian còn lại của hiệu ứng nhấp nháy
     float m_invulDuration = 1.0f; // Tổng thời gian nhấp nháy
@@ -88,6 +90,7 @@ public:
     int GetMaxDashCharges() const { return m_maxDashCharges; }
 
     int GetUpgradePoints() const { return m_upgradePoints; }
+    void SetUpgradePoints(int pts) { m_upgradePoints = pts; }
     void UseUpgradePoint() {
         if (m_upgradePoints > 0) {
             m_upgradePoints--;
@@ -110,6 +113,8 @@ public:
     void SetSpeed(float speed) { m_speed = speed; }
     void SetAttackRange(float range) { m_attackRange = range; }
     void SetShielded(bool value) { m_isShielded = value; }
+    
+    TalentTree& GetTalentTree() { return m_talentTree; }
 
 private:
     void UpdateAttackCooldown(float dt);

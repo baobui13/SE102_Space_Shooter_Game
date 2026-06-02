@@ -1,6 +1,7 @@
 #include "SimpleJson.h"
 
 #include <cctype>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -266,4 +267,82 @@ JsonValue SimpleJson::ParseFile(const std::string& filePath) {
     std::ostringstream buffer;
     buffer << file.rdbuf();
     return Parse(buffer.str());
+}
+
+std::string SimpleJson::Stringify(const JsonValue& value, int indent) {
+    const std::string INDENT(indent * 2, ' ');
+    const std::string INNER((indent + 1) * 2, ' ');
+
+    switch (value.GetType()) {
+    case JsonValue::Type::Null:
+        return "null";
+    case JsonValue::Type::Bool:
+        return value.AsBool() ? "true" : "false";
+    case JsonValue::Type::Number: {
+        double n = value.AsNumber();
+        // Use integer repr when it is a whole number
+        if (n == static_cast<long long>(n))
+            return std::to_string(static_cast<long long>(n));
+        std::ostringstream oss;
+        oss << n;
+        return oss.str();
+    }
+    case JsonValue::Type::String: {
+        // Basic escaping for common characters
+        std::string result = "\"";
+        for (char c : value.AsString()) {
+            switch (c) {
+            case '"': result += "\\\""; break;
+            case '\\': result += "\\\\"; break;
+            case '\n': result += "\\n"; break;
+            case '\r': result += "\\r"; break;
+            case '\t': result += "\\t"; break;
+            default: result.push_back(c);
+            }
+        }
+        result += '"';
+        return result;
+    }
+    case JsonValue::Type::Array: {
+        const auto& arr = value.AsArray();
+        if (arr.empty()) return "[]";
+        std::string result = "[\n";
+        for (size_t i = 0; i < arr.size(); ++i) {
+            result += INNER + Stringify(arr[i], indent + 1);
+            if (i + 1 < arr.size()) result += ",";
+            result += "\n";
+        }
+        result += INDENT + "]";
+        return result;
+    }
+    case JsonValue::Type::Object: {
+        const auto& obj = value.AsObject();
+        if (obj.empty()) return "{}";
+        std::string result = "{\n";
+        size_t i = 0;
+        for (const auto& kv : obj) {
+            result += INNER + "\"" + kv.first + "\": " + Stringify(kv.second, indent + 1);
+            if (i + 1 < obj.size()) result += ",";
+            result += "\n";
+            ++i;
+        }
+        result += INDENT + "}";
+        return result;
+    }
+    }
+    return "null";
+}
+
+bool SimpleJson::WriteFile(const std::string& filePath, const JsonValue& value) {
+    // Create parent directories if they don't exist
+    std::filesystem::path p(filePath);
+    if (p.has_parent_path()) {
+        std::filesystem::create_directories(p.parent_path());
+    }
+    std::ofstream file(filePath);
+    if (!file) {
+        return false;
+    }
+    file << Stringify(value);
+    return file.good();
 }

@@ -1,0 +1,16 @@
+{
+  "nodes": [
+    { "id": 0, "parentId": -1, "type": "MAX_HP", "buffAmount": 0.0, "x": 400.0, "y": 500.0, "icon": "Assets/TalentNodeIcon/max_hp.png" },
+    { "id": 1, "parentId": 0, "type": "ATTACK_DAMAGE", "buffAmount": 5.0, "x": 250.0, "y": 400.0, "icon": "Assets/TalentNodeIcon/attack_dame.png" },
+    { "id": 2, "parentId": 1, "type": "ATTACK_DAMAGE", "buffAmount": 10.0, "x": 150.0, "y": 300.0, "icon": "Assets/TalentNodeIcon/attack_dame.png" },
+    { "id": 3, "parentId": 2, "type": "ATTACK_SPEED", "buffAmount": 0.1, "x": 50.0, "y": 200.0, "icon": "Assets/TalentNodeIcon/attack_speed.png" },
+
+    { "id": 4, "parentId": 0, "type": "COOLDOWN_REDUCTION", "buffAmount": 0.05, "x": 400.0, "y": 350.0, "icon": "Assets/TalentNodeIcon/cooldown_reduction.png" },
+    { "id": 5, "parentId": 4, "type": "SKILL_SIZE", "buffAmount": 0.1, "x": 400.0, "y": 200.0, "icon": "Assets/TalentNodeIcon/skill_size.png" },
+    { "id": 6, "parentId": 5, "type": "COOLDOWN_REDUCTION", "buffAmount": 0.1, "x": 400.0, "y": 50.0, "icon": "Assets/TalentNodeIcon/cooldown_reduction.png" },
+
+    { "id": 7, "parentId": 0, "type": "MAX_HP", "buffAmount": 20.0, "x": 550.0, "y": 400.0, "icon": "Assets/TalentNodeIcon/max_hp.png" },
+    { "id": 8, "parentId": 7, "type": "MOVEMENT_SPEED", "buffAmount": 20.0, "x": 650.0, "y": 300.0, "icon": "Assets/TalentNodeIcon/move_speed.png" },
+    { "id": 9, "parentId": 8, "type": "MAX_HP", "buffAmount": 50.0, "x": 750.0, "y": 200.0, "icon": "Assets/TalentNodeIcon/max_hp.png" }
+  ]
+}

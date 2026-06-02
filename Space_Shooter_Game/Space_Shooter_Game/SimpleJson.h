@@ -59,4 +59,10 @@ class SimpleJson {
 public:
     static JsonValue Parse(const std::string& text);
     static JsonValue ParseFile(const std::string& filePath);
+
+    // Serialize a JsonValue to a formatted JSON string
+    static std::string Stringify(const JsonValue& value, int indent = 0);
+
+    // Write a JsonValue to a file (creates parent dirs if needed)
+    static bool WriteFile(const std::string& filePath, const JsonValue& value);
 };
