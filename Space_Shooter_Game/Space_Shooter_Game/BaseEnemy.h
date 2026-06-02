@@ -30,6 +30,9 @@ protected:
 
     EnemyType m_type;
     int m_expReward;
+    float m_talentDropChance = 0.0f;
+    int m_talentPointReward = 1;
+    GameContext* m_lastCtx = nullptr;
 
     // Movement Strategy — có thể thay đổi runtime
     std::unique_ptr<IMovementStrategy> m_movementStrategy;
@@ -60,6 +63,8 @@ public:
     void FacePoint(float targetX, float targetY);
     float GetAimAngle() const { return m_rotation + m_spriteForwardAngle; }
     void SpawnAttackMarker(GameContext& ctx, const AttackMarkerSpawnData& markerData);
+    void RecordContext(GameContext& ctx);
+    void DropRewards();
     void UpdateRotationToMovement();
     void SmoothRotationToward(float targetAngle, float dt, float maxAngularSpeed);
 
@@ -74,6 +79,7 @@ public:
     EnemyType GetType() const { return m_type; }
     int GetExpReward() const { return m_expReward; }
     void SetExpReward(int exp) { m_expReward = exp; }
+    void SetTalentDrop(float chance, int points) { m_talentDropChance = chance; m_talentPointReward = points; }
     float GetRotation() const { return m_rotation; }
     float GetSpriteForwardAngle() const { return m_spriteForwardAngle; }
 };

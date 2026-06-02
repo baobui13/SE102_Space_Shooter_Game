@@ -1,7 +1,11 @@
 {
   "unlockedNodeIds": [
     0,
-    7
+    1,
+    4,
+    7,
+    2,
+    3
   ],
-  "upgradePoints": 0
+  "upgradePoints": 1
 }

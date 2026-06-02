@@ -328,6 +328,8 @@ void ColliderRegistry::RegisterDefaults() {
     RegisterDefinition({ "laser_hitbox", ColliderShape::Rectangle, ColliderPositionMode::Absolute, -3.0f, -300.0f, 6.0f, 300.0f });
     RegisterDefinition({ "exp_orb", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
     RegisterDefinition({ "exp_orb_collect", ColliderShape::Oval, ColliderPositionMode::Absolute, -15.0f, -15.0f, 30.0f, 30.0f });
+    RegisterDefinition({ "talent_orb", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds });
+    RegisterDefinition({ "talent_orb_collect", ColliderShape::Oval, ColliderPositionMode::Absolute, -16.0f, -16.0f, 32.0f, 32.0f });
     RegisterDefinition({ "circle_ground_attack", ColliderShape::Oval, ColliderPositionMode::OwnerBounds });
     RegisterDefinition({ "melee_contact", ColliderShape::Rectangle, ColliderPositionMode::OwnerBounds, 0.0f, 0.0f, 0.0f, 0.0f, 4.0f, 4.0f });
 }

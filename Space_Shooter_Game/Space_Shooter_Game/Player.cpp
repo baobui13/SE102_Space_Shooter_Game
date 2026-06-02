@@ -156,9 +156,27 @@ void Player::GainExp(int amount) {
 
 void Player::LevelUp() {
     m_level++;
+    m_levelPoints++;
     m_expToNextLevel = static_cast<int>(m_expToNextLevel * m_expGrowthMultiplier);
-    m_upgradePoints++;
     AudioManager::GetInstance().PlaySoundEffect(AudioIds::PlayerLevelUp);
+}
+
+void Player::AddUpgradePoints(int pts) {
+    if (pts <= 0) {
+        return;
+    }
+
+    m_upgradePoints += pts;
+    m_talentTree.PersistSave(*this);
+}
+
+void Player::UseUpgradePoint() {
+    if (m_upgradePoints <= 0) {
+        return;
+    }
+
+    m_upgradePoints--;
+    m_talentTree.PersistSave(*this);
 }
 
 void Player::UpdateAttackCooldown(float dt) {

@@ -4,7 +4,6 @@
 #include "Bullet.h"
 #include "BulletPool.h"
 #include "EntityManager.h"
-#include "ExpOrb.h"
 #include "GameConfig.h"
 #include "GameContext.h"
 #include "Player.h"
@@ -35,7 +34,7 @@ Boss1::Boss1(float x, float y, float width, float height,
 void Boss1::Update(float dt, GameContext& ctx) {
     if (!m_isActive) return;
 
-    m_lastCtx = &ctx;
+    RecordContext(ctx);
 
     if (m_isDying) {
         UpdateAnimation(dt);
@@ -170,13 +169,7 @@ void Boss1::OnDeath() {
         return;
     }
     AudioManager::GetInstance().PlaySoundEffect(AudioIds::BossDeath);
-
-    if (m_lastCtx && m_expReward > 0) {
-        const float orbX = m_x + m_width * 0.5f;
-        const float orbY = m_y + m_height * 0.5f;
-        m_lastCtx->entityManager.AddEntity(
-            std::make_unique<ExpOrb>(m_lastCtx->gfx, orbX, orbY, m_expReward));
-    }
+    DropRewards();
 }
 
 void Boss1::UpdateBossRotation(float dt) {

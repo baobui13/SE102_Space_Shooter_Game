@@ -12,6 +12,7 @@ MeleeEnemy1::MeleeEnemy1(float x, float y, float width, float height,
 
 void MeleeEnemy1::Update(float dt, GameContext& ctx) {
     if (!m_isActive) return;
+    RecordContext(ctx);
     UpdateAnimation(dt);
     if (m_attackCooldown > 0) m_attackCooldown -= dt;
 

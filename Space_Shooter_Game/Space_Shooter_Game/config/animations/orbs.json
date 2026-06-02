@@ -1,0 +1,30 @@
+{
+  "exp_orb_idle": {
+    "texture": "Assets/Bullets1.png",
+    "clip": "idle",
+    "x": 15,
+    "y": 80,
+    "w": 17,
+    "h": 17,
+    "count": 1,
+    "cols": 1,
+    "duration": 1.0,
+    "loop": true,
+    "spacingX": 0,
+    "spacingY": 0
+  },
+  "talent_orb_idle": {
+    "texture": "Assets/Orbs/Pickup_2_B_Medium.png",
+    "clip": "idle",
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 128,
+    "count": 1,
+    "cols": 1,
+    "duration": 1.0,
+    "loop": true,
+    "spacingX": 0,
+    "spacingY": 0
+  }
+}

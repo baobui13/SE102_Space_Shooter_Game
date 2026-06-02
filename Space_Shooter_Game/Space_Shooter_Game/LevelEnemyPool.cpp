@@ -81,11 +81,13 @@ EnemyStatsDefinition ParseStats(const JsonValue& value, EnemyStatsDefinition fal
     fallback.attackSpeed = ReadFloat(value, "attackSpeed", fallback.attackSpeed);
     fallback.attackRange = ReadFloat(value, "attackRange", fallback.attackRange);
     fallback.expReward = ReadInt(value, "expReward", fallback.expReward);
+    fallback.talentDropChance = ReadFloat(value, "talentDropChance", fallback.talentDropChance);
+    fallback.talentPointReward = ReadInt(value, "talentPointReward", fallback.talentPointReward);
     return fallback;
 }
 
 EnemyStatsDefinition DefaultStats() {
-    return { 1.0f, 80.0f, 1.0f, 1.0f, 30.0f, 0 };
+    return { 1.0f, 80.0f, 1.0f, 1.0f, 30.0f, 0, 0.0f, 1 };
 }
 
 EnemyStatsDefinition GetStats(const StatsMap& stats, EnemyType type) {

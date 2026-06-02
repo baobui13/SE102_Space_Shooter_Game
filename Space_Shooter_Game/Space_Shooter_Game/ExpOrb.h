@@ -1,10 +1,13 @@
 #pragma once
 #include "GameObject.h"
+#include <string>
 
 class ExpOrb : public GameObject {
 private:
     int m_expAmount; // Lượng kinh nghiệm mà viên ngọc này chứa
     float m_magnetSpeed; // Tốc độ bay về phía Player khi bị hút
+    float m_fallSpeed;
+    std::string m_collectColliderName;
 public:
     // Khởi tạo ngọc EXP tại tọa độ (x, y) với lượng EXP truyền vào
     ExpOrb(Graphics& gfx, float x, float y, int expValue);

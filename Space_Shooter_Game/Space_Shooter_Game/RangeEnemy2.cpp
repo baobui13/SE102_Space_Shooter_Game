@@ -14,6 +14,7 @@ RangeEnemy2::RangeEnemy2(float x, float y, float width, float height,
 
 void RangeEnemy2::Update(float dt, GameContext& ctx) {
     if (!m_isActive) return;
+    RecordContext(ctx);
 
     UpdateAnimation(dt);
     Move(dt, ctx);

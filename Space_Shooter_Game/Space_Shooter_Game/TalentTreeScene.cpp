@@ -9,8 +9,8 @@ TalentTreeScene::TalentTreeScene(Graphics& gfx, Player* player)
 {
     // Ensure player pointer is valid, we can assert or just check in methods
     
-    // Create a Back button at top left
-    m_backButton = std::make_unique<Button>(50.0f, 50.0f, 200.0f, 80.0f);
+    // Create a Back button at top right
+    m_backButton = std::make_unique<Button>(VIRTUAL_WIDTH - 250.0f, 50.0f, 200.0f, 80.0f);
     m_backButton->SetTextures(
         AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_BTN.png"),
         AssetManager::GetInstance().GetTexture(gfx, L"Assets/Exit_BTN.png"),
@@ -54,13 +54,33 @@ void TalentTreeScene::Render(Graphics& gfx) {
 
     if (m_player) {
         // Load font locally for drawing text (could be cached)
-        static std::unique_ptr<DirectX::SpriteFont> font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
+        static std::unique_ptr<DirectX::SpriteFont> font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/GoodTimingRg.spritefont");
         
         m_player->GetTalentTree().Render(gfx, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, font.get());
         
+        // Draw Player Stats
+        std::wstring uiLeft =
+            L"--- PLAYER STATS ---\n"
+            L"HP: " + std::to_wstring(m_player->GetHp()) + L" / " + std::to_wstring(m_player->GetMaxHp()) + L"\n" +
+            L"LEVEL: " + std::to_wstring(m_player->GetLevel()) + L"\n" +
+            L"EXP: " + std::to_wstring(m_player->GetCurrentExp()) + L" / " + std::to_wstring(m_player->GetExpToNextLevel()) + L"\n" +
+            L"SPEED: " + std::to_wstring((int)m_player->GetSpeed()) + L"\n" +
+            L"MAGNET: " + std::to_wstring((int)m_player->GetMagnetRange());
+
+        std::wstring uiRight =
+            L"--- COMBAT STATS ---\n"
+            L"DAMAGE: " + std::to_wstring(m_player->GetAttackDamage()) + L"\n" +
+            L"ATK SPD: " + std::to_wstring((int)(m_player->GetAttackSpeed() * 10.0f) / 10) + L" /s\n" +
+            L"RANGE: " + std::to_wstring((int)m_player->GetAttackRange()) + L"\n" +
+            L"CD MULT: " + std::to_wstring((int)(m_player->GetCooldownMultiplier() * 100)) + L"%\n" +
+            L"SKILL SIZE: " + std::to_wstring((int)(m_player->GetSkillSizeMultiplier() * 100)) + L"%";
+
+        font->DrawString(spriteBatch, uiLeft.c_str(), DirectX::XMFLOAT2(10.0f, 10.0f), DirectX::Colors::Yellow);
+        font->DrawString(spriteBatch, uiRight.c_str(), DirectX::XMFLOAT2(200.0f, 10.0f), DirectX::Colors::LightGreen);
+        
         // Draw Upgrade Points
         std::wstring pointsText = L"Upgrade Points: " + std::to_wstring(m_player->GetUpgradePoints());
-        font->DrawString(spriteBatch, pointsText.c_str(), DirectX::XMFLOAT2(VIRTUAL_WIDTH - 400.0f, 50.0f), DirectX::Colors::Yellow);
+        font->DrawString(spriteBatch, pointsText.c_str(), DirectX::XMFLOAT2(VIRTUAL_WIDTH - 400.0f, 150.0f), DirectX::Colors::Yellow);
         
         // Draw Tooltip
         const TalentNode* hoveredNode = m_player->GetTalentTree().GetHoveredNode();

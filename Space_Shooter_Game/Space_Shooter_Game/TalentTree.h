@@ -26,12 +26,12 @@ public:
     // Ap dung lai buff cho tat ca node da duoc mo (dung sau khi load save)
     void ApplyAllUnlockedBuffs(Player& player);
 
+    // Ghi toan bo trang thai talent hien tai ra file save
+    void PersistSave(const Player& player) const;
+
 private:
     bool CanUnlockNode(int nodeId, const Player& player) const;
     void ApplyBuff(TalentNode* node, Player& player);
-    // Ghi toan bo trang thai talent hien tai ra file save
-    void PersistSave(const Player& player) const;
-    
     std::vector<std::unique_ptr<TalentNode>> m_nodes;
     
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_lineTexture;

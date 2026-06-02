@@ -10,7 +10,29 @@
   },
   "waves": [
     {
-      "time": 3.0,
+      "time": 2.0,
+      "enemies": [
+        { "type": "Ranged_Basic", "x": 180, "y": -80 },
+        { "type": "Ranged_Basic", "x": 820, "y": -80 }
+      ]
+    },
+    {
+      "time": 8.0,
+      "enemies": [
+        { "type": "Melee_Fast", "x": 120, "y": -80 },
+        { "type": "Melee_Basic", "x": 500, "y": -130 },
+        { "type": "Melee_Fast", "x": 880, "y": -80 }
+      ]
+    },
+    {
+      "time": 15.0,
+      "enemies": [
+        { "type": "Ranged_Burst", "x": 220, "y": -90 },
+        { "type": "Ranged_Burst", "x": 780, "y": -90 }
+      ]
+    },
+    {
+      "time": 23.0,
       "enemies": [
         { "type": "Boss_Stage1", "x": "center", "y": 0 }
       ]

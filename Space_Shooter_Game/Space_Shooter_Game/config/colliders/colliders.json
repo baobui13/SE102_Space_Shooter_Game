@@ -112,6 +112,20 @@
       "height": 30
     },
     {
+      "name": "talent_orb",
+      "shape": "rectangle",
+      "positionMode": "ownerBounds"
+    },
+    {
+      "name": "talent_orb_collect",
+      "shape": "oval",
+      "positionMode": "absolute",
+      "x": -16,
+      "y": -16,
+      "width": 32,
+      "height": 32
+    },
+    {
       "name": "circle_ground_attack",
       "shape": "oval",
       "positionMode": "ownerBounds"

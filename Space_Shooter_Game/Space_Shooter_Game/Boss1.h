@@ -29,6 +29,5 @@ private:
     BossState m_state = BossState::Entering;
     float m_entryTargetY = 0.0f;
     float m_enterSpeed = 140.0f;
-    GameContext* m_lastCtx = nullptr;
     bool m_isDying = false;
 };

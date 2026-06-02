@@ -63,6 +63,7 @@ void MeleeEnemy2::TryPeriodicSpawn(float dt, GameContext& ctx) {
 }
 
 void MeleeEnemy2::Update(float dt, GameContext& ctx) {
+    RecordContext(ctx);
     m_lastCtx = &ctx;
 
     if (m_pendingDeathSpawn) {

@@ -51,6 +51,7 @@ void AnimationManager::LoadAll(Graphics& gfx) {
         "config/animations/enemies.json",
         "config/animations/bullets.json",
         "config/animations/skills.json",
+        "config/animations/orbs.json",
     };
 
     for (const auto& f : files) {

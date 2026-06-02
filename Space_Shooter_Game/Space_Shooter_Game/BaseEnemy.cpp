@@ -3,13 +3,25 @@
 #include "Collider.h"
 #include "GameContext.h"
 #include "EntityManager.h" 
+#include "ExpOrb.h"
 #include "Player.h"
+#include "TalentOrb.h"
 #include <DirectXMath.h>
 #include <cmath>
+#include <random>
 
 namespace {
 constexpr float DAMAGE_FLASH_DURATION = 0.18f;
 constexpr float DAMAGE_FLASH_INTERVAL = 0.06f;
+
+bool RollChance(float chance) {
+    if (chance <= 0.0f) return false;
+    if (chance >= 1.0f) return true;
+
+    static std::mt19937 rng(std::random_device{}());
+    static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    return dist(rng) < chance;
+}
 }
 
 BaseEnemy::BaseEnemy(float x, float y, float width, float height,
@@ -34,6 +46,7 @@ BaseEnemy::BaseEnemy(float x, float y, float width, float height,
 
 void BaseEnemy::Update(float dt, GameContext& ctx) {
     if (!m_isActive) return;
+    RecordContext(ctx);
 
     // 1. Cập nhật Animation
     UpdateAnimation(dt);
@@ -135,6 +148,7 @@ void BaseEnemy::TakeDamage(float damage) {
 }
 
 void BaseEnemy::OnDeath() {
+    DropRewards();
     Destroy();
 }
 
@@ -164,6 +178,29 @@ void BaseEnemy::FacePoint(float targetX, float targetY) {
 
 void BaseEnemy::SpawnAttackMarker(GameContext& ctx, const AttackMarkerSpawnData& markerData) {
     ctx.entityManager.AddEntity(std::make_unique<AttackMarker>(markerData));
+}
+
+void BaseEnemy::RecordContext(GameContext& ctx) {
+    m_lastCtx = &ctx;
+}
+
+void BaseEnemy::DropRewards() {
+    if (!m_lastCtx) {
+        return;
+    }
+
+    const float orbX = m_x + m_width * 0.5f;
+    const float orbY = m_y + m_height * 0.5f;
+
+    if (m_expReward > 0) {
+        m_lastCtx->entityManager.AddEntity(
+            std::make_unique<ExpOrb>(m_lastCtx->gfx, orbX, orbY, m_expReward));
+    }
+
+    if (m_talentPointReward > 0 && RollChance(m_talentDropChance)) {
+        m_lastCtx->entityManager.AddEntity(
+            std::make_unique<TalentOrb>(m_lastCtx->gfx, orbX + 18.0f, orbY, m_talentPointReward));
+    }
 }
 
 void BaseEnemy::UpdateRotationToMovement() {

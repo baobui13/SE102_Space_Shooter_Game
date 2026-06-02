@@ -1,4 +1,4 @@
-#include "ExpOrb.h"
+#include "TalentOrb.h"
 #include "AnimationManager.h"
 #include "GameContext.h"
 #include "OrbConfig.h"
@@ -6,15 +6,15 @@
 
 #include <cmath>
 
-ExpOrb::ExpOrb(Graphics& gfx, float x, float y, int expValue)
-    : GameObject(x, y, OrbConfig::GetExpOrb().width, OrbConfig::GetExpOrb().height)
-    , m_expAmount(expValue)
-    , m_magnetSpeed(OrbConfig::GetExpOrb().magnetSpeed)
-    , m_fallSpeed(OrbConfig::GetExpOrb().fallSpeed)
-    , m_collectColliderName(OrbConfig::GetExpOrb().collectColliderName)
+TalentOrb::TalentOrb(Graphics& gfx, float x, float y, int pointValue)
+    : GameObject(x, y, OrbConfig::GetTalentOrb().width, OrbConfig::GetTalentOrb().height)
+    , m_pointValue(pointValue)
+    , m_magnetSpeed(OrbConfig::GetTalentOrb().magnetSpeed)
+    , m_fallSpeed(OrbConfig::GetTalentOrb().fallSpeed)
+    , m_collectColliderName(OrbConfig::GetTalentOrb().collectColliderName)
 {
     (void)gfx;
-    const OrbDefinition& config = OrbConfig::GetExpOrb();
+    const OrbDefinition& config = OrbConfig::GetTalentOrb();
     SetColliderName(config.colliderName);
     m_vx = 0.0f;
     m_vy = m_fallSpeed;
@@ -22,7 +22,7 @@ ExpOrb::ExpOrb(Graphics& gfx, float x, float y, int expValue)
     AnimationManager::GetInstance().PlayAnimation(config.animationId, m_anim);
 }
 
-void ExpOrb::Update(float dt, ::GameContext& ctx) {
+void TalentOrb::Update(float dt, ::GameContext& ctx) {
     const float playerCenterX = ctx.player.GetX() + ctx.player.GetWidth() / 2.0f;
     const float playerCenterY = ctx.player.GetY() + ctx.player.GetHeight() / 2.0f;
     const float orbCenterX = m_x + m_width / 2.0f;
@@ -49,7 +49,7 @@ void ExpOrb::Update(float dt, ::GameContext& ctx) {
         GetCenterY());
 
     if (collectCollider.Intersects(ctx.player.GetCollider())) {
-        ctx.player.GainExp(m_expAmount);
+        ctx.player.AddUpgradePoints(m_pointValue);
         Destroy();
     }
     else if (m_y > ctx.screenHeight + 100.0f) {

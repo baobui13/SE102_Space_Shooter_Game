@@ -34,6 +34,7 @@ private:
     int m_dashCharges;
     int m_maxDashCharges;
     float m_dashRechargeTime;
+
     float m_dashRechargeTimer;
     float m_lastMoveDirX;
     float m_lastMoveDirY;
@@ -41,13 +42,13 @@ private:
     float m_dashDirY;
 
     int m_upgradePoints = 0;
+    int m_levelPoints = 0;
     SkillManager m_skillManager;
     TalentTree m_talentTree;
 
     float m_invulTimer = 0.0f;          // Thời gian còn lại của hiệu ứng nhấp nháy
     float m_invulDuration = 1.0f; // Tổng thời gian nhấp nháy
     float m_blinkTimer = 0.0f;          // Timer nội bộ để tính toán hàm Sin
-
     float m_shootRecoilOffset = 0.0f;             //Biến giật nhẹ
     float m_shootRecoilRecoverSpeed = 80.0f;
     float m_bulletOffset = 8.0f;
@@ -91,11 +92,12 @@ public:
 
     int GetUpgradePoints() const { return m_upgradePoints; }
     void SetUpgradePoints(int pts) { m_upgradePoints = pts; }
-    void UseUpgradePoint() {
-        if (m_upgradePoints > 0) {
-            m_upgradePoints--;
-        }
-    }
+    void AddUpgradePoints(int pts);
+    void UseUpgradePoint();
+
+    int GetLevelPoints() const { return m_levelPoints; }
+    void AddLevelPoints(int pts) { m_levelPoints += pts; }
+    void UseLevelPoint() { if (m_levelPoints > 0) m_levelPoints--; }
 
     void Heal(int amount) {
         m_hp += amount;

@@ -128,7 +128,7 @@ void BaseGameplayScene::Update(float dt, InputManager& input, SceneManager& mana
 
     HandleLevelInput(input, manager);
 
-    if (m_player->GetUpgradePoints() > 0 && input.IsKeyPressed('U')) {
+    if (m_player->GetLevelPoints() > 0 && input.IsKeyPressed('U')) {
         AudioManager::GetInstance().PlayUiEffect(AudioIds::UiOpenLevelUp);
         manager.PushScene(std::make_unique<LevelUpScene>(m_gfx, *m_player));
     }
@@ -243,10 +243,16 @@ void BaseGameplayScene::Render(Graphics& gfx) {
     m_font->DrawString(spriteBatch, uiLeft.c_str(), DirectX::XMFLOAT2(10.0f, 10.0f), DirectX::Colors::Yellow);
     m_font->DrawString(spriteBatch, uiRight.c_str(), DirectX::XMFLOAT2(200.0f, 10.0f), DirectX::Colors::LightGreen);
 
+    if (m_player->GetLevelPoints() > 0) {
+        std::wstring notify =
+            L"Ban co " + std::to_wstring(m_player->GetLevelPoints()) + L" luot nang cap! Bam 'U' de tang ky nang.";
+        m_font->DrawString(spriteBatch, notify.c_str(), DirectX::XMFLOAT2(10.0f, 200.0f), DirectX::Colors::Cyan);
+    }
+
     if (m_player->GetUpgradePoints() > 0) {
         std::wstring notify =
-            L"Ban co " + std::to_wstring(m_player->GetUpgradePoints()) + L" luot nang cap! Bam 'U' (Ky nang) hoac 'T' (Talent Tree).";
-        m_font->DrawString(spriteBatch, notify.c_str(), DirectX::XMFLOAT2(10.0f, 200.0f), DirectX::Colors::Cyan);
+            L"Ban co " + std::to_wstring(m_player->GetUpgradePoints()) + L" diem talent! Bam 'T' de mo Talent Tree.";
+        m_font->DrawString(spriteBatch, notify.c_str(), DirectX::XMFLOAT2(10.0f, 230.0f), DirectX::Colors::Cyan);
     }
 
     // Draw HP Bar

@@ -150,6 +150,7 @@
     <ClInclude Include="ExplodingBullet.h" />
     <ClInclude Include="ExplodingBulletSkill.h" />
     <ClInclude Include="ExpOrb.h" />
+    <ClInclude Include="OrbConfig.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameObject.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SettingScene.h" />
     <ClInclude Include="TalentNode.h" />
+    <ClInclude Include="TalentOrb.h" />
     <ClInclude Include="TalentTree.h" />
     <ClInclude Include="TalentTreeScene.h" />
     <ClInclude Include="Shield.h" />
@@ -215,6 +217,7 @@
     <ClCompile Include="ConfigUtils.cpp" />
     <ClCompile Include="EnemyPool.cpp" />
     <ClCompile Include="ExpOrb.cpp" />
+    <ClCompile Include="OrbConfig.cpp" />
     <ClCompile Include="GameConfig.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -244,6 +247,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SettingScene.cpp" />
     <ClCompile Include="TalentNode.cpp" />
+    <ClCompile Include="TalentOrb.cpp" />
     <ClCompile Include="TalentTree.cpp" />
     <ClCompile Include="TalentTreeScene.cpp" />
     <ClCompile Include="Shield.cpp" />

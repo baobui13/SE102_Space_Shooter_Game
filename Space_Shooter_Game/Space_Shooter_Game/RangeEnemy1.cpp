@@ -17,6 +17,7 @@ RangeEnemy1::RangeEnemy1(float x, float y, float width, float height,
 
 void RangeEnemy1::Update(float dt, GameContext& ctx) {
     if (!m_isActive) return;
+    RecordContext(ctx);
 
     UpdateAnimation(dt);
     m_stateTimer += dt;

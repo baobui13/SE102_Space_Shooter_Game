@@ -42,10 +42,6 @@ void TalentNode::Render(DirectX::SpriteBatch* spriteBatch, float screenWidth, fl
 
     if (!m_icon) return;
     
-    DirectX::XMFLOAT2 position(m_x, m_y);
-    // Draw centered
-    DirectX::XMFLOAT2 origin(m_width / 2.0f, m_height / 2.0f);
-    
     DirectX::XMVECTOR color = DirectX::Colors::White;
     if (!m_isUnlocked) {
         if (m_isHovered) {
@@ -57,7 +53,13 @@ void TalentNode::Render(DirectX::SpriteBatch* spriteBatch, float screenWidth, fl
         color = DirectX::Colors::Yellow; // Highlight even when unlocked
     }
     
-    spriteBatch->Draw(m_icon.Get(), position, nullptr, color, 0.0f, origin);
+    RECT destRect = {
+        static_cast<LONG>(m_x - m_width / 2.0f),
+        static_cast<LONG>(m_y - m_height / 2.0f),
+        static_cast<LONG>(m_x + m_width / 2.0f),
+        static_cast<LONG>(m_y + m_height / 2.0f)
+    };
+    spriteBatch->Draw(m_icon.Get(), destRect, nullptr, color);
 }
 
 std::wstring TalentNode::GetDescription() const {

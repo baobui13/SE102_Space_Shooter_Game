@@ -89,9 +89,9 @@ void LevelUpScene::Update(float dt, InputManager& input, SceneManager& manager) 
     if (choice >= 0 && choice < m_currentChoices.size()) {
         AudioManager::GetInstance().PlayUiEffect(AudioIds::UiSelectUpgrade);
         m_currentChoices[choice].applyEffect(m_player);
-        m_player.UseUpgradePoint();
+        m_player.UseLevelPoint();
 
-        if (m_player.GetUpgradePoints() > 0) {
+        if (m_player.GetLevelPoints() > 0) {
             GenerateChoices(); // Rút thẻ mới nếu vẫn còn lượt
         }
         else {

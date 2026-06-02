@@ -74,6 +74,9 @@
     <ClInclude Include="ExpOrb.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="TalentOrb.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
     <ClInclude Include="BulletPool.h">
       <Filter>Entities</Filter>
     </ClInclude>
@@ -176,6 +179,9 @@
     <ClInclude Include="LevelConfig.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="OrbConfig.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
     <ClInclude Include="PlayerConfig.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -247,6 +253,9 @@
       <Filter>Foundation</Filter>
     </ClCompile>
     <ClCompile Include="ExpOrb.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="TalentOrb.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="Laser.cpp">
@@ -331,6 +340,9 @@
       <Filter>Foundation</Filter>
     </ClCompile>
     <ClCompile Include="LevelConfig.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="OrbConfig.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
     <ClCompile Include="PlayerConfig.cpp">

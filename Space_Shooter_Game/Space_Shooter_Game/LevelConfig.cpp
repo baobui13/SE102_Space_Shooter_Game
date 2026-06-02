@@ -4,6 +4,7 @@
 #include "ExpOrb.h"
 #include "GameConfig.h"
 #include "SimpleJson.h"
+#include "TalentOrb.h"
 
 #include <iomanip>
 #include <memory>
@@ -97,8 +98,31 @@ std::vector<ExpOrbConfig> LevelConfig::GetExpOrbs(int levelIndex) {
     return orbs;
 }
 
+std::vector<TalentOrbConfig> LevelConfig::GetTalentOrbs(int levelIndex) {
+    std::vector<TalentOrbConfig> orbs;
+
+    try {
+        const JsonValue level = LoadLevel(levelIndex);
+        for (const auto& orb : level.At("objects").At("talentOrbs").AsArray()) {
+            orbs.push_back({
+                ReadCoordinate(orb.At("x"), 0.0f, true),
+                ReadCoordinate(orb.At("y"), 0.0f, false),
+                ReadInt(orb, "points", 1)
+            });
+        }
+    }
+    catch (...) {
+    }
+
+    return orbs;
+}
+
 void LevelConfig::SpawnObjects(int levelIndex, Graphics& gfx, EntityManager& entityManager) {
     for (const auto& orb : GetExpOrbs(levelIndex)) {
         entityManager.AddEntity(std::make_unique<ExpOrb>(gfx, orb.x, orb.y, orb.value));
+    }
+
+    for (const auto& orb : GetTalentOrbs(levelIndex)) {
+        entityManager.AddEntity(std::make_unique<TalentOrb>(gfx, orb.x, orb.y, orb.points));
     }
 }

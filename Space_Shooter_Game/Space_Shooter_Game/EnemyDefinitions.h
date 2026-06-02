@@ -45,6 +45,8 @@ struct EnemyStatsDefinition {
     float attackSpeed;
     float attackRange;
     int expReward;
+    float talentDropChance = 0.0f;
+    int talentPointReward = 1;
 };
 
 enum class EnemyMovementKind {

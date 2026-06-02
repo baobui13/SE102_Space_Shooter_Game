@@ -5,7 +5,9 @@
     "attackPower": 10,
     "attackSpeed": 1.0,
     "attackRange": 30,
-    "expReward": 10
+    "expReward": 10,
+    "talentDropChance": 0.04,
+    "talentPointReward": 1
   },
   "Melee_Fast": {
     "health": 50,
@@ -13,7 +15,9 @@
     "attackPower": 5,
     "attackSpeed": 1.0,
     "attackRange": 20,
-    "expReward": 15
+    "expReward": 15,
+    "talentDropChance": 0.06,
+    "talentPointReward": 1
   },
   "Melee_Spawner": {
     "health": 300,
@@ -21,7 +25,9 @@
     "attackPower": 12,
     "attackSpeed": 1.0,
     "attackRange": 30,
-    "expReward": 25
+    "expReward": 25,
+    "talentDropChance": 0.12,
+    "talentPointReward": 1
   },
   "Ranged_Basic": {
     "health": 80,
@@ -29,7 +35,9 @@
     "attackPower": 15,
     "attackSpeed": 1.0,
     "attackRange": 500,
-    "expReward": 20
+    "expReward": 20,
+    "talentDropChance": 0.08,
+    "talentPointReward": 1
   },
   "Ranged_Burst": {
     "health": 100,
@@ -37,7 +45,9 @@
     "attackPower": 20,
     "attackSpeed": 1.0,
     "attackRange": 600,
-    "expReward": 30
+    "expReward": 30,
+    "talentDropChance": 0.10,
+    "talentPointReward": 1
   },
   "Boss_Stage1": {
     "health": 3000,
@@ -45,6 +55,8 @@
     "attackPower": 25,
     "attackSpeed": 1.0,
     "attackRange": 600,
-    "expReward": 500
+    "expReward": 500,
+    "talentDropChance": 1.0,
+    "talentPointReward": 2
   }
 }
