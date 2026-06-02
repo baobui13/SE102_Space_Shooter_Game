@@ -179,6 +179,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ProgressBar.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SettingScene.h" />
     <ClInclude Include="Shield.h" />
     <ClInclude Include="ShieldSkill.h" />
     <ClInclude Include="SkillConfig.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="SpriteAnimation.h" />
     <ClInclude Include="Upgrade.h" />
     <ClInclude Include="UpgradeManager.h" />
+    <ClInclude Include="VolumeScene.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +238,7 @@
     <ClCompile Include="CircleGroundAttack.cpp" />
     <ClCompile Include="Boss1.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SettingScene.cpp" />
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="ShieldSkill.cpp" />
     <ClCompile Include="SkillConfig.cpp" />
@@ -245,6 +248,7 @@
     <ClCompile Include="UpgradeManager.cpp" />
     <ClCompile Include="EnemyFactory.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
+    <ClCompile Include="VolumeScene.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -254,15 +258,19 @@
     <Image Include="Assets\Back_BTN.png" />
     <Image Include="Assets\background.png" />
     <Image Include="Assets\Bullets\Green Effect Bullet Impact Explosion 32x32.png" />
+    <Image Include="Assets\Bgm_BTN.png" />
     <Image Include="Assets\Bullets1.png" />
     <Image Include="Assets\Choose_Level_BTN.png" />
     <Image Include="Assets\Continue_BTN.png" />
     <Image Include="Assets\Exit_BTN.png" />
     <Image Include="Assets\Exit_Scene_BTN.png" />
     <Image Include="Assets\ExplodingBullet_1.png" />
+    <Image Include="Assets\GM_BTN.png" />
     <Image Include="Assets\lazer_1.png" />
     <Image Include="Assets\Menu_BTN.png" />
+    <Image Include="Assets\Minus_BTN.png" />
     <Image Include="Assets\Pause_BTN.png" />
+    <Image Include="Assets\Plus_BTN.png" />
     <Image Include="Assets\Setting_BTN.png" />
     <Image Include="Assets\Shield_1.png" />
     <Image Include="Assets\Spaceship.png" />

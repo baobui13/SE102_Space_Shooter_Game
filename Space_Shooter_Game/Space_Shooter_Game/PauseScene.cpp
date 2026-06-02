@@ -6,6 +6,7 @@
 #include "SceneManager.h"
 #include "MenuScene.h"
 #include <windows.h>
+#include "SettingScene.h"
 
 PauseScene::PauseScene(Graphics& gfx) : m_gfx(gfx) {
     m_font = std::make_unique<DirectX::SpriteFont>(gfx.GetDevice().Get(), L"Assets/Arial.spritefont");
@@ -88,7 +89,7 @@ void PauseScene::Update(float dt, InputManager& input, SceneManager& manager) {
     }
 
     if (m_settingButton->IsClicked()) {
-        // TODO: Implement settings scene
+        manager.PushScene(std::make_unique<SettingScene>(m_gfx));
     }
 
     if (m_menuButton->IsClicked()) {
@@ -101,6 +102,7 @@ void PauseScene::Update(float dt, InputManager& input, SceneManager& manager) {
 }
 
 void PauseScene::Render(Graphics& gfx) {
+
     // Do not clear buffer to allow gameplay scene to show underneath
     // Optionally, render a semi-transparent overlay
 
@@ -116,6 +118,7 @@ void PauseScene::Render(Graphics& gfx) {
     m_settingButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
     m_menuButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
     m_exitButton->Render(spriteBatch, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+
 
     spriteBatch->End();
 }
