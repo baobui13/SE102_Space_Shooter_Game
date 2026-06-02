@@ -285,8 +285,20 @@ void AudioManager::RefreshMusicVolume() {
     m_musicInstance->SetVolume(ComputeFinalVolume(*clip, 1.0f));
 }
 
-float AudioManager::ComputeFinalVolume(const ClipRecord& clip, float volumeMultiplier) const {
-    const float categoryVolume = m_categoryVolumes[CategoryToIndex(clip.category)];
+float AudioManager::ComputeFinalVolume(const ClipRecord& clip, float volumeMultiplier) const
+{
+    float categoryVolume;
+
+    if (clip.category == AudioCategory::UiEffect)
+    {
+        // 🔥 UI dùng chung volume với SFX
+        categoryVolume = m_categoryVolumes[CategoryToIndex(AudioCategory::SoundEffect)];
+    }
+    else
+    {
+        categoryVolume = m_categoryVolumes[CategoryToIndex(clip.category)];
+    }
+
     return Clamp01(clip.defaultVolume * categoryVolume * volumeMultiplier);
 }
 

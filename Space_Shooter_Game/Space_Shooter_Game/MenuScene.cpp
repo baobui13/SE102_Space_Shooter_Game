@@ -6,6 +6,7 @@
 #include "Graphics.h"
 #include "InputManager.h"
 #include "GameConfig.h"
+#include "VolumeScene.h"
 
 MenuScene::MenuScene(Graphics& gfx) : m_gfx(gfx) {
     AudioManager::GetInstance().PlayMusic(AudioIds::MenuMusic);
@@ -63,17 +64,10 @@ void MenuScene::Update(float dt, InputManager& input, SceneManager& manager) {
         manager.ChangeScene(std::make_unique<LevelSelectScene>(m_gfx));
     }
 
-    static bool isMuted = false;
-
     if (m_volumeButton->IsClicked()) {
-        isMuted = !isMuted;
-
-        if (isMuted) {
-            AudioManager::GetInstance().StopMusic();
-        }
-        else {
-            AudioManager::GetInstance().PlayMusic(AudioIds::MenuMusic);
-        }
+        manager.PushScene(
+            std::make_unique<VolumeScene>(m_gfx)
+        );
     }
 
 	if (m_exitButton->IsClicked()) {

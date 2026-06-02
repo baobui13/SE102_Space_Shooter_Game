@@ -60,11 +60,11 @@ public:
 
     void SetBackgroundMusicVolume(float volume) { SetCategoryVolume(AudioCategory::BackgroundMusic, volume); }
     void SetSoundEffectVolume(float volume) { SetCategoryVolume(AudioCategory::SoundEffect, volume); }
-    void SetUiEffectVolume(float volume) { SetCategoryVolume(AudioCategory::UiEffect, volume); }
+   
 
     float GetBackgroundMusicVolume() const { return GetCategoryVolume(AudioCategory::BackgroundMusic); }
     float GetSoundEffectVolume() const { return GetCategoryVolume(AudioCategory::SoundEffect); }
-    float GetUiEffectVolume() const { return GetCategoryVolume(AudioCategory::UiEffect); }
+
 
     bool IsReady() const { return m_ready && m_audioEngine != nullptr; }
 

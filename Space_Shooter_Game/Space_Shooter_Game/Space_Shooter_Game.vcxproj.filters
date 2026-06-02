@@ -158,6 +158,8 @@
     <ClInclude Include="AttackMarkerPool.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="VolumeScene.h" />
+    <ClInclude Include="SettingScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Space_Shooter_Game.rc">
@@ -277,6 +279,8 @@
     <ClCompile Include="AttackMarkerPool.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="VolumeScene.cpp" />
+    <ClCompile Include="SettingScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Bullets1.png">
@@ -344,6 +348,18 @@
     </Image>
     <Image Include="Assets\Exit_Scene_BTN.png">
       <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Minus_BTN.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Plus_BTN.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Bgm_BTN.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\GM_BTN.png">
+      <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
