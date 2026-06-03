@@ -12,8 +12,8 @@
     "animationId": "talent_orb_idle",
     "colliderName": "talent_orb",
     "collectColliderName": "talent_orb_collect",
-    "width": 18,
-    "height": 18,
+    "width": 64,
+    "height": 64,
     "magnetSpeed": 500,
     "fallSpeed": 40
   }

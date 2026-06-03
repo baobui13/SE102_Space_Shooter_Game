@@ -30,8 +30,8 @@
     "spriteHeadDirection": "Down"
   },
   "Boss_Stage1": {
-    "displayWidth": 480,
-    "displayHeight": 720,
+    "displayWidth": 640,
+    "displayHeight": 960,
     "animationId": "boss_stage1_idle",
     "spriteHeadDirection": "Down"
   }
