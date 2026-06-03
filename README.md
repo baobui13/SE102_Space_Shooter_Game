@@ -7,11 +7,8 @@
 **Sinh viên 1:** Bùi Quốc Bảo  
 **MSSV 1:** 23520093
 
-**Sinh viên 2:** Nguyễn Công Tài  
-**MSSV 2:** 21522565
-
-**Sinh viên 3:** Nguyễn Hoàng Quân  
-**MSSV 3:** 21522494
+**Sinh viên 2:** Nguyễn Hoàng Quân  
+**MSSV 2:** 21522494
 
 ## NỘI DUNG SƠ LƯỢC
 
